@@ -8,6 +8,7 @@ type TypeMataData struct {
 type TypeUserInfo struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	NickName string `json:nickname`
 	ID       string `json:"ID"`
 	Phone    string `json:"Phone"`
 	Email    string `json:"Email"`

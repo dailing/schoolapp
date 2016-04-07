@@ -13,7 +13,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestLogin(t *testing.T) {
+func _TestLogin(t *testing.T) {
 
 	req := controllers.TypeLoginInfo{
 		MataData: controllers.TypeMataData{
