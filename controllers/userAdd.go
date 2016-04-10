@@ -15,7 +15,7 @@ type UserAddController struct {
 
 type SQLuserinfo struct {
 	Uid      int    `orm:"pk;auto"`
-	Username string `orm:"column(username)"`
+	Username string `orm:"unique;column(username)"`
 	Password string `orm:"column(password)"`
 	Nickname string `orm:"column(nickname)"`
 	Coins    int    `orm:"column(coins)"`

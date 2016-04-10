@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 )
 
 type LoginController struct {
@@ -22,7 +23,7 @@ type TypeLoginResp struct {
 	Status   TypeStatus   `json:"status"`
 }
 
-func (c *LoginController) Get() {
+func (c *LoginController) _Get() {
 	c.Data["json"] = TypeLoginInfo{
 		MataData: TypeMataData{
 			TimeStamp: int(time.Now().UnixNano()),
@@ -53,7 +54,8 @@ func (c *LoginController) Post() {
 		Token: "",
 	}
 	// check username and psw
-	if !checkLogIn(info.UserInfo.Username, info.UserInfo.Password) {
+	succ, err := checkLogIn(info.UserInfo.Username, info.UserInfo.Password)
+	if !succ {
 		retval.Status.Code = StatusCodeErrorLoginInfo
 		retval.Status.Description = ErrorDesp[StatusCodeErrorLoginInfo]
 		c.Data["json"] = retval
@@ -67,6 +69,19 @@ func (c *LoginController) Post() {
 	c.ServeJSON()
 }
 
-func checkLogIn(username, psw string) bool {
-	return true
+func checkLogIn(username, psw string) (bool, error) {
+	o := orm.NewOrm()
+	user := SQLuserinfo{
+		Username: username,
+	}
+	err := o.Read(&user, "username")
+	ErrReport(err)
+	if err != nil {
+		return false, err
+	}
+	beego.Trace("Read User Psw:", user.Password)
+	if psw == user.Password {
+		return true, nil
+	}
+	return false, nil
 }
