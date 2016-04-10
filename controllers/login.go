@@ -23,20 +23,6 @@ type TypeLoginResp struct {
 	Status   TypeStatus   `json:"status"`
 }
 
-func (c *LoginController) _Get() {
-	c.Data["json"] = TypeLoginInfo{
-		MataData: TypeMataData{
-			TimeStamp: int(time.Now().UnixNano()),
-			Device:    "test",
-		},
-		UserInfo: TypeUserInfo{
-			Username: "test",
-			Password: "psw",
-		},
-	}
-	c.ServeJSON()
-}
-
 func (c *LoginController) Post() {
 	info := TypeLoginInfo{}
 	beego.Trace(string(c.Ctx.Input.RequestBody))
@@ -62,6 +48,7 @@ func (c *LoginController) Post() {
 		c.ServeJSON()
 		return
 	}
+	// gentoken and setup redisDB
 	retval.Status.Code = StatusCodeOK
 	retval.Status.Description = ErrorDesp[StatusCodeOK]
 	retval.Token = GenToken(info.UserInfo.Username, info.UserInfo.Password)
