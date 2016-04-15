@@ -14,6 +14,7 @@ import (
 )
 
 func TestUserAPIs(t *testing.T) {
+	// add a test user
 	info := controllers.TypeUserInfo{
 		Username: controllers.GenRandToken(),
 		Password: controllers.GenRandToken(),
@@ -23,8 +24,10 @@ func TestUserAPIs(t *testing.T) {
 		Coins:    0,
 	}
 	id, err := controllers.AddUser(info)
+	info.ID = id
 	assert.Equal(t, err, nil)
 	assert.T(t, id > 0)
+	// retrieve user info again to check confidential
 	succ, err := controllers.CheckUserNameExist(info.Username)
 	assert.T(t, succ)
 	assert.Equal(t, err, nil)
@@ -35,6 +38,13 @@ func TestUserAPIs(t *testing.T) {
 	assert.Equal(t, rInfo.Password, info.Password)
 	assert.Equal(t, rInfo.Coins, info.Coins)
 	assert.Equal(t, rInfo.NickName, info.NickName)
+	// delete user from database
+	succ, err = controllers.DelUser(info.Username)
+	assert.T(t, succ)
+	assert.Equal(t, err, nil)
+	// retrieve user info again
+	succ, _ = controllers.CheckUserNameExist(info.Username)
+	assert.T(t, !succ)
 }
 
 func _TestLogin(t *testing.T) {

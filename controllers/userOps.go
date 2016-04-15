@@ -18,6 +18,7 @@ func GetUserInfo(name string) (info TypeUserInfo, err error) {
 		return
 	}
 	info = TypeUserInfo{
+		ID:       user.Uid,
 		Username: name,
 		Password: user.Password,
 		NickName: user.Nickname,
@@ -58,8 +59,10 @@ func DelUser(name string) (bool, error) {
 	uinfo, err := GetUserInfo(name)
 	o := orm.NewOrm()
 	info := SQLuserinfo{
-		Uid: uinfo.ID,
+		Uid:      uinfo.ID,
+		Username: uinfo.Username,
 	}
+	beego.Trace("Del user id ", info.Uid, " for ", name)
 	num, err := o.Delete(&info)
 	ErrReport(err)
 	beego.Trace("affected rows:", num)
