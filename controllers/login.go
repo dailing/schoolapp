@@ -2,10 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
+	"os/user"
 )
 
 type LoginController struct {
@@ -57,11 +56,7 @@ func (c *LoginController) Post() {
 }
 
 func checkLogIn(username, psw string) (bool, error) {
-	o := orm.NewOrm()
-	user := SQLuserinfo{
-		Username: username,
-	}
-	err := o.Read(&user, "username")
+	user, err := getUserInfo(username)
 	ErrReport(err)
 	if err != nil {
 		return false, err

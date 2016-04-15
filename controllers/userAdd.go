@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"database/sql"
 	"fmt"
 
+	"encoding/json"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
@@ -41,6 +41,10 @@ func createTable() {
 	}
 }
 
+func checkUserExist(name string) (bool, error) {
+	return true,nil
+}
+
 func addUser(usrinfo TypeUserInfo) (string, error) {
 	o := orm.NewOrm()
 	o.Using("default")
@@ -59,35 +63,23 @@ func addUser(usrinfo TypeUserInfo) (string, error) {
 	return fmt.Sprint(retval), nil
 }
 
-func _addUser(usrinfo TypeUserInfo) (string, error) {
-	db, err := sql.Open("mysql", "aixinwu:aixinwu@tcp(localhost:3306)/appdev")
-	if err != nil {
-		fmt.Print(err)
-		return "", err
-	}
-	stmt, err := db.Prepare("INSERT userinfo SET username=?,nickname=?,password=?,coins=?")
-	if err != nil {
-		fmt.Print(err)
-		return "", err
-	}
-
-	res, err := stmt.Exec(usrinfo.Username, usrinfo.NickName, usrinfo.Password, 0)
-	if err != nil {
-		fmt.Print(err)
-		return "", err
-	}
-
-	id, err := res.LastInsertId()
-	if err != nil {
-		fmt.Print(err)
-		return "", err
-	}
-	stmt.Close()
-	db.Close()
-	return fmt.Sprint(id), nil
-}
-
 func (c *UserAddController) Post() {
 	beego.Debug("add user")
+	info := TypeUserInfo{}
+	beego.Info("Post Body is:", string(c.Ctx.Input.RequestBody))
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &info)
+	ErrReport(err)
+	if err != nil {
+		c.Abort("500")
+		return
+	}
+	retval := TypeRegularResp{
+		MataData: GenMataData(),
+	}
+	// check username and psw
+	_, err = addUser(info)
+	retval.Status = GenStatus(StatusCodeOK)
+	c.Data["json"] = retval
+	c.ServeJSON()
 
 }

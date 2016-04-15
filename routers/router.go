@@ -9,7 +9,8 @@ import (
 
 func init() {
 	beego.Router("/", &controllers.MainController{})
-	beego.Router("/login", &controllers.LoginController{})
+	beego.Router("/api/login", &controllers.LoginController{})
+	beego.Router("/api/usr_add", &controllers.UserAddController{})
 	beego.Router("/upload", &controllers.UploadController{})
 
 	beego.ErrorHandler("404", serve404)

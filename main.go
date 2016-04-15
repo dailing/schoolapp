@@ -7,5 +7,6 @@ import (
 
 func main() {
 	beego.SetLogger("file", `{"filename":"test.log"}`)
+	beego.Info("This is an info log")
 	beego.Run()
 }
