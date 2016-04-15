@@ -14,10 +14,10 @@ type TypeUserInfo struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	NickName string `json:"nickname"`
-	ID       string `json:"ID"`
+	ID       int    `json:"ID"`
 	Phone    string `json:"phone"`
 	Email    string `json:"email"`
-	Coins    string `josn:"coins"`
+	Coins    int    `josn:"coins"`
 }
 
 type TypeStatus struct {

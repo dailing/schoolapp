@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"fmt"
-
 	"encoding/json"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -29,6 +27,7 @@ func init() {
 	orm.RegisterDriver("mysql", orm.DRMySQL)
 	orm.RegisterDataBase("default", "mysql", "aixinwu:aixinwu@tcp(localhost:3306)/appdev?charset=utf8")
 	orm.RegisterModel(new(SQLuserinfo))
+	createTable()
 }
 
 func createTable() {
@@ -39,28 +38,6 @@ func createTable() {
 	if err != nil {
 		beego.Error(err)
 	}
-}
-
-func checkUserExist(name string) (bool, error) {
-	return true,nil
-}
-
-func addUser(usrinfo TypeUserInfo) (string, error) {
-	o := orm.NewOrm()
-	o.Using("default")
-	createTable()
-	fmt.Println(o)
-	s := SQLuserinfo{
-		Username: usrinfo.Username,
-		Password: usrinfo.Password,
-		Nickname: usrinfo.NickName,
-		Coins:    0,
-	}
-	retval, err := o.Insert(&s)
-	if err != nil {
-		return "", err
-	}
-	return fmt.Sprint(retval), nil
 }
 
 func (c *UserAddController) Post() {
@@ -77,7 +54,7 @@ func (c *UserAddController) Post() {
 		MataData: GenMataData(),
 	}
 	// check username and psw
-	_, err = addUser(info)
+	_, err = AddUser(info)
 	retval.Status = GenStatus(StatusCodeOK)
 	c.Data["json"] = retval
 	c.ServeJSON()

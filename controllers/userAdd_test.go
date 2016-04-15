@@ -15,6 +15,6 @@ func TestUserAdd(t *testing.T) {
 		Password: "psw",
 		NickName: GenRandToken(),
 	}
-	id, err := addUser(tdata)
+	id, err := AddUser(tdata)
 	fmt.Println(id, err)
 }

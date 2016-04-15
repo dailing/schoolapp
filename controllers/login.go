@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego"
-	"os/user"
 )
 
 type LoginController struct {
@@ -24,8 +23,9 @@ type TypeLoginResp struct {
 
 func (c *LoginController) Post() {
 	info := TypeLoginInfo{}
-	beego.Trace(string(c.Ctx.Input.RequestBody))
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &info)
+	body := c.Ctx.Input.CopyBody(1024 * 1024)
+	beego.Trace(string(body))
+	err := json.Unmarshal(body, &info)
 	ErrReport(err)
 	if err != nil {
 		c.Abort("500")
@@ -56,7 +56,7 @@ func (c *LoginController) Post() {
 }
 
 func checkLogIn(username, psw string) (bool, error) {
-	user, err := getUserInfo(username)
+	user, err := GetUserInfo(username)
 	ErrReport(err)
 	if err != nil {
 		return false, err

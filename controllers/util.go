@@ -8,6 +8,10 @@ import (
 	"github.com/astaxie/beego"
 )
 
+func init() {
+	rand.Seed(int64(time.Now().UnixNano()))
+}
+
 func Hash(str string) string {
 	return str
 }
