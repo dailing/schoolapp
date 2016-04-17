@@ -3,6 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>LoginTest</title>
+    <script src="../js/userOps.js"></script>
+    <script>
+        function btnFunc() {
+            var Name = document.getElementById("usr_add_name").value;
+            var psw = document.getElementById("usr_add_psw").value;
+            var token = user_login(Name, psw);
+            console.info(token);
+            document.getElementById("resp").innerHTML = token;
+        }
+    </script>
 
 </head>
 <body>

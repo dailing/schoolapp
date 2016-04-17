@@ -43,20 +43,21 @@ func createTable() {
 func (c *UserAddController) Post() {
 	beego.Debug("add user")
 	info := TypeUserInfo{}
-	beego.Info("Post Body is:", string(c.Ctx.Input.RequestBody))
-	err := json.Unmarshal(c.Ctx.Input.RequestBody, &info)
+	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
+	beego.Info("Post Body is:", string(body))
+	err := json.Unmarshal(body, &info)
 	ErrReport(err)
 	if err != nil {
 		c.Abort("500")
 		return
 	}
-	retval := TypeRegularResp{
+	retVal := TypeRegularResp{
 		MataData: GenMataData(),
 	}
 	// check username and psw
 	_, err = AddUser(info)
-	retval.Status = GenStatus(StatusCodeOK)
-	c.Data["json"] = retval
+	retVal.Status = GenStatus(StatusCodeOK)
+	c.Data["json"] = retVal
 	c.ServeJSON()
 
 }

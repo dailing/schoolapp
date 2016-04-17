@@ -10,6 +10,19 @@ type TypeRegularResp struct {
 	Status   TypeStatus   `json:"status"`
 }
 
+type TypeRegularReq struct {
+	MataData TypeMataData `json:"mataData"`
+	Token    string       `json:"token"`
+}
+
+// regular user request
+type TypeUserReq struct {
+	MataData TypeMataData `json:"mataData"`
+	UserInfo TypeUserInfo `json:"userinfo"`
+	Token    string       `json:"token"`
+	Status   TypeStatus   `json:"status"`
+}
+
 type TypeUserInfo struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -23,6 +36,10 @@ type TypeUserInfo struct {
 type TypeStatus struct {
 	Code        int    `json:"code"`
 	Description string `json:"description"`
+}
+
+type TypeTokenInfo struct {
+	UserName string
 }
 
 const (

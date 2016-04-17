@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>upload images</title>
+    <script src="../js/userOps.js"></script>
+    <script src="../js/uploadFile.js"></script>
+    <script>
+        function filesChange() {
+            var fd = document.getElementById("file").files[0];
+            upload(fd);
+        }
+    </script>
+</head>
+<body>
+<form>
+    <input type="file" id="file" name="files[]" onchange="filesChange()">
+</form>
+</body>
+</html>

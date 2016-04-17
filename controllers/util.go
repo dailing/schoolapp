@@ -5,7 +5,9 @@ import (
 	"math/rand"
 	"time"
 
+	"encoding/json"
 	"github.com/astaxie/beego"
+	"github.com/dvsekhvalnov/jose2go"
 )
 
 func init() {
@@ -16,8 +18,25 @@ func Hash(str string) string {
 	return str
 }
 
-func GenToken(usrname, psw string) string {
-	return fmt.Sprintf("%s.%s.%016d", usrname, psw, GetTimeStamp())
+func GenToken(info TypeTokenInfo) string {
+	payload, err := json.Marshal(info)
+	ErrReport(err)
+	token, err := jose.Sign(string(payload), jose.NONE, nil)
+	ErrReport(err)
+	return token
+}
+
+func ParseToken(token string) TypeTokenInfo {
+	beego.Info("token:", token)
+	payload, _, err := jose.Decode(token, nil)
+	ErrReport(err)
+	info := TypeTokenInfo{}
+	err = json.Unmarshal([]byte(payload), &info)
+	ErrReport(err)
+	if err != nil {
+		info.UserName = ""
+	}
+	return info
 }
 
 func GenRandToken() string {
@@ -46,4 +65,13 @@ func GenStatus(code int) TypeStatus {
 		Code:        code,
 		Description: ErrorDesp[code],
 	}
+}
+
+func CheckToken(token string) bool {
+	_, _, err := jose.Decode(token, nil)
+	ErrReport(err)
+	if err == nil {
+		return true
+	}
+	return false
 }

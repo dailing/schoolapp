@@ -2,9 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>update</title>
+    <script src="../js/userOps.js"></script>
+    <script>
+        function updateFunc() {
+            var Name = document.getElementById("usr_add_name").value;
+            var psw = document.getElementById("usr_add_psw").value;
+            var token = user_login(Name, psw);
+            var nick = document.getElementById("nickname").value;
+            console.info(token);
+            if (token != "") {
+                document.getElementById("resp").innerHTML += "<br>" + token;
+            } else {
+                document.getElementById("resp").innerHTML += "<br>" + "Error psw";
+                return;
+            }
+            jsonObj = {
+                "token": token,
+                "userinfo": {
+                    "password": psw,
+                    "nickname": nick
+                }
+            };
+            usrUpdate(jsonObj)
+        }
+        function getFunc() {
+            var Name = document.getElementById("usr_add_name").value;
+            var psw = document.getElementById("usr_add_psw").value;
+            var token = user_login(Name, psw);
+            console.info(token);
+            if (token != "") {
+                document.getElementById("resp").innerHTML += "<br>" + token;
+            } else {
+                document.getElementById("resp").innerHTML += "<br>" + "Error psw";
+            }
+            var resp = user_get(token);
+            console.info(resp);
+            document.getElementById("nickname").value = resp.userinfo.nickname;
+        }
+        function clearBtn() {
+            document.getElementById("resp").innerHTML = "";
+        }
+    </script>
 </head>
 <body>
-
+<table border="1">
+    <tr>
+        <td>UserName</td>
+        <td><input type="text" id="usr_add_name"></td>
+    </tr>
+    <tr>
+        <td>Psw</td>
+        <td><input type="password" id="usr_add_psw"></td>
+    </tr>
+    <tr>
+        <td>nickName</td>
+        <td><input type="text" id="nickname"></td>
+    </tr>
+</table>
+<input type="button" value="update" id="usr_add_submit" onclick="updateFunc()">
+<input type="button" value="get" onclick="getFunc()">
+<input type="button" value="clear" onclick="clearBtn()">
+</form>
+<div id="resp"></div>
 </body>
 </html>

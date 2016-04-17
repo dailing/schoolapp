@@ -27,6 +27,33 @@ func GetUserInfo(name string) (info TypeUserInfo, err error) {
 	return
 }
 
+func UpdateUserInfo(usrinfo TypeUserInfo) error {
+	o := orm.NewOrm()
+	o.Using("default")
+	// check user name
+	if succ, err := CheckUserNameLegal(usrinfo.Username); err != nil {
+		return err
+	} else if succ == false {
+		return errors.New("Unknown Errors.")
+	}
+	s := SQLuserinfo{
+		Username: usrinfo.Username,
+	}
+	err := o.Read(&s, "username")
+	ErrReport(err)
+	if err != nil {
+		return err
+	}
+	beego.Trace("updating information for user id", s.Uid)
+	s.Nickname = usrinfo.NickName
+	s.Password = usrinfo.Password
+	s.Coins = usrinfo.Coins
+	num, err := o.Update(&s)
+	ErrReport(err)
+	beego.Info("affected rows when update:", num)
+	return err
+}
+
 func AddUser(usrinfo TypeUserInfo) (int, error) {
 	o := orm.NewOrm()
 	o.Using("default")

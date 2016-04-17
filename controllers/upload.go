@@ -3,6 +3,7 @@ package controllers
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"github.com/astaxie/beego"
 )
@@ -18,17 +19,19 @@ type TypeUploadResp struct {
 }
 
 func (c *UploadController) Post() {
+	imgPath := "./uploadimgs/"
 	beego.Trace("Recv Post")
 	file, header, err := c.GetFile("binaryFile")
 	ErrReport(err)
 	beego.Trace(header.Filename)
-	filecontant, err := ioutil.ReadAll(file)
+	fileContent, err := ioutil.ReadAll(file)
 	ErrReport(err)
-	ioutil.WriteFile("/tmp/img/"+header.Filename, filecontant, os.FileMode(0644))
+	fileToken := GenRandToken()
+	ioutil.WriteFile(imgPath+fileToken+filepath.Ext(header.Filename), fileContent, os.FileMode(0644))
 	file.Close()
 	resp := TypeUploadResp{
 		MataData: GenMataData(),
-		ImageID:  GenRandToken(),
+		ImageID:  fileToken,
 		Status:   GenStatus(StatusCodeOK),
 	}
 	c.Data["json"] = resp

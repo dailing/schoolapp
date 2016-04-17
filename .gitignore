@@ -25,5 +25,7 @@ _testmain.go
 *.log
 .idea
 .idea/
+uploadimgs/
+uploadimgs
 
 schoolapp

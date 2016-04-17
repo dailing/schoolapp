@@ -10,11 +10,6 @@ type LoginController struct {
 	beego.Controller
 }
 
-type TypeLoginInfo struct {
-	MataData TypeMataData `json:"mataData"`
-	UserInfo TypeUserInfo `json:"userinfo"`
-}
-
 type TypeLoginResp struct {
 	MataData TypeMataData `json:"mataData"`
 	Token    string       `json:"token"`
@@ -22,7 +17,7 @@ type TypeLoginResp struct {
 }
 
 func (c *LoginController) Post() {
-	info := TypeLoginInfo{}
+	info := TypeUserReq{}
 	body := c.Ctx.Input.CopyBody(1024 * 1024)
 	beego.Trace(string(body))
 	err := json.Unmarshal(body, &info)
@@ -50,7 +45,10 @@ func (c *LoginController) Post() {
 	// gentoken and setup redisDB
 	retval.Status.Code = StatusCodeOK
 	retval.Status.Description = ErrorDesp[StatusCodeOK]
-	retval.Token = GenToken(info.UserInfo.Username, info.UserInfo.Password)
+	tInfo := TypeTokenInfo{
+		UserName: info.UserInfo.Username,
+	}
+	retval.Token = GenToken(tInfo)
 	c.Data["json"] = retval
 	c.ServeJSON()
 }

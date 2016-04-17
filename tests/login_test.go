@@ -47,25 +47,46 @@ func TestUserAPIs(t *testing.T) {
 	assert.T(t, !succ)
 }
 
-func _TestLogin(t *testing.T) {
-
+func TestUserAPIs_http(t *testing.T) {
+	regAddUser := controllers.TypeUserInfo{
+		Username: controllers.GenRandToken(),
+		Password: controllers.GenRandToken(),
+		NickName: controllers.GenRandToken(),
+		Phone:    controllers.GenRandToken(),
+		Email:    controllers.GenRandToken(),
+		Coins:    0,
+	}
 	req := controllers.TypeLoginInfo{
-		MataData: controllers.TypeMataData{
-			TimeStamp: controllers.GetTimeStamp(),
-			Device:    "test",
-		},
+		MataData: controllers.GenMataData(),
 		UserInfo: controllers.TypeUserInfo{
-			Username: "test",
-			Password: "psw",
+			Username: regAddUser.Username,
+			Password: regAddUser.Password,
 		},
 	}
-
-	body, err := json.Marshal(req)
+	// add a user
+	beego.Trace("Adding user using web api")
+	body, err := json.Marshal(regAddUser)
 	assert.Equal(t, err, nil)
-	beego.Trace(string(body))
-	r, err := http.NewRequest("POST", "/api/login", bytes.NewReader(body))
+	r, err := http.NewRequest("POST", "/api/usr_add", bytes.NewReader(body))
 	assert.Equal(t, err, nil)
 	w := httptest.NewRecorder()
+	beego.BeeApp.Handlers.ServeHTTP(w, r)
+	assert.Equal(t, w.Code, 200)
+	assert.T(t, w.Body.Len() > 0)
+	beego.Trace(string(w.Body.Bytes()))
+	resp := controllers.TypeRegularResp{}
+	err = json.Unmarshal(w.Body.Bytes(), &resp)
+	assert.Equal(t, err, nil)
+	assert.Equal(t, resp.Status.Code, controllers.StatusCodeOK)
+
+	// login using web api
+	beego.Trace("logging in using web api")
+	body, err = json.Marshal(req)
+	assert.Equal(t, err, nil)
+	beego.Trace(string(body))
+	r, err = http.NewRequest("POST", "/api/login", bytes.NewReader(body))
+	assert.Equal(t, err, nil)
+	w = httptest.NewRecorder()
 	beego.BeeApp.Handlers.ServeHTTP(w, r)
 	assert.Equal(t, w.Code, 200)
 	assert.T(t, w.Body.Len() > 0)
