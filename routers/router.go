@@ -17,6 +17,9 @@ func init() {
 	beego.Router("/api/img_upload", &controllers.ImgUploadController{})
 	beego.Router("/api/img_get", &controllers.ImgGetController{})
 
+	beego.Router("/api/item_add", &controllers.ItemAddController{})
+	beego.Router("/api/item_get", &controllers.ItemGetController{})
+
 	beego.ErrorHandler("404", serve404)
 }
 

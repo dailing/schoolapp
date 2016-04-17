@@ -7,24 +7,30 @@ import (
 	"regexp"
 )
 
+/*
+ * 	User profile related operations
+ */
+
 func GetUserInfo(name string) (info TypeUserInfo, err error) {
 	o := orm.NewOrm()
-	user := SQLuserinfo{
-		Username: name,
-	}
-	err = o.Read(&user, "username")
+	info.Username = name
+	err = o.Read(&info, "username")
 	ErrReport(err)
 	if err != nil {
+		info.Username = ""
 		return
 	}
-	info = TypeUserInfo{
-		ID:       user.Uid,
-		Username: name,
-		Password: user.Password,
-		NickName: user.Nickname,
-		Coins:    user.Coins,
-	}
 	return
+}
+
+func GetUserInfoByToken(token string) TypeUserInfo {
+	tokenInfo := ParseToken(token)
+	if tokenInfo.UserName == "" {
+		return TypeUserInfo{}
+	}
+	usrInfo, err := GetUserInfo(tokenInfo.UserName)
+	ErrReport(err)
+	return usrInfo
 }
 
 func UpdateUserInfo(usrinfo TypeUserInfo) error {
@@ -36,7 +42,7 @@ func UpdateUserInfo(usrinfo TypeUserInfo) error {
 	} else if succ == false {
 		return errors.New("Unknown Errors.")
 	}
-	s := SQLuserinfo{
+	s := TypeUserInfo{
 		Username: usrinfo.Username,
 	}
 	err := o.Read(&s, "username")
@@ -44,8 +50,8 @@ func UpdateUserInfo(usrinfo TypeUserInfo) error {
 	if err != nil {
 		return err
 	}
-	beego.Trace("updating information for user id", s.Uid)
-	s.Nickname = usrinfo.NickName
+	beego.Trace("updating information for user id", s.ID)
+	s.NickName = usrinfo.NickName
 	s.Password = usrinfo.Password
 	s.Coins = usrinfo.Coins
 	num, err := o.Update(&s)
@@ -54,24 +60,24 @@ func UpdateUserInfo(usrinfo TypeUserInfo) error {
 	return err
 }
 
-func AddUser(usrinfo TypeUserInfo) (int, error) {
+func AddUser(usrInfo TypeUserInfo) (int, error) {
 	o := orm.NewOrm()
 	o.Using("default")
 	// check user name
-	if succ, err := CheckUserNameLegal(usrinfo.Username); err != nil {
+	if succ, err := CheckUserNameLegal(usrInfo.Username); err != nil {
 		return -1, err
 	} else if succ == false {
 		return -1, errors.New("Unknown Errors.")
 	}
 	// check if user already exist
-	if succ, err := CheckUserNameExist(usrinfo.Username); succ {
+	if succ, err := CheckUserNameExist(usrInfo.Username); succ {
 		beego.Error(err)
 		return -1, errors.New("User name already exists")
 	}
-	s := SQLuserinfo{
-		Username: usrinfo.Username,
-		Password: usrinfo.Password,
-		Nickname: usrinfo.NickName,
+	s := TypeUserInfo{
+		Username: usrInfo.Username,
+		Password: usrInfo.Password,
+		NickName: usrInfo.NickName,
 		Coins:    0,
 	}
 	id, err := o.Insert(&s)
@@ -85,11 +91,11 @@ func AddUser(usrinfo TypeUserInfo) (int, error) {
 func DelUser(name string) (bool, error) {
 	uinfo, err := GetUserInfo(name)
 	o := orm.NewOrm()
-	info := SQLuserinfo{
-		Uid:      uinfo.ID,
+	info := TypeUserInfo{
+		ID:       uinfo.ID,
 		Username: uinfo.Username,
 	}
-	beego.Trace("Del user id ", info.Uid, " for ", name)
+	beego.Trace("Del user id ", info.ID, " for ", name)
 	num, err := o.Delete(&info)
 	ErrReport(err)
 	beego.Trace("affected rows:", num)
@@ -117,4 +123,30 @@ func CheckUserNameExist(name string) (bool, error) {
 		return false, err
 	}
 	return true, nil
+}
+
+/*
+ * 	Item Related Operations
+ */
+func AddItem(itemInfo TypeItemInfo) (int, error) {
+	o := orm.NewOrm()
+	o.Using("default")
+	id, err := o.Insert(&itemInfo)
+	ErrReport(err)
+	return int(id), err
+}
+
+func GetItemByID(id int) (TypeItemInfo, error) {
+	o := orm.NewOrm()
+	o.Using("default")
+	itemInfo := TypeItemInfo{
+		ID: id,
+	}
+	err := o.Read(&itemInfo)
+	ErrReport(err)
+	return itemInfo, err
+}
+
+func GetItemIDsByUserID(id int) []int {
+	return nil
 }

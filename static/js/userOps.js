@@ -60,3 +60,12 @@ function user_get(token) {
     };
     return doAjaxCall(jsonObj, "/api/usr_get");
 }
+
+
+function item_Add(token, iteminfo) {
+    jsonObj = {
+        "token": token,
+        "itemInfo": iteminfo
+    };
+    response = doAjaxCall(jsonObj, "")
+}
