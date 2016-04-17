@@ -1,5 +1,7 @@
 package controllers
 
+import "time"
+
 type TypeMataData struct {
 	TimeStamp int
 	Device    string
@@ -48,9 +50,8 @@ type TypeItemInfo struct {
 	ID          int    `json:"ID"            orm:"pk;auto;colume(id)"`
 	OwnerID     int    `json:"ownerID"       orm:"colume(ownerID)"`
 	Description string `json:"description"   orm:"colume(description)"`
-	UserID      int    `json:"userid"        orm:"colume(userid)"`
 	Price       int    `json:"price"         orm:"colume(price)"`
-	Images      string `json:"images"        orm:"colume(price)"`
+	Images      string `json:"images"        orm:"colume(images)"`
 	Status      int    `json:"status"        orm:"colume(status)"`
 }
 
@@ -59,6 +60,24 @@ type TypeItemReqResp struct {
 	Token    string       `json:"token"`
 	ItemInfo TypeItemInfo `json:"itemInfo"`
 	Status   TypeStatus   `json:"status"`
+}
+
+type TypeGetItemsResp struct {
+	MataData TypeMataData   `json:"mataData"`
+	Items    []TypeItemInfo `json:"items"`
+	Status   TypeStatus     `json:"status"`
+}
+
+/*
+ *  	Comments related structure definition
+ */
+
+type TypeItemComments struct {
+	ID          int       `json:"ID"            orm:"pk;auto;colume(id)"`
+	Content     string    `json:"content"       orm:"colume(content)"`
+	ItemId      int       `json:"itemID"        orm:"colume(itemID)"`
+	PublisherID int       `json:"publisherID"   orm:"colume(publisherID)"`
+	Created     time.Time `json:"created"       orm:"auto_now_add;type(datetime)"`
 }
 
 /*

@@ -147,6 +147,11 @@ func GetItemByID(id int) (TypeItemInfo, error) {
 	return itemInfo, err
 }
 
-func GetItemIDsByUserID(id int) []int {
-	return nil
+func GetItemsByUserID(id int) []TypeItemInfo {
+	itemids := make([]TypeItemInfo, 0)
+	o := orm.NewOrm()
+	o.Using("default")
+	_, err := o.Raw("select * from type_item_info where owner_i_d = ?", id).QueryRows(&itemids)
+	ErrReport(err)
+	return itemids
 }

@@ -34,8 +34,8 @@ func (c *LoginController) Post() {
 		Token: "",
 	}
 	// check username and psw
-	succ, err := checkLogIn(info.UserInfo.Username, info.UserInfo.Password)
-	if !succ {
+	id, err := checkLogIn(info.UserInfo.Username, info.UserInfo.Password)
+	if id <= 0 {
 		retval.Status.Code = StatusCodeErrorLoginInfo
 		retval.Status.Description = ErrorDesp[StatusCodeErrorLoginInfo]
 		c.Data["json"] = retval
@@ -47,22 +47,22 @@ func (c *LoginController) Post() {
 	retval.Status.Description = ErrorDesp[StatusCodeOK]
 	tInfo := TypeTokenInfo{
 		UserName: info.UserInfo.Username,
-		UserID:   info.UserInfo.ID,
+		UserID:   id,
 	}
 	retval.Token = GenToken(tInfo)
 	c.Data["json"] = retval
 	c.ServeJSON()
 }
 
-func checkLogIn(username, psw string) (bool, error) {
+func checkLogIn(username, psw string) (int, error) {
 	user, err := GetUserInfo(username)
 	ErrReport(err)
 	if err != nil {
-		return false, err
+		return -1, err
 	}
 	beego.Trace("Read User Psw:", user.Password)
 	if psw == user.Password {
-		return true, nil
+		return user.ID, nil
 	}
-	return false, nil
+	return -1, nil
 }

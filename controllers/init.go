@@ -10,6 +10,7 @@ func init() {
 	orm.RegisterDataBase("default", "mysql", "aixinwu:aixinwu@tcp(localhost:3306)/appdev?charset=utf8")
 	orm.RegisterModel(new(TypeUserInfo))
 	orm.RegisterModel(new(TypeItemInfo))
+	orm.RegisterModel(new(TypeItemComments))
 	createTable()
 }
 

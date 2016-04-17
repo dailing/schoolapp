@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>items</title>
+    <script src="js/userOps.js"></script>
+    <script>
+        function addItem() {
+            console.trace("enter addItem");
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var ID = document.getElementById("ID").value;
+            var ownerID = document.getElementById("ownerID").value;
+            var description = document.getElementById("description").value;
+            var price = document.getElementById("price").value;
+            var images = document.getElementById("images").value;
+            var status = document.getElementById("status").value;
+
+            var token = user_login(username, password);
+            var itemObj = {
+                "token": token,
+                "itemInfo": {
+                    "ID": ID,
+                    "ownerID": ownerID,
+                    "description": description,
+                    "price": price,
+                    "images": images,
+                    "status": status
+                }
+            };
+            var resp = item_Add(token, itemObj);
+            document.getElementById("ownerID").value = resp.itemInfo.ownerID;
+            document.getElementById("ID").value = resp.itemInfo.ID;
+        }
+        function getItemList() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var token = user_login(username, password);
+            var resp = item_get_list(token);
+            console.trace(JSON.stringify(resp));
+        }
+    </script>
+</head>
+<body>
+<form>
+    <table border="1">
+        <tr>
+            <td>username</td>
+            <td><input type="text" id="username"></td>
+        </tr>
+        <tr>
+            <td>psw</td>
+            <td><input type="password" id="password"></td>
+        </tr>
+        <tr>
+            <td>ID</td>
+            <td><input type="text" id="ID"></td>
+        </tr>
+        <tr>
+            <td>ownerID</td>
+            <td><input type="text" id="ownerID"></td>
+        </tr>
+        <tr>
+            <td>description</td>
+            <td><input type="text" id="description"></td>
+        </tr>
+        <tr>
+            <td>price</td>
+            <td><input type="text" id="price"></td>
+        </tr>
+        <tr>
+            <td>images</td>
+            <td><input type="text" id="images"></td>
+        </tr>
+        <tr>
+            <td>status</td>
+            <td><input type="text" id="status"></td>
+        </tr>
+    </table>
+    <input type="button" value="addItem" onclick="addItem()">
+    <input type="button" value="getItemList" onclick="getItemList()">
+    <div id="itemList"></div>
+</form>
+</body>
+</html>

@@ -19,6 +19,7 @@ func init() {
 
 	beego.Router("/api/item_add", &controllers.ItemAddController{})
 	beego.Router("/api/item_get", &controllers.ItemGetController{})
+	beego.Router("/api/item_get_list", &controllers.ItemGetListController{})
 
 	beego.ErrorHandler("404", serve404)
 }

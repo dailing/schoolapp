@@ -63,9 +63,23 @@ function user_get(token) {
 
 
 function item_Add(token, iteminfo) {
-    jsonObj = {
+    console.trace("enter the item_add");
+    var jsonObj = {
         "token": token,
         "itemInfo": iteminfo
     };
-    response = doAjaxCall(jsonObj, "")
+    var response = doAjaxCall(jsonObj, "/api/item_add");
+    console.trace(response);
+    return response;
+}
+
+function item_get_list(token) {
+    var jsonObj = {
+        "token": token
+    };
+    return doAjaxCall(jsonObj, "/api/item_get_list");
+}
+
+function item_get(token, id) {
+
 }

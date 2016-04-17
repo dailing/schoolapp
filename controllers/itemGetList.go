@@ -5,37 +5,37 @@ import (
 	"github.com/astaxie/beego"
 )
 
-type ItemAddController struct {
+type ItemGetListController struct {
 	beego.Controller
 }
 
-func (c *ItemAddController) Post() {
+func (c *ItemGetListController) Post() {
 	beego.Debug("add user")
-	request := TypeItemReqResp{}
+	request := TypeRegularReq{}
 	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
 	beego.Info("Post Body is:", string(body))
 	err := json.Unmarshal(body, &request)
 	ErrReport(err)
 	if err != nil {
-		c.Abort("500")
+		c.Abort("400")
 		return
 	}
-	response := TypeItemReqResp{
+	response := TypeGetItemsResp{
 		MataData: GenMataData(),
 	}
 	// check token
 	tInfo := ParseToken(request.Token)
 	if tInfo.UserID <= 0 {
-		c.Abort("400")
+		c.Abort("401")
 		return
 	}
-	// set parameters
-	request.ItemInfo.OwnerID = tInfo.UserID
-	itemID, err := AddItem(request.ItemInfo)
+	//
+	items := GetItemsByUserID(tInfo.UserID)
+	beego.Trace(items)
+	// ser parameters
 	response.Status = GenStatus(StatusCodeOK)
-	response.ItemInfo = request.ItemInfo
-	response.ItemInfo.OwnerID = tInfo.UserID
-	response.ItemInfo.ID = itemID
+	response.Items = items
+	ErrReport(err)
 	c.Data["json"] = response
 	c.ServeJSON()
 }
