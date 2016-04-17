@@ -23,6 +23,14 @@ type TypeUserReq struct {
 	Status   TypeStatus   `json:"status"`
 }
 
+// image related request parameters
+type TypeImgResp struct {
+	MataData TypeMataData `json:"mataData"`
+	ImageID  string       `json:"imageID"`
+	Token    string       `json:"token"`
+	Status   TypeStatus   `json:"status"`
+}
+
 type TypeUserInfo struct {
 	Username string `json:"username"`
 	Password string `json:"password"`

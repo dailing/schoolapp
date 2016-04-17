@@ -6,15 +6,52 @@
     <script src="../js/userOps.js"></script>
     <script src="../js/uploadFile.js"></script>
     <script>
+        var imgid = "";
         function filesChange() {
             var fd = document.getElementById("file").files[0];
-            upload(fd);
+            var imageID = upload(fd, function (jsonObj) {
+                console.info("Call back executed");
+                document.getElementById("imgid").innerHTML = jsonObj.imageID;
+                imgid = jsonObj.imageID;
+            });
+        }
+        function getImage() {
+            console.info("imgid is ", imgid);
+            var request = new XMLHttpRequest();
+            var fd = new FormData();
+            request.open('POST', "/api/img_get");
+            request.responseType = 'arraybuffer';
+            jsonObj = {
+                "imageID": imgid
+            };
+            request.send(JSON.stringify(jsonObj));
+
+            request.onload = function () {
+                if (request.readyState == 4) {
+                    var arr = new Uint8Array(this.response);
+                    var raw = '';
+                    var i, j, subArray, chunk = 5000;
+                    for (i = 0, j = arr.length; i < j; i += chunk) {
+                        subArray = arr.subarray(i, i + chunk);
+                        raw += String.fromCharCode.apply(null, subArray);
+                    }
+                    var b64 = btoa(raw);
+                    var dataURL = "data:image/jpeg;base64," + b64;
+                    document.getElementById("oimg").src = dataURL;
+                    console.log("finished load");
+                }
+            }
         }
     </script>
 </head>
 <body>
 <form>
-    <input type="file" id="file" name="files[]" onchange="filesChange()">
+    <input type="file" id="file" name="files[]" onchange="filesChange()"><br>
+    imgID is:
+    <div id="imgid"></div>
+    <br>
+    <input type="button" value="getimg" onclick="getImage()"><br>
+    <image id="oimg" width="70%"/>
 </form>
 </body>
 </html>
