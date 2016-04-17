@@ -47,6 +47,7 @@ func (c *LoginController) Post() {
 	retval.Status.Description = ErrorDesp[StatusCodeOK]
 	tInfo := TypeTokenInfo{
 		UserName: info.UserInfo.Username,
+		UserID:   info.UserInfo.ID,
 	}
 	retval.Token = GenToken(tInfo)
 	c.Data["json"] = retval
