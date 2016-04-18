@@ -94,6 +94,31 @@ type TypeCommentResp struct {
 }
 
 /*
+ *	Chat related definition
+ */
+type TypeChatInfo struct {
+	ID          int       `json:"ID"            orm:"pk;auto;colume(id)"`
+	Content     string    `json:"content"       orm:"colume(content)"`
+	ItemID      int       `json:"itemID"        orm:"colume(itemID)"`
+	BuyerID     int       `json:"buyerID"       orm:"colume(buyerID)"`
+	PublisherID int       `json:"publisherID"   orm:"colume(publisherID)"`
+	Created     time.Time `json:"created"       orm:"auto_now_add;type(datetime)"`
+}
+
+type TypeChatReq struct {
+	MataData TypeMataData `json:"mataData"`
+	Token    string       `json:"token"`
+	Chat     TypeChatInfo `json:"chat"`
+}
+
+type TypeChatResp struct {
+	MataData TypeMataData   `json:"mataData"`
+	Token    string         `json:"token"`
+	Chat     []TypeChatInfo `json:"chat"`
+	Status   TypeStatus     `json:"status"`
+}
+
+/*
  * 	Error code and other definitions
  */
 type TypeStatus struct {

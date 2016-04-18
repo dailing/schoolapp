@@ -11,6 +11,7 @@ func init() {
 	orm.RegisterModel(new(TypeUserInfo))
 	orm.RegisterModel(new(TypeItemInfo))
 	orm.RegisterModel(new(TypeItemComments))
+	orm.RegisterModel(new(TypeChatInfo))
 	createTable()
 }
 

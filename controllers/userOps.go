@@ -178,3 +178,22 @@ func GetComments(itemid int) []TypeItemComments {
 	ErrReport(err)
 	return comments
 }
+
+func AddChat(chat TypeChatInfo) (int, error) {
+	o := orm.NewOrm()
+	o.Using("default")
+	id, err := o.Insert(&chat)
+	ErrReport(err)
+	if err != nil {
+		return -1, err
+	}
+	return int(id), nil
+}
+
+func GetChat(itemID, buyerID int) []TypeChatInfo{
+	chats := make([]TypeChatInfo,0)
+	o := orm.NewOrm()
+	o.Using("default")
+	//_, err := o.Raw("select * from type_item_comments where item_id = ?", itemid).QueryRows(&comments)
+	return chats
+}
