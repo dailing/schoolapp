@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"fmt"
 )
 
 func init() {
@@ -16,10 +17,12 @@ func init() {
 }
 
 func createTable() {
+	fmt.Println("here")
 	name := "default"
 	force := false
 	verbose := true
 	err := orm.RunSyncdb(name, force, verbose)
+	fmt.Println("here2")
 	if err != nil {
 		beego.Error(err)
 	}

@@ -35,7 +35,7 @@ func GetUserInfoByToken(token string) TypeUserInfo {
 
 func UpdateUserInfo(usrinfo TypeUserInfo) error {
 	o := orm.NewOrm()
-	o.Using("default")
+	//o.Using("default")
 	// check user name
 	if succ, err := CheckUserNameLegal(usrinfo.Username); err != nil {
 		return err
@@ -62,7 +62,7 @@ func UpdateUserInfo(usrinfo TypeUserInfo) error {
 
 func AddUser(usrInfo TypeUserInfo) (int, error) {
 	o := orm.NewOrm()
-	o.Using("default")
+	//o.Using("default")
 	// check user name
 	if succ, err := CheckUserNameLegal(usrInfo.Username); err != nil {
 		return -1, err
@@ -130,7 +130,7 @@ func CheckUserNameExist(name string) (bool, error) {
  */
 func AddItem(itemInfo TypeItemInfo) (int, error) {
 	o := orm.NewOrm()
-	o.Using("default")
+	//o.Using("default")
 	id, err := o.Insert(&itemInfo)
 	ErrReport(err)
 	return int(id), err
@@ -138,7 +138,7 @@ func AddItem(itemInfo TypeItemInfo) (int, error) {
 
 func GetItemByID(id int) (TypeItemInfo, error) {
 	o := orm.NewOrm()
-	o.Using("default")
+	//o.Using("default")
 	itemInfo := TypeItemInfo{
 		ID: id,
 	}
@@ -150,7 +150,7 @@ func GetItemByID(id int) (TypeItemInfo, error) {
 func GetItemsByUserID(id int) []TypeItemInfo {
 	itemids := make([]TypeItemInfo, 0)
 	o := orm.NewOrm()
-	o.Using("default")
+	//o.Using("default")
 	_, err := o.Raw("select * from type_item_info where owner_i_d = ?", id).QueryRows(&itemids)
 	ErrReport(err)
 	return itemids
@@ -161,7 +161,7 @@ func GetItemsByUserID(id int) []TypeItemInfo {
  */
 func AddComments(comment TypeItemComments) (int, error) {
 	o := orm.NewOrm()
-	o.Using("default")
+	//o.Using("default")
 	id, err := o.Insert(&comment)
 	ErrReport(err)
 	if err != nil {
@@ -173,7 +173,7 @@ func AddComments(comment TypeItemComments) (int, error) {
 func GetComments(itemid int) []TypeItemComments {
 	comments := make([]TypeItemComments, 0)
 	o := orm.NewOrm()
-	o.Using("default")
+	//o.Using("default")
 	_, err := o.Raw("select * from type_item_comments where item_id = ?", itemid).QueryRows(&comments)
 	ErrReport(err)
 	return comments
@@ -181,7 +181,7 @@ func GetComments(itemid int) []TypeItemComments {
 
 func AddChat(chat TypeChatInfo) (int, error) {
 	o := orm.NewOrm()
-	o.Using("default")
+	//o.Using("default")
 	id, err := o.Insert(&chat)
 	ErrReport(err)
 	if err != nil {
@@ -192,8 +192,8 @@ func AddChat(chat TypeChatInfo) (int, error) {
 
 func GetChat(itemID, buyerID int) []TypeChatInfo{
 	chats := make([]TypeChatInfo,0)
-	o := orm.NewOrm()
-	o.Using("default")
+	//o := orm.NewOrm()
+	//o.Using("default")
 	//_, err := o.Raw("select * from type_item_comments where item_id = ?", itemid).QueryRows(&comments)
 	return chats
 }
