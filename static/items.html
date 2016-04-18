@@ -18,15 +18,12 @@
 
             var token = user_login(username, password);
             var itemObj = {
-                "token": token,
-                "itemInfo": {
                     "ID": ID,
                     "ownerID": ownerID,
                     "description": description,
                     "price": price,
                     "images": images,
                     "status": status
-                }
             };
             var resp = item_Add(token, itemObj);
             document.getElementById("ownerID").value = resp.itemInfo.ownerID;
@@ -37,7 +34,63 @@
             var password = document.getElementById("password").value;
             var token = user_login(username, password);
             var resp = item_get_list(token);
-            console.trace(JSON.stringify(resp));
+            var itemid = document.getElementById("ID").value;
+            if (itemid > 0) {
+                document.getElementById("ownerID").value = resp.items[itemid].ownerID;
+                document.getElementById("description").value = resp.items[itemid].description;
+                document.getElementById("price").value = resp.items[itemid].price;
+                document.getElementById("images").value = resp.items[itemid].images;
+                document.getElementById("status").value = resp.items[itemid].status;
+            }
+            document.getElementById("itemList").innerHTML = "";
+            for (var i = 0; i < resp.items.length; i++) {
+                console.trace(JSON.stringify(resp.items[i]));
+                document.getElementById("itemList").innerHTML +=
+                        i + ":" + resp.items[i].ID + " ";
+                document.getElementById("itemList").innerHTML +=
+                        resp.items[i].description;
+                document.getElementById("itemList").innerHTML +=
+                        "<br>";
+            }
+        }
+        function thisAddComments() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var token = user_login(username, password);
+            var resp = item_get_list(token);
+            var itemid = document.getElementById("ID").value;
+            var commentText = document.getElementById("comments").value;
+            if (itemid > 0) {
+                itemid = resp.items[itemid].ID;
+                var commentObj = {
+                    "content": commentText,
+                    "itemID": itemid
+                };
+                addComments(token, commentObj)
+            }
+        }
+        function thisGetCommnets() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            var token = user_login(username, password);
+            var resp = item_get_list(token);
+            var itemid = document.getElementById("ID").value;
+            if (itemid > 0) {
+                itemid = resp.items[itemid].ID;
+                var commentObj = {
+                    "itemID": itemid
+                };
+                resp = getComments(token, commentObj);
+                console.trace(JSON.stringify(resp));
+                console.trace(JSON.stringify(resp));
+                document.getElementById("comment").innerHTML = "";
+                for (i = 0; i < resp.comment.length; i++) {
+                    document.getElementById("comment").innerHTML +=
+                            resp.comment[i].ID + " " +
+                            resp.comment[i].content +
+                            "<br>";
+                }
+            }
         }
     </script>
 </head>
@@ -76,10 +129,18 @@
             <td>status</td>
             <td><input type="text" id="status"></td>
         </tr>
+        <tr>
+            <td>Comments of this item</td>
+            <td><input type="text" id="comments"></td>
+        </tr>
     </table>
     <input type="button" value="addItem" onclick="addItem()">
     <input type="button" value="getItemList" onclick="getItemList()">
+    <input type="button" value="addComments" onclick="thisAddComments()">
+    <input type="button" value="getComments" onclick="thisGetCommnets()">
     <div id="itemList"></div>
+    Comments:<br>
+    <div id="comment"></div>
 </form>
 </body>
 </html>

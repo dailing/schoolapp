@@ -155,3 +155,26 @@ func GetItemsByUserID(id int) []TypeItemInfo {
 	ErrReport(err)
 	return itemids
 }
+
+/*
+ * 	Add and get comments
+ */
+func AddComments(comment TypeItemComments) (int, error) {
+	o := orm.NewOrm()
+	o.Using("default")
+	id, err := o.Insert(&comment)
+	ErrReport(err)
+	if err != nil {
+		return -1, err
+	}
+	return int(id), nil
+}
+
+func GetComments(itemid int) []TypeItemComments {
+	comments := make([]TypeItemComments, 0)
+	o := orm.NewOrm()
+	o.Using("default")
+	_, err := o.Raw("select * from type_item_comments where item_id = ?", itemid).QueryRows(&comments)
+	ErrReport(err)
+	return comments
+}

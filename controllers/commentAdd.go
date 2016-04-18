@@ -5,24 +5,22 @@ import (
 	"github.com/astaxie/beego"
 )
 
-type ItemAddController struct {
+type CommentAddController struct {
 	beego.Controller
 }
 
-func (c *ItemAddController) Post() {
+func (c *CommentAddController) Post() {
 	beego.Debug("add user")
-	request := TypeItemReqResp{}
+	request := TypeCommentReq{}
 	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
 	beego.Info("Post Body is:", string(body))
 	err := json.Unmarshal(body, &request)
-	tbody, err := json.Marshal(request)
-	beego.Trace(string(tbody))
 	ErrReport(err)
 	if err != nil {
 		c.Abort("500")
 		return
 	}
-	response := TypeItemReqResp{
+	response := TypeRegularResp{
 		MataData: GenMataData(),
 	}
 	// check token
@@ -32,16 +30,16 @@ func (c *ItemAddController) Post() {
 		return
 	}
 	// set parameters
-	if request.ItemInfo.Description == "" {
-		request.ItemInfo.Description = "No Request"
-	}
-	beego.Trace("description", request.ItemInfo.Description)
-	request.ItemInfo.OwnerID = tInfo.UserID
-	itemID, err := AddItem(request.ItemInfo)
+	request.Comment.PublisherID = tInfo.UserID
+	// do insert
+	_, err = AddComments(request.Comment)
+	ErrReport(err)
+	//request.ItemInfo.OwnerID = tInfo.UserID
+	//itemID, err := AddItem(request.ItemInfo)
 	response.Status = GenStatus(StatusCodeOK)
-	response.ItemInfo = request.ItemInfo
-	response.ItemInfo.OwnerID = tInfo.UserID
-	response.ItemInfo.ID = itemID
+	//response.ItemInfo = request.ItemInfo
+	//response.ItemInfo.OwnerID = tInfo.UserID
+	//response.ItemInfo.ID = itemID
 	c.Data["json"] = response
 	c.ServeJSON()
 }

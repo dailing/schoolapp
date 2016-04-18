@@ -80,6 +80,18 @@ function item_get_list(token) {
     return doAjaxCall(jsonObj, "/api/item_get_list");
 }
 
-function item_get(token, id) {
+function addComments(token, comment) {
+    var reqObj = {
+        "token": token,
+        "comment": comment
+    };
+    doAjaxCall(reqObj, "/api/item_add_comment")
+}
 
+function getComments(token, comment) {
+    var reqObj = {
+        "token": token,
+        "comment": comment
+    };
+    return doAjaxCall(reqObj, "/api/item_get_comment")
 }

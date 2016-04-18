@@ -71,13 +71,26 @@ type TypeGetItemsResp struct {
 /*
  *  	Comments related structure definition
  */
-
 type TypeItemComments struct {
 	ID          int       `json:"ID"            orm:"pk;auto;colume(id)"`
 	Content     string    `json:"content"       orm:"colume(content)"`
 	ItemId      int       `json:"itemID"        orm:"colume(itemID)"`
 	PublisherID int       `json:"publisherID"   orm:"colume(publisherID)"`
 	Created     time.Time `json:"created"       orm:"auto_now_add;type(datetime)"`
+}
+
+type TypeCommentReq struct {
+	MataData TypeMataData     `json:"mataData"`
+	Token    string           `json:"token"`
+	Comment  TypeItemComments `json:"comment"`
+	Status   TypeStatus       `json:"status"`
+}
+
+type TypeCommentResp struct {
+	MataData TypeMataData       `json:"mataData"`
+	Token    string             `json:"token"`
+	Comments []TypeItemComments `json:"comment"`
+	Status   TypeStatus         `json:"status"`
 }
 
 /*
