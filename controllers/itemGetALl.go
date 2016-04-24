@@ -5,13 +5,13 @@ import (
 	"github.com/astaxie/beego"
 )
 
-type ChatGetController struct {
+type ItemGetAllController struct {
 	beego.Controller
 }
 
-func (c *ChatGetController) Post() {
+func (c *ItemGetAllController) Post() {
 	beego.Debug("add user")
-	request := TypeChatReq{}
+	request := TypeRegularReq{}
 	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
 	beego.Info("Post Body is:", string(body))
 	err := json.Unmarshal(body, &request)
@@ -20,7 +20,7 @@ func (c *ChatGetController) Post() {
 		c.Abort("400")
 		return
 	}
-	response := TypeChatResp{
+	response := TypeGetItemsResp{
 		MataData: GenMataData(),
 	}
 	// check token
@@ -30,10 +30,9 @@ func (c *ChatGetController) Post() {
 		return
 	}
 	// ser parameters
-	response.Chat = GetChat(request.Chat.ItemID, request.Chat.BuyerID)
-	ErrReport(err)
+	itemInfo := GetAllItem()
 	response.Status = GenStatus(StatusCodeOK)
-	//response.ItemInfo = itemInfo
+	response.Items = itemInfo
 	c.Data["json"] = response
 	c.ServeJSON()
 }

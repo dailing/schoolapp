@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TestSite</title>
+    <script src="js/userOps.js"></script>
+    <script>
+        function Login() {
+            var name = document.getElementById("username").value;
+            var psw = document.getElementById("password").value;
+            document.getElementById("token").innerHTML = user_login(name, psw);
+        }
+
+        function AddChar() {
+            var itemID = parseInt(document.getElementById("chat_itemid").value);
+            var buyerID = parseInt(document.getElementById("chat_buyerid").value);
+            var info = document.getElementById("chat_info").value;
+            if (isNaN(itemID) || isNaN(buyerID)) {
+                alert("Fill the blank")
+            }
+            char_add(document.getElementById("token").innerHTML, buyerID, itemID, info)
+        }
+    </script>
+</head>
+<body>
+<table border="1">
+    <tr>
+        <td>username</td>
+        <td><input type="text" id="username"></td>
+    </tr>
+    <tr>
+        <td>psw</td>
+        <td><input type="password" id="password"></td>
+    </tr>
+    <tr>
+        <td>token</td>
+        <td>
+            <div id="token"></div>
+        </td>
+    </tr>
+    <tr>
+        <td>ID</td>
+        <td><input type="text" id="ID"></td>
+    </tr>
+    <tr>
+        <td>ownerID</td>
+        <td><input type="text" id="ownerID"></td>
+    </tr>
+    <tr>
+        <td>description</td>
+        <td><input type="text" id="description"></td>
+    </tr>
+    <tr>
+        <td>price</td>
+        <td><input type="text" id="price"></td>
+    </tr>
+    <tr>
+        <td>images</td>
+        <td><input type="text" id="images"></td>
+    </tr>
+    <tr>
+        <td>status</td>
+        <td><input type="text" id="status"></td>
+    </tr>
+    <tr>
+        <td>Comments of this item</td>
+        <td><input type="text" id="comments"></td>
+    </tr>
+</table>
+<input type="button" value="Login" onclick="Login()">
+<table>
+    <tr>
+        <th>ItemID</th>
+        <th>BuyerID</th>
+        <th>char info</th>
+    </tr>
+    <tr>
+        <td><input type="text" id="chat_itemid"></td>
+        <td><input type="text" id="chat_buyerid"></td>
+        <td><input type="text" id="chat_info"></td>
+    </tr>
+</table>
+<input type="button" value="Add chart" onclick="AddChar()">
+<div id="list_chat"></div>
+</body>
+</html>

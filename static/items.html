@@ -34,14 +34,8 @@
             var password = document.getElementById("password").value;
             var token = user_login(username, password);
             var resp = item_get_list(token);
-            var itemid = document.getElementById("ID").value;
-            if (itemid > 0) {
-                document.getElementById("ownerID").value = resp.items[itemid].ownerID;
-                document.getElementById("description").value = resp.items[itemid].description;
-                document.getElementById("price").value = resp.items[itemid].price;
-                document.getElementById("images").value = resp.items[itemid].images;
-                document.getElementById("status").value = resp.items[itemid].status;
-            }
+            var itemid = parseInt(document.getElementById("ID").value);
+            // list all items under user
             document.getElementById("itemList").innerHTML = "";
             for (var i = 0; i < resp.items.length; i++) {
                 console.trace(JSON.stringify(resp.items[i]));
@@ -52,44 +46,55 @@
                 document.getElementById("itemList").innerHTML +=
                         "<br>";
             }
+            // get info for specific item
+            if (isNaN(itemid) || itemid <= 0) {
+                return
+            }
+            document.getElementById("ownerID").value = "";
+            document.getElementById("description").value = "";
+            document.getElementById("price").value = "";
+            document.getElementById("images").value = "";
+            document.getElementById("status").value = "";
+            for (var it = 0; it < resp.items.length; it++) {
+                if (resp.items[it].ID != itemid) {
+                    continue;
+                }
+                document.getElementById("ownerID").value = resp.items[it].ownerID;
+                document.getElementById("description").value = resp.items[it].description;
+                document.getElementById("price").value = resp.items[it].price;
+                document.getElementById("images").value = resp.items[it].images;
+                document.getElementById("status").value = resp.items[it].status;
+            }
         }
         function thisAddComments() {
             var username = document.getElementById("username").value;
             var password = document.getElementById("password").value;
             var token = user_login(username, password);
             var resp = item_get_list(token);
-            var itemid = document.getElementById("ID").value;
+            var itemid = parseInt(document.getElementById("ID").value);
             var commentText = document.getElementById("comments").value;
-            if (itemid > 0) {
-                itemid = resp.items[itemid].ID;
-                var commentObj = {
-                    "content": commentText,
-                    "itemID": itemid
-                };
-                addComments(token, commentObj)
+            if (isNaN(itemid) || itemid <= 0) {
+                return
             }
+            var commentObj = {
+                "content": commentText,
+                "itemID": itemid
+            };
+            addComments(token, commentObj)
         }
         function thisGetCommnets() {
             var username = document.getElementById("username").value;
             var password = document.getElementById("password").value;
             var token = user_login(username, password);
-            var resp = item_get_list(token);
-            var itemid = document.getElementById("ID").value;
-            if (itemid > 0) {
-                itemid = resp.items[itemid].ID;
-                var commentObj = {
-                    "itemID": itemid
-                };
-                resp = getComments(token, commentObj);
-                console.trace(JSON.stringify(resp));
-                console.trace(JSON.stringify(resp));
-                document.getElementById("comment").innerHTML = "";
-                for (i = 0; i < resp.comment.length; i++) {
-                    document.getElementById("comment").innerHTML +=
-                            resp.comment[i].ID + " " +
-                            resp.comment[i].content +
-                            "<br>";
-                }
+            var itemid = parseInt(document.getElementById("ID").value);
+            var resp = getComments(token, itemid);
+            document.getElementById("comment").innerHTML = "";
+            var commentTag = document.getElementById("comment");
+            for (var i = 0; i < resp.comment.length; i++) {
+                commentTag.innerHTML +=
+                        resp.comment[i].ID + " " +
+                        resp.comment[i].content +
+                        "<br>";
             }
         }
     </script>

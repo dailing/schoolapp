@@ -88,10 +88,24 @@ function addComments(token, comment) {
     doAjaxCall(reqObj, "/api/item_add_comment")
 }
 
-function getComments(token, comment) {
+function getComments(token, id) {
     var reqObj = {
         "token": token,
-        "comment": comment
+        "comment": {
+            "itemID": id
+        }
     };
     return doAjaxCall(reqObj, "/api/item_get_comment")
+}
+
+function char_add(token, buyerID, itemID, text) {
+    var reqObj = {
+        "token": token,
+        "chat": {
+            "content": text,
+            "buyerID": buyerID,
+            "itemID": itemID
+        }
+    };
+    doAjaxCall(reqObj, "/api/item_add_chart");
 }

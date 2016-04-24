@@ -99,9 +99,9 @@ type TypeCommentResp struct {
 type TypeChatInfo struct {
 	ID          int       `json:"ID"            orm:"pk;auto;colume(id)"`
 	Content     string    `json:"content"       orm:"colume(content)"`
-	ItemID      int       `json:"itemID"        orm:"colume(itemID)"`
-	BuyerID     int       `json:"buyerID"       orm:"colume(buyerID)"`
-	PublisherID int       `json:"publisherID"   orm:"colume(publisherID)"`
+	ItemID      int       `json:"itemID"        orm:"colume(item_id)"`
+	BuyerID     int       `json:"buyerID"       orm:"colume(buyer_id)"`
+	PublisherID int       `json:"publisherID"   orm:"colume(publisher_id)"`
 	Created     time.Time `json:"created"       orm:"auto_now_add;type(datetime)"`
 }
 
@@ -112,10 +112,56 @@ type TypeChatReq struct {
 }
 
 type TypeChatResp struct {
-	MataData TypeMataData   `json:"mataData"`
-	Token    string         `json:"token"`
-	Chat     []TypeChatInfo `json:"chat"`
-	Status   TypeStatus     `json:"status"`
+	MataData TypeMataData `json:"mataData"`
+	//Token    string         `json:"token"`
+	Chat   []TypeChatInfo `json:"chat"`
+	Status TypeStatus     `json:"status"`
+}
+
+/*
+ * 	Item add aixinwu
+ */
+type TypeItemAixinwuInfo struct {
+	JAcountID string `json:"jacount_id"`
+	Desc      string `json:"desc"`
+}
+type TypeItemAixinwuReq struct {
+	MataData TypeMataData        `json:"mataData"`
+	Token    string              `json:"token"`
+	Item     TypeItemAixinwuInfo `json:"itemInfo"`
+	Status   TypeStatus          `json:"status"`
+}
+
+// ln_jacount_info
+type TypeLcnJacountInfo struct {
+	Id          int    `json:"id"            orm:"pk;auto;colume(id)"`
+	Customer_id int    `json:"customer_id"   orm:"colume(customer_id)"`
+	Jaccount_id string `json:"jaccount_id"   orm:"colume(jaccount_id)"`
+	Citizenid   string `json:"citizenid"     orm:"colume(citizenid)"`
+	Realname    string `json:"realname"      orm:"colume(realname)"`
+	Dept        string `json:"dept"          orm:"colume(dept)"`
+	Tel         string `json:"tel"           orm:"colume(tel)"`
+	Snum        string `json:"snum"          orm:"colume(snum)"`
+	Is_student  string `json:"is_student"    orm:"colume(is_student)"`
+}
+
+func (u *TypeLcnJacountInfo) TableName() string {
+	return "lcn_jaccount_info"
+}
+
+type TypeLcnDonateBatch struct {
+	Id          int       `json:"id"             orm:"pk;auto;colume(id)"`
+	User_id     int       `json:"user_id"        orm:"colume(user_id)"`
+	Snum        string    `json:"snum"           orm:"colume(snum)"`
+	Produced_at time.Time `json:"produced_at"    orm:"auto_now_add;colume(produced_at)"`
+	Desc        string    `json:"desc"    orm:"  colume(desc)"`
+	Donation_sn string    `json:"donation_sn"    orm:"colume(donation_sn)"`
+	Barcode     string    `json:"barcode"        orm:"colume(barcode)"`
+	Status      int       `json:"status"         orm:"colume(status)"`
+}
+
+func (u *TypeLcnDonateBatch) TableName() string {
+	return "lcn_donation_batch"
 }
 
 /*

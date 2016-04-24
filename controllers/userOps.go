@@ -156,6 +156,15 @@ func GetItemsByUserID(id int) []TypeItemInfo {
 	return itemids
 }
 
+func GetAllItem() []TypeItemInfo {
+	itemids := make([]TypeItemInfo, 0)
+	o := orm.NewOrm()
+	//o.Using("default")
+	_, err := o.Raw("select * from type_item_info").QueryRows(&itemids)
+	ErrReport(err)
+	return itemids
+}
+
 /*
  * 	Add and get comments
  */
@@ -190,10 +199,16 @@ func AddChat(chat TypeChatInfo) (int, error) {
 	return int(id), nil
 }
 
-func GetChat(itemID, buyerID int) []TypeChatInfo{
-	chats := make([]TypeChatInfo,0)
-	//o := orm.NewOrm()
+/*
+ *	Since a chat environment is determined by itemID-OwnerID and The Buyer.
+ *	There are multiple ways to retrieve chat information.
+ * 	Here Use OwnerID and Buyer ID if both are given.
+ */
+func GetChat(itemID, buyerID int) []TypeChatInfo {
+	chats := make([]TypeChatInfo, 0)
+	o := orm.NewOrm()
 	//o.Using("default")
-	//_, err := o.Raw("select * from type_item_comments where item_id = ?", itemid).QueryRows(&comments)
+	_, err := o.Raw("select * from aixinwu_test.type_chat_info where item_id = ? and buyer_id = ?", itemID, buyerID).QueryRows(&chats)
+	ErrReport(err)
 	return chats
 }

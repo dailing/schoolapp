@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"fmt"
 )
 
 func init() {
@@ -13,6 +13,8 @@ func init() {
 	orm.RegisterModel(new(TypeItemInfo))
 	orm.RegisterModel(new(TypeItemComments))
 	orm.RegisterModel(new(TypeChatInfo))
+	orm.RegisterModel(new(TypeLcnJacountInfo))
+	orm.RegisterModel(new(TypeLcnDonateBatch))
 	createTable()
 }
 

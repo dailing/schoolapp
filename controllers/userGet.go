@@ -19,12 +19,12 @@ func (c *UserGetController) Post() {
 		c.Abort("500")
 		return
 	}
-	//if !CheckToken(info.token) {
-	//	c.Abort("400")
-	//	return
-	//}
-	Token := ParseToken(info.Token)
-	userInfo, err := GetUserInfo(Token.UserName)
+	tInfo := ParseToken(info.Token)
+	if tInfo.UserID <= 0 {
+		c.Abort("400")
+		return
+	}
+	userInfo, err := GetUserInfo(tInfo.UserName)
 	ErrReport(err)
 	retVal := TypeUserReq{
 		MataData: GenMataData(),
