@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/base64"
 	"errors"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -10,6 +11,16 @@ import (
 /*
  * 	User profile related operations
  */
+
+func baseEncode(str string) string {
+	return base64.StdEncoding.EncodeToString([]byte(str))
+}
+
+func baseDecode(str string) string {
+	body, err := base64.StdEncoding.DecodeString(str)
+	ErrReport(err)
+	return string(body)
+}
 
 func GetUserInfo(name string) (info TypeUserInfo, err error) {
 	o := orm.NewOrm()
@@ -131,6 +142,7 @@ func CheckUserNameExist(name string) (bool, error) {
 func AddItem(itemInfo TypeItemInfo) (int, error) {
 	o := orm.NewOrm()
 	//o.Using("default")
+	itemInfo.Description = baseEncode(itemInfo.Description)
 	id, err := o.Insert(&itemInfo)
 	ErrReport(err)
 	return int(id), err
@@ -144,6 +156,7 @@ func GetItemByID(id int) (TypeItemInfo, error) {
 	}
 	err := o.Read(&itemInfo)
 	ErrReport(err)
+	itemInfo.Description = baseDecode(itemInfo.Description)
 	return itemInfo, err
 }
 
@@ -153,6 +166,9 @@ func GetItemsByUserID(id int) []TypeItemInfo {
 	//o.Using("default")
 	_, err := o.Raw("select * from type_item_info where owner_i_d = ?", id).QueryRows(&itemids)
 	ErrReport(err)
+	for i := 0; i < len(itemids); i++{
+		itemids[i].Description = baseDecode(itemids[i].Description)
+	}
 	return itemids
 }
 
@@ -162,6 +178,9 @@ func GetAllItem() []TypeItemInfo {
 	//o.Using("default")
 	_, err := o.Raw("select * from type_item_info").QueryRows(&itemids)
 	ErrReport(err)
+	for i := 0; i < len(itemids); i++{
+		itemids[i].Description = baseDecode(itemids[i].Description)
+	}
 	return itemids
 }
 
@@ -171,6 +190,7 @@ func GetAllItem() []TypeItemInfo {
 func AddComments(comment TypeItemComments) (int, error) {
 	o := orm.NewOrm()
 	//o.Using("default")
+	comment.Content = baseEncode(comment.Content)
 	id, err := o.Insert(&comment)
 	ErrReport(err)
 	if err != nil {
@@ -185,12 +205,16 @@ func GetComments(itemid int) []TypeItemComments {
 	//o.Using("default")
 	_, err := o.Raw("select * from type_item_comments where item_id = ?", itemid).QueryRows(&comments)
 	ErrReport(err)
+	for i := 0; i < len(comments); i++ {
+		comments[i].Content = baseDecode(comments[i].Content)
+	}
 	return comments
 }
 
 func AddChat(chat TypeChatInfo) (int, error) {
 	o := orm.NewOrm()
 	//o.Using("default")
+	chat.Content = baseEncode(chat.Content)
 	id, err := o.Insert(&chat)
 	ErrReport(err)
 	if err != nil {
@@ -210,5 +234,8 @@ func GetChat(itemID, buyerID int) []TypeChatInfo {
 	//o.Using("default")
 	_, err := o.Raw("select * from aixinwu_test.type_chat_info where item_id = ? and buyer_id = ?", itemID, buyerID).QueryRows(&chats)
 	ErrReport(err)
+	for i:= 0; i < len(chats); i++{
+		chats[i].Content = baseDecode(chats[i].Content)
+	}
 	return chats
 }
