@@ -47,7 +47,7 @@ func (c *ItemAddAixinwuController) Post() {
 		Desc:    request.Item.Desc,
 		Status:  1,
 	}
-	_, err = o.Insert(dinfo)
+	_, err = o.Insert(&dinfo)
 	ErrReport(err)
 	response.Status = GenStatus(StatusCodeOK)
 	c.Data["json"] = response

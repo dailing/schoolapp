@@ -204,6 +204,9 @@ type TypeAixinwuProduct struct {
 	is_borrow              int
 	is_cash                int
 }
+func (u *TypeAixinwuProduct) TableName() string {
+	return "lcn_product"
+}
 
 /*
  * 	Error code and other definitions
