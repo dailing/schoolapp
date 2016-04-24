@@ -165,6 +165,47 @@ func (u *TypeLcnDonateBatch) TableName() string {
 }
 
 /*
+ * 	Aixinwu product databese
+ */
+//Table: lcn_product
+type TypeAixinwuProduct struct {
+	id                     int
+	cat_id                 int
+	brand_id               int
+	attr_set_id            int
+	price                  int
+	market_price           int
+	special_price          int
+	name                   string
+	short_name             string
+	url_alias              string
+	short_desc             string
+	desc                   string
+	weight                 int
+	stock                  int
+	limit                  int
+	is_on_sale             int
+	on_sale_at             time.Time
+	tag                    string
+	meta_title             string
+	meta_keywords          string
+	meta_desc              string
+	is_new                 int
+	is_hot                 int
+	is_special_price       int
+	special_price_start_at time.Time
+	special_price_end_at   time.Time
+	is_commend             int
+	is_delete              int
+	created_at             time.Time
+	updated_at             time.Time
+	code                   string
+	barcode                string
+	is_borrow              int
+	is_cash                int
+}
+
+/*
  * 	Error code and other definitions
  */
 type TypeStatus struct {

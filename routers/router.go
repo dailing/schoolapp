@@ -28,6 +28,8 @@ func init() {
 	beego.Router("/api/item_add_chart", &controllers.ChatAddController{})
 	beego.Router("/api/item_get_chart", &controllers.ChatGetController{})
 
+
+
 	beego.ErrorHandler("404", serve404)
 }
 
