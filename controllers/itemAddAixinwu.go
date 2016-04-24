@@ -2,12 +2,22 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"math/rand"
+	"time"
 )
 
 type ItemAddAixinwuController struct {
 	beego.Controller
+}
+
+func getDonationSN() string {
+	t := time.Now()
+	ret := t.Format("20060122")
+	ret += fmt.Sprintf("%05d", rand.Int()%100000)
+	return ret
 }
 
 func (c *ItemAddAixinwuController) Post() {
@@ -42,10 +52,11 @@ func (c *ItemAddAixinwuController) Post() {
 
 	// set parameters
 	dinfo := TypeLcnDonateBatch{
-		User_id: jinfo.Customer_id,
-		Snum:    jinfo.Snum,
-		Desc:    request.Item.Desc,
-		Status:  1,
+		Donation_sn: getDonationSN(),
+		User_id:     jinfo.Customer_id,
+		Snum:        jinfo.Snum,
+		Desc:        request.Item.Desc,
+		Status:      1,
 	}
 	_, err = o.Insert(&dinfo)
 	ErrReport(err)
