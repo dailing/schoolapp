@@ -64,11 +64,11 @@ func AddUser(usrInfo TypeUserInfo) (int, error) {
 	o := orm.NewOrm()
 	//o.Using("default")
 	// check user name
-	if succ, err := CheckUserNameLegal(usrInfo.Username); err != nil {
-		return -1, err
-	} else if succ == false {
-		return -1, errors.New("Unknown Errors.")
-	}
+	//if succ, err := CheckUserNameLegal(usrInfo.Username); err != nil {
+	//	return -1, err
+	//} else if succ == false {
+	//	return -1, errors.New("Unknown Errors.")
+	//}
 	// check if user already exist
 	if succ, err := CheckUserNameExist(usrInfo.Username); succ {
 		beego.Error(err)

@@ -15,7 +15,8 @@ type ItemAddAixinwuController struct {
 
 func getDonationSN() string {
 	t := time.Now()
-	ret := t.Format("20060122")
+	ret := ""
+	ret += fmt.Sprintf("%04d%02d%02d",t.Year(),t.Month(),t.Day())
 	ret += fmt.Sprintf("%05d", rand.Int()%100000)
 	return ret
 }
