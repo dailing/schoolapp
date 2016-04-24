@@ -8,13 +8,14 @@ import (
 
 func init() {
 	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", "aixinwu_test:$AIXINWU_test@tcp(localhost:3306)/aixinwu_test?charset=utf8")
+	orm.RegisterDataBase("default", "mysql", "aixinwu_test:$AIXINWU_test@tcp(localhost:3306)/aixinwu_test?charset=UTF8")
 	orm.RegisterModel(new(TypeUserInfo))
 	orm.RegisterModel(new(TypeItemInfo))
 	orm.RegisterModel(new(TypeItemComments))
 	orm.RegisterModel(new(TypeChatInfo))
 	orm.RegisterModel(new(TypeLcnJacountInfo))
 	orm.RegisterModel(new(TypeLcnDonateBatch))
+	orm.RegisterModel(new(TypeAixinwuProduct))
 	createTable()
 }
 

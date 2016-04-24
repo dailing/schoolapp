@@ -20,6 +20,38 @@
             }
             char_add(document.getElementById("token").innerHTML, buyerID, itemID, info)
         }
+        function getAllItem() {
+            var ele = document.getElementById("div_all_list");
+            ele.innerHTML = `<tr><th>id</th><th>ownerID</th><th>Description</th><th>Price</th><th>images</th></tr>`;
+            items = item_get_all().items;
+            if(items == null)
+                    return;
+            for (var i = 0; i < items.length; i++){
+                // console.info(JSON.stringify(items[i]));
+                imgs = items[i].images.split(",");
+                console.info(imgs);
+                str = "";
+                str += "<tr>";
+                str += "<td>"+ items[i].ID +"</td>";
+                str += "<td>"+ items[i].ownerID +"</td>";
+                str += "<td>"+ items[i].description +"</td>";
+                str += "<td>"+ items[i].price +"</td>";
+                str += "<td>";
+                for(var j = 0; j < imgs.length; j++){
+                    str += "<img width='200' id=\""  + gen_image_id(i,imgs[j]) + "\">";
+                }
+                str += "</td>";
+                str += "<td>"+ items[i].status +"</td>";
+                str += "</tr>";
+                ele.innerHTML += str;
+                console.info(str);
+            }
+            for (var i = 0; i < items.length; i++){
+                for(var j = 0; j < imgs.length; j++){
+                    getImage(imgs[j], document.getElementById(gen_image_id(i,imgs[j])));
+                }
+            }
+        }
     </script>
 </head>
 <body>
@@ -82,5 +114,16 @@
 </table>
 <input type="button" value="Add chart" onclick="AddChar()">
 <div id="list_chat"></div>
+
+<input type="button" value="Get All items" onclick="getAllItem()">
+<table border="1" id="div_all_list">
+    <tr>
+        <th>id</th>
+        <th>ownerID</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>images</th>
+    </tr>
+</table>
 </body>
 </html>

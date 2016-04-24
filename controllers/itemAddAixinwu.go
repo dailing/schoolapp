@@ -7,6 +7,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"math/rand"
 	"time"
+	"unicode/utf8"
 )
 
 type ItemAddAixinwuController struct {
@@ -52,6 +53,9 @@ func (c *ItemAddAixinwuController) Post() {
 	ErrReport(err)
 
 	// set parameters
+	succ :=  utf8.Valid([]byte(request.Item.Desc))
+	beego.Info(succ)
+	//request.Item.Desc = baseEncode(request.Item)
 	dinfo := TypeLcnDonateBatch{
 		Donation_sn: getDonationSN(),
 		User_id:     jinfo.Customer_id,

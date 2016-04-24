@@ -109,3 +109,41 @@ function char_add(token, buyerID, itemID, text) {
     };
     doAjaxCall(reqObj, "/api/item_add_chart");
 }
+
+function item_get_all() {
+    var reqObj = {
+        "token":""
+    };
+    return doAjaxCall(reqObj, "/api/item_get_all");
+}
+
+function getImage(imgid, element) {
+    console.info("imgid is ", imgid);
+    var request = new XMLHttpRequest();
+    var fd = new FormData();
+    request.open('POST', "/api/img_get");
+    request.responseType = 'arraybuffer';
+    jsonObj = {
+        "imageID": imgid
+    };
+    request.send(JSON.stringify(jsonObj));
+
+    request.onload = function () {
+        if (request.readyState == 4) {
+            var arr = new Uint8Array(this.response);
+            var raw = '';
+            var i, j, subArray, chunk = 5000;
+            for (i = 0, j = arr.length; i < j; i += chunk) {
+                subArray = arr.subarray(i, i + chunk);
+                raw += String.fromCharCode.apply(null, subArray);
+            }
+            var b64 = btoa(raw);
+            element.src = "data:image/jpeg;base64," + b64;
+            console.log("finished load");
+        }
+    }
+}
+
+function gen_image_id(index, imageID) {
+    return "" + index + "_" + imageID;
+}

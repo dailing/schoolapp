@@ -153,7 +153,7 @@ type TypeLcnDonateBatch struct {
 	Id          int       `json:"id"             orm:"pk;auto;colume(id)"`
 	User_id     int       `json:"user_id"        orm:"colume(user_id)"`
 	Snum        string    `json:"snum"           orm:"colume(snum)"`
-	Produced_at time.Time `json:"produced_at"    orm:"auto_now_add;colume(produced_at)"`
+	Produced_at time.Time `json:"produced_at"    orm:"auto_now_add;type(datetime);colume(produced_at)"`
 	Desc        string    `json:"desc"    orm:"  colume(desc)"`
 	Donation_sn string    `json:"donation_sn"    orm:"colume(donation_sn)"`
 	Barcode     string    `json:"barcode"        orm:"colume(barcode)"`
@@ -169,41 +169,42 @@ func (u *TypeLcnDonateBatch) TableName() string {
  */
 //Table: lcn_product
 type TypeAixinwuProduct struct {
-	id                     int
-	cat_id                 int
-	brand_id               int
-	attr_set_id            int
-	price                  int
-	market_price           int
-	special_price          int
-	name                   string
-	short_name             string
-	url_alias              string
-	short_desc             string
-	desc                   string
-	weight                 int
-	stock                  int
-	limit                  int
-	is_on_sale             int
-	on_sale_at             time.Time
-	tag                    string
-	meta_title             string
-	meta_keywords          string
-	meta_desc              string
-	is_new                 int
-	is_hot                 int
-	is_special_price       int
-	special_price_start_at time.Time
-	special_price_end_at   time.Time
-	is_commend             int
-	is_delete              int
-	created_at             time.Time
-	updated_at             time.Time
-	code                   string
-	barcode                string
-	is_borrow              int
-	is_cash                int
+	Id                     int       `json:"id"                      orm:"colume(id)"`
+	Cat_id                 int       `json:"cat_id"                  orm:"colume(cat_id)"`
+	Brand_id               int       `json:"brand_id"                orm:"colume(brand_id)"`
+	Attr_set_id            int       `json:"attr_set_id"             orm:"colume(attr_set_id)"`
+	Price                  int       `json:"price"                   orm:"colume(price)"`
+	Market_price           int       `json:"market_price"            orm:"colume(market_price)"`
+	Special_price          int       `json:"special_price"           orm:"colume(special_price)"`
+	Name                   string    `json:"name"                    orm:"colume(name)"`
+	Short_name             string    `json:"short_name"              orm:"colume(short_name)"`
+	Url_alias              string    `json:"url_alias"               orm:"colume(url_alias)"`
+	Short_desc             string    `json:"short_desc"              orm:"colume(short_desc)"`
+	Desc                   string    `json:"desc"                    orm:"colume(desc)"`
+	Weight                 int       `json:"weight"                  orm:"colume(weight)"`
+	Stock                  int       `json:"stock"                   orm:"colume(stock)"`
+	Limit                  int       `json:"limit"                   orm:"colume(limit)"`
+	Is_on_sale             int       `json:"is_on_sale"              orm:"colume(is_on_sale)"`
+	On_sale_at             time.Time `json:"on_sale_at"              orm:"colume(on_sale_at)"`
+	Tag                    string    `json:"tag"                     orm:"colume(tag)"`
+	Meta_title             string    `json:"meta_title"              orm:"colume(meta_title)"`
+	Meta_keywords          string    `json:"meta_keywords"           orm:"colume(meta_keywords)"`
+	Meta_desc              string    `json:"meta_desc"               orm:"colume(meta_desc)"`
+	Is_new                 int       `json:"is_new"                  orm:"colume(is_new)"`
+	Is_hot                 int       `json:"is_hot"                  orm:"colume(is_hot)"`
+	Is_special_price       int       `json:"is_special_price"        orm:"colume(is_special_price)"`
+	Special_price_start_at time.Time `json:"special_price_start_at"  orm:"colume(special_price_start_at)"`
+	Special_price_end_at   time.Time `json:"special_price_end_at"    orm:"colume(special_price_end_at)"`
+	Is_commend             int       `json:"is_commend"              orm:"colume(is_commend)"`
+	Is_delete              int       `json:"is_delete"               orm:"colume(is_delete)"`
+	Created_at             time.Time `json:"created_at"              orm:"colume(created_at)"`
+	Updated_at             time.Time `json:"updated_at"              orm:"colume(updated_at)"`
+	Code                   string    `json:"code"                    orm:"colume(code)"`
+	Barcode                string    `json:"barcode"                 orm:"colume(barcode)"`
+	Is_borrow              int       `json:"is_borrow"               orm:"colume(is_borrow)"`
+	Is_cash                int       `json:"is_cash"                 orm:"colume(is_cash)"`
 }
+
 func (u *TypeAixinwuProduct) TableName() string {
 	return "lcn_product"
 }

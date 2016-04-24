@@ -24,11 +24,11 @@ func (c *CommentGetController) Post() {
 		MataData: GenMataData(),
 	}
 	// check token
-	tInfo := ParseToken(request.Token)
-	if tInfo.UserID <= 0 {
-		c.Abort("401")
-		return
-	}
+	//tInfo := ParseToken(request.Token)
+	//if tInfo.UserID <= 0 {
+	//	c.Abort("401")
+	//	return
+	//}
 	// ser parameters
 	response.Comments = GetComments(request.Comment.ItemId)
 	//itemInfo, err := GetItemByID(request.ItemInfo.ID)
