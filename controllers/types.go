@@ -47,12 +47,21 @@ type TypeUserInfo struct {
  * item related structure definition
  */
 type TypeItemInfo struct {
-	ID          int    `json:"ID"            orm:"pk;auto;colume(id)"`
-	OwnerID     int    `json:"ownerID"       orm:"colume(ownerID)"`
-	Description string `json:"description"   orm:"colume(description)"`
-	Price       int    `json:"price"         orm:"colume(price)"`
-	Images      string `json:"images"        orm:"colume(images)"`
-	Status      int    `json:"status"        orm:"colume(status)"`
+	ID                      int       `json:"ID"                       orm:"pk;auto;colume(id)"`
+	Caption                 string    `json:"caption"                  orm:"colume(caption)"`
+	BoughtAt                time.Time `json:"boughtAt"                 orm:"colume(boughtAt)"`
+	ItemCondition           int       `json:"itemCondition"            orm:"colume(itemCondition)"`
+	EstimatedPriceByUser    int       `json:"estimatedPriceByUser"     orm:"colume(estimatedPriceByUser)"`
+	EstimatedPriceByAiXinWu int       `json:"estimatedPriceByAiXinWu"  orm:"colume(estimatedPriceByAiXinWu)"`
+	Location                string    `json:"location"                 orm:"colume(location)"`
+	Category                int       `json:"category"                 orm:"colume(category)"`
+	PublishedAt             time.Time `json:"publishedAt"              orm:"colume(publishedAt)"`
+	UnShelveReason          string    `json:"unShelveReason"           orm:"colume(unShelveReason)"`
+	Description             string    `json:"description"              orm:"colume(description)"`
+	OwnerID                 int       `json:"ownerID"                  orm:"colume(ownerID)"`
+	Price                   int       `json:"price"                    orm:"colume(price)"`
+	Images                  string    `json:"images"                   orm:"colume(images)"`
+	Status                  int       `json:"status"                   orm:"colume(status)"`
 }
 
 type TypeItemReqResp struct {
@@ -207,6 +216,27 @@ type TypeAixinwuProduct struct {
 
 func (u *TypeAixinwuProduct) TableName() string {
 	return "lcn_product"
+}
+
+/*
+ * Static infomationo
+ */
+type TypeStaticInfo struct {
+	VisitCounter int `json:"visitCounter"`
+}
+type TypeStaticInfoResp struct {
+	MataData   TypeMataData   `json:"mataData"`
+	StaticInfo TypeStaticInfo `json:"staticInfo"`
+	Status     TypeStatus     `json:"status"`
+}
+
+/*
+ *  The six picture in the main page of app
+ */
+type TypeMainPageItems struct {
+	ID            int  `json:"id"             orm:"colume(id)"` 
+	ItemID        int  `json:"itemID"         orm:"colume(itemID)"`
+	IsAiXinWuItem int  `json:"isAixinwuItem"  orm:"colume(isAixinwuItem)"`
 }
 
 /*

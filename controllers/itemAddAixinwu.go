@@ -17,9 +17,34 @@ type ItemAddAixinwuController struct {
 func getDonationSN() string {
 	t := time.Now()
 	ret := ""
-	ret += fmt.Sprintf("%04d%02d%02d",t.Year(),t.Month(),t.Day())
+	ret += fmt.Sprintf("%04d%02d%02d", t.Year(), t.Month(), t.Day())
 	ret += fmt.Sprintf("%05d", rand.Int()%100000)
 	return ret
+}
+
+/*
+ * The barcode should be a string of length 9
+ * YYMMiiiii
+ * 34.""
+ */
+func genBarcode() string {
+	const modVal = 10000000
+	o := orm.NewOrm()
+	var info TypeLcnDonateBatch
+	var code = 0
+	for {
+		code = rand.Int() % modVal
+		//code += 1
+		info.Barcode = fmt.Sprintf("34%07d", code)
+		err := o.Read(&info, "barcode")
+		beego.Debug("trying bar code ", info.Barcode)
+		ErrReport(err)
+		if err == orm.ErrNoRows {
+			break
+		}
+	}
+	beego.Debug("succeed with barcode ", info.Barcode)
+	return info.Barcode
 }
 
 func (c *ItemAddAixinwuController) Post() {
@@ -53,11 +78,12 @@ func (c *ItemAddAixinwuController) Post() {
 	ErrReport(err)
 
 	// set parameters
-	succ :=  utf8.Valid([]byte(request.Item.Desc))
+	succ := utf8.Valid([]byte(request.Item.Desc))
 	beego.Info(succ)
 	//request.Item.Desc = baseEncode(request.Item)
 	dinfo := TypeLcnDonateBatch{
 		Donation_sn: getDonationSN(),
+		Barcode:     genBarcode(),
 		User_id:     jinfo.Customer_id,
 		Snum:        jinfo.Snum,
 		Desc:        request.Item.Desc,
