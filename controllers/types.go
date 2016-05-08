@@ -214,6 +214,8 @@ type TypeAixinwuProduct struct {
 	Is_cash                int       `json:"is_cash"                 orm:"colume(is_cash)"`
 }
 
+// TODO add item database model
+
 func (u *TypeAixinwuProduct) TableName() string {
 	return "lcn_product"
 }

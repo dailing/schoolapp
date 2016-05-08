@@ -89,7 +89,10 @@ func (c *ItemAddAixinwuController) Post() {
 		Desc:        request.Item.Desc,
 		Status:      1,
 	}
+	// TODO also add this information to item database
 	_, err = o.Insert(&dinfo)
+	//ErrReport(err)
+	//_, err = o.Insert(&productInfo)
 	ErrReport(err)
 	response.Status = GenStatus(StatusCodeOK)
 	c.Data["json"] = response
