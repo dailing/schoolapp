@@ -178,7 +178,7 @@ func (u *TypeLcnDonateBatch) TableName() string {
  */
 //Table: lcn_product
 type TypeAixinwuProduct struct {
-	Id                     int       `json:"id"                      orm:"colume(id)"`
+	Id                     int       `json:"id"                      orm:"pk;auto;colume(id)"`
 	Cat_id                 int       `json:"cat_id"                  orm:"colume(cat_id)"`
 	Brand_id               int       `json:"brand_id"                orm:"colume(brand_id)"`
 	Attr_set_id            int       `json:"attr_set_id"             orm:"colume(attr_set_id)"`
@@ -214,10 +214,31 @@ type TypeAixinwuProduct struct {
 	Is_cash                int       `json:"is_cash"                 orm:"colume(is_cash)"`
 }
 
-// TODO add item database model
-
 func (u *TypeAixinwuProduct) TableName() string {
 	return "lcn_product"
+}
+
+type TypeAixinwuItem struct {
+	Id             int       `json:"id"               orm:"pk;auto;colume(id)"`
+	Barcode        string    `json:"barcode"          orm:"colume(barcode)"`
+	Name           string    `json:"name"             orm:"colume(name)"`
+	Valuation      int       `json:"valuation"        orm:"colume(valuation)"`
+	Status         int       `json:"status"           orm:"colume(status)"`
+	Quantity       int       `json:"quantity"         orm:"colume(quantity)"`
+	Quantity_saled int       `json:"quantity_saled"   orm:"colume(quantity_saled)"`
+	Category       int       `json:"category"         orm:"colume(category)"`
+	Donation_id    int       `json:"donation_id"      orm:"colume(donation_id)"`
+	Product_id     int       `json:"product_id"       orm:"colume(product_id)"`
+	Order_id       string    `json:"order_id"         orm:"colume(order_id)"`
+	Description    string    `json:"description"      orm:"colume(description)"`
+	Create_time    time.Time `json:"create_time"      orm:"colume(create_time)"`
+	Validity       time.Time `json:"validity"         orm:"colume(validity)"`
+	Is_delete      int       `json:"is_delete"        orm:"colume(is_delete)"`
+	Image_name     string    `json:"image_name"       orm:"colume(image_name)"`
+}
+
+func (u *TypeAixinwuItem) TableName() string{
+	return "lcn_item";
 }
 
 /*
@@ -236,9 +257,9 @@ type TypeStaticInfoResp struct {
  *  The six picture in the main page of app
  */
 type TypeMainPageItems struct {
-	ID            int  `json:"id"             orm:"colume(id)"` 
-	ItemID        int  `json:"itemID"         orm:"colume(itemID)"`
-	IsAiXinWuItem int  `json:"isAixinwuItem"  orm:"colume(isAixinwuItem)"`
+	ID            int `json:"id"             orm:"colume(id)"`
+	ItemID        int `json:"itemID"         orm:"colume(itemID)"`
+	IsAiXinWuItem int `json:"isAixinwuItem"  orm:"colume(isAixinwuItem)"`
 }
 
 /*
