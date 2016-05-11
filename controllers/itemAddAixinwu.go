@@ -89,10 +89,18 @@ func (c *ItemAddAixinwuController) Post() {
 		Desc:        request.Item.Desc,
 		Status:      1,
 	}
+	donationID,err := o.Insert(&dinfo)
+	ErrReport(err)
 	// TODO also add this information to item database
-	_, err = o.Insert(&dinfo)
-	//ErrReport(err)
-	//_, err = o.Insert(&productInfo)
+	itemInfo := TypeAixinwuItem{
+		Barcode:dinfo.Barcode,
+		Status:1,
+		Donation_id: int(donationID),
+		// TODO check product id here
+		Description:request.Item.Desc,
+		Is_delete:0,
+	}
+	_, err = o.Insert(&itemInfo)
 	ErrReport(err)
 	response.Status = GenStatus(StatusCodeOK)
 	c.Data["json"] = response
