@@ -14,7 +14,7 @@ func (c *ImgGetRestfulController) Get() {
 	imgID := c.Ctx.Input.Param(":imgid")
 	if imgID == "" {
 		beego.Warning("No image")
-		c.Abort(500)
+		c.Abort("500")
 	}
 	img, err := ioutil.ReadFile(imgPath + imgID)
 	ErrReport(err)
