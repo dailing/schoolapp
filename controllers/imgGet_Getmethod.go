@@ -5,11 +5,11 @@ import (
 	"io/ioutil"
 )
 
-type ImgGetRestfulController struct {
+type ImgGetRestfulRController struct {
 	beego.Controller
 }
 
-func (c *ImgGetRestfulController) Get() {
+func (c *ImgGetRestfulRController) Get() {
 	beego.Trace("img get resuful, the id is:", c.Ctx.Input.Param(":imgid"))
 	imgID := c.Ctx.Input.Param(":imgid")
 	if imgID == "" {
