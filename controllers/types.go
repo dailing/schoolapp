@@ -48,20 +48,20 @@ type TypeUserInfo struct {
  */
 type TypeItemInfo struct {
 	ID                      int       `json:"ID"                       orm:"pk;auto;colume(id)"`
-	Caption                 string    `json:"caption"                  orm:"colume(caption)"`
-	BoughtAt                time.Time `json:"boughtAt"                 orm:"colume(boughtAt)"`
-	ItemCondition           int       `json:"itemCondition"            orm:"colume(itemCondition)"`
-	EstimatedPriceByUser    int       `json:"estimatedPriceByUser"     orm:"colume(estimatedPriceByUser)"`
-	EstimatedPriceByAiXinWu int       `json:"estimatedPriceByAiXinWu"  orm:"colume(estimatedPriceByAiXinWu)"`
-	Location                string    `json:"location"                 orm:"colume(location)"`
-	Category                int       `json:"category"                 orm:"colume(category)"`
-	PublishedAt             time.Time `json:"publishedAt"              orm:"colume(publishedAt)"`
-	UnShelveReason          string    `json:"unShelveReason"           orm:"colume(unShelveReason)"`
-	Description             string    `json:"description"              orm:"colume(description)"`
-	OwnerID                 int       `json:"ownerID"                  orm:"colume(ownerID)"`
-	Price                   int       `json:"price"                    orm:"colume(price)"`
-	Images                  string    `json:"images"                   orm:"colume(images)"`
-	Status                  int       `json:"status"                   orm:"colume(status)"`
+	Caption                 string    `json:"caption"                  orm:"colume(caption);null"`
+	BoughtAt                time.Time `json:"boughtAt"                 orm:"colume(boughtAt);null"`
+	ItemCondition           int       `json:"itemCondition"            orm:"colume(itemCondition);null"`
+	EstimatedPriceByUser    int       `json:"estimatedPriceByUser"     orm:"colume(estimatedPriceByUser);null"`
+	EstimatedPriceByAiXinWu int       `json:"estimatedPriceByAiXinWu"  orm:"colume(estimatedPriceByAiXinWu);null"`
+	Location                string    `json:"location"                 orm:"colume(location);null"`
+	Category                int       `json:"category"                 orm:"colume(category);null"`
+	PublishedAt             time.Time `json:"publishedAt"              orm:"colume(publishedAt);null"`
+	UnShelveReason          string    `json:"unShelveReason"           orm:"colume(unShelveReason);null"`
+	Description             string    `json:"description"              orm:"colume(description);null"`
+	OwnerID                 int       `json:"ownerID"                  orm:"colume(ownerID);null"`
+	Price                   int       `json:"price"                    orm:"colume(price);null"`
+	Images                  string    `json:"images"                   orm:"colume(images);null"`
+	Status                  int       `json:"status"                   orm:"colume(status);null"`
 }
 
 type TypeItemReqResp struct {
@@ -237,15 +237,18 @@ type TypeAixinwuItem struct {
 	Image_name     string    `json:"image_name"       orm:"colume(image_name)"`
 }
 
-func (u *TypeAixinwuItem) TableName() string{
-	return "lcn_item";
+func (u *TypeAixinwuItem) TableName() string {
+	return "lcn_item"
 }
 
 /*
  * Static infomationo
  */
 type TypeStaticInfo struct {
-	VisitCounter int `json:"visitCounter"`
+	Visit string `json:"visitCounter"`
+	Money string `json:"money"`
+	User  string `json:"user"`
+	Item  string `json:"item"`
 }
 type TypeStaticInfoResp struct {
 	MataData   TypeMataData   `json:"mataData"`
