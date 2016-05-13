@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"github.com/astaxie/beego"
 	"github.com/dvsekhvalnov/jose2go"
+	"strings"
 )
 
 func init() {
@@ -74,4 +75,17 @@ func CheckToken(token string) bool {
 		return true
 	}
 	return false
+}
+
+func getSqlSearchAixinwu(keywords string) string {
+	strs := strings.Split(keywords, " ")
+	retval := "select * from type_item_info where (name "
+	for index, s := range strs {
+		if index != len(strs)-1 {
+			retval += fmt.Sprintf(" like '%s' OR name ", s)
+		} else {
+			retval += fmt.Printf(" like %s)", s)
+		}
+	}
+	return retval
 }

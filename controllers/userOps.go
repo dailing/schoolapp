@@ -12,14 +12,22 @@ import (
  * 	User profile related operations
  */
 
+var encode = false
+
 func baseEncode(str string) string {
-	return base64.StdEncoding.EncodeToString([]byte(str))
+	if encode {
+		return base64.StdEncoding.EncodeToString([]byte(str))
+	}
+	return str
 }
 
 func baseDecode(str string) string {
-	body, err := base64.StdEncoding.DecodeString(str)
-	ErrReport(err)
-	return string(body)
+	if encode {
+		body, err := base64.StdEncoding.DecodeString(str)
+		ErrReport(err)
+		return string(body)
+	}
+	return str
 }
 
 func GetUserInfo(name string) (info TypeUserInfo, err error) {
@@ -166,7 +174,7 @@ func GetItemsByUserID(id int) []TypeItemInfo {
 	//o.Using("default")
 	_, err := o.Raw("select * from type_item_info where owner_i_d = ?", id).QueryRows(&itemids)
 	ErrReport(err)
-	for i := 0; i < len(itemids); i++{
+	for i := 0; i < len(itemids); i++ {
 		itemids[i].Description = baseDecode(itemids[i].Description)
 	}
 	return itemids
@@ -178,7 +186,7 @@ func GetAllItem(startat int, length int) []TypeItemInfo {
 	//o.Using("default")
 	_, err := o.Raw("select * from type_item_info where i_d > ? and i_d <= ?", startat, startat+length).QueryRows(&itemids)
 	ErrReport(err)
-	for i := 0; i < len(itemids); i++{
+	for i := 0; i < len(itemids); i++ {
 		itemids[i].Description = baseDecode(itemids[i].Description)
 	}
 	return itemids
@@ -234,7 +242,7 @@ func GetChat(itemID, buyerID int) []TypeChatInfo {
 	//o.Using("default")
 	_, err := o.Raw("select * from aixinwu_test.type_chat_info where item_id = ? and buyer_id = ?", itemID, buyerID).QueryRows(&chats)
 	ErrReport(err)
-	for i:= 0; i < len(chats); i++{
+	for i := 0; i < len(chats); i++ {
 		chats[i].Content = baseDecode(chats[i].Content)
 	}
 	return chats
