@@ -71,6 +71,14 @@ type TypeItemReqResp struct {
 	Status   TypeStatus   `json:"status"`
 }
 
+type TypeItemGetAllReq struct {
+	MataData TypeMataData `json:"mataData"`
+	Token    string       `json:"token"`
+	StartAt  int          `json:"startAt"`
+	Length   int          `json:"length"`
+	Status   TypeStatus   `json:"status"`
+}
+
 type TypeGetItemsResp struct {
 	MataData TypeMataData   `json:"mataData"`
 	Items    []TypeItemInfo `json:"items"`

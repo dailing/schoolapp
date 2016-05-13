@@ -14,3 +14,8 @@ func TestStaticGetMoney(t *testing.T) {
 	assert.T(t, info.Visit != "")
 	assert.T(t, info.Money != "")
 }
+
+func TestGetAllItem(t *testing.T) {
+	items := GetAllItem(0,10);
+	fmt.Println(items)
+}
