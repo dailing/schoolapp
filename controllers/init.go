@@ -39,10 +39,10 @@ func makeFakeUser() {
 	beego.Trace("Adding fake users ......")
 	user := TypeUserInfo{
 		Username: "liangyuding",
-		Password: "123",
+		Password: "1234",
 		NickName: "nick",
 		Phone:    "12345678",
-		Email:    "safads@163.con",
+		Email:    "a@a.com",
 		JAccount: "liangyuding",
 	}
 	AddUser(user)

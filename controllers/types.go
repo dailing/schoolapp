@@ -46,6 +46,9 @@ type TypeUserInfo struct {
 
 /*
  * item related structure definition
+ * Status :
+ *		000: 初始状态
+ *		200:已审批
  */
 type TypeItemInfo struct {
 	ID                      int       `json:"ID"                       orm:"pk;auto;(id)"`
