@@ -251,7 +251,7 @@ func (u *TypeAixinwuItem) TableName() string {
 }
 
 type TypeAixinwuJaccountInfo struct {
-	Id          int    `json:"id"            orm:"colume(id)"`
+	Id          int    `json:"id"            orm:"pk;auto;colume(id)"`
 	Customer_id int    `json:"customer_id"   orm:"colume(customer_id)"`
 	Jaccount_id string `json:"jaccount_id"   orm:"colume(jaccount_id)"`
 	Citizenid   string `json:"citizenid"     orm:"colume(citizenid)"`
@@ -267,7 +267,7 @@ func (u *TypeAixinwuJaccountInfo) TableName() string {
 }
 
 type TypeAixinwuCustomCash struct {
-	User_id int     `json:"user_id"  orm:"colume(user_id)"`
+	User_id int     `json:"user_id"  orm:"pk;colume(user_id)"`
 	Total   float64 `json:"total"    orm:"colume(total)"`
 }
 
