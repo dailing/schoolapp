@@ -12,7 +12,7 @@ import (
  * 	User profile related operations
  */
 
-var encode = false
+var encode = true
 
 func baseEncode(str string) string {
 	if encode {

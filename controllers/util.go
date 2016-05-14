@@ -84,7 +84,7 @@ func getSqlSearchAixinwu(keywords string) string {
 		if index != len(strs)-1 {
 			retval += fmt.Sprintf(" like '%s' OR name ", s)
 		} else {
-			retval += fmt.Printf(" like %s)", s)
+			retval += fmt.Sprintf(" like %s)", s)
 		}
 	}
 	return retval
