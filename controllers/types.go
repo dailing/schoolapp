@@ -151,21 +151,21 @@ type TypeItemAixinwuReq struct {
 }
 
 // ln_jacount_info
-type TypeLcnJacountInfo struct {
-	Id          int    `json:"id"            orm:"pk;auto;colume(id)"`
-	Customer_id int    `json:"customer_id"   orm:"colume(customer_id)"`
-	Jaccount_id string `json:"jaccount_id"   orm:"colume(jaccount_id)"`
-	Citizenid   string `json:"citizenid"     orm:"colume(citizenid)"`
-	Realname    string `json:"realname"      orm:"colume(realname)"`
-	Dept        string `json:"dept"          orm:"colume(dept)"`
-	Tel         string `json:"tel"           orm:"colume(tel)"`
-	Snum        string `json:"snum"          orm:"colume(snum)"`
-	Is_student  string `json:"is_student"    orm:"colume(is_student)"`
-}
-
-func (u *TypeLcnJacountInfo) TableName() string {
-	return "lcn_jaccount_info"
-}
+//type TypeLcnJacountInfo struct {
+//	Id          int    `json:"id"            orm:"pk;auto;colume(id)"`
+//	Customer_id int    `json:"customer_id"   orm:"colume(customer_id)"`
+//	Jaccount_id string `json:"jaccount_id"   orm:"colume(jaccount_id)"`
+//	Citizenid   string `json:"citizenid"     orm:"colume(citizenid)"`
+//	Realname    string `json:"realname"      orm:"colume(realname)"`
+//	Dept        string `json:"dept"          orm:"colume(dept)"`
+//	Tel         string `json:"tel"           orm:"colume(tel)"`
+//	Snum        string `json:"snum"          orm:"colume(snum)"`
+//	Is_student  string `json:"is_student"    orm:"colume(is_student)"`
+//}
+//
+//func (u *TypeLcnJacountInfo) TableName() string {
+//	return "lcn_jaccount_info"
+//}
 
 type TypeLcnDonateBatch struct {
 	Id          int       `json:"id"             orm:"pk;auto;colume(id)"`

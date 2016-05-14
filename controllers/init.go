@@ -13,7 +13,7 @@ func SysInit() {
 	orm.RegisterModel(new(TypeItemInfo))
 	orm.RegisterModel(new(TypeItemComments))
 	orm.RegisterModel(new(TypeChatInfo))
-	orm.RegisterModel(new(TypeLcnJacountInfo))
+	//orm.RegisterModel(new(TypeLcnJacountInfo))
 	orm.RegisterModel(new(TypeLcnDonateBatch))
 	orm.RegisterModel(new(TypeAixinwuProduct))
 	orm.RegisterModel(new(TypeAixinwuItem))

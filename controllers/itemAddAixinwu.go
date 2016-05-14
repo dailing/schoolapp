@@ -71,7 +71,7 @@ func (c *ItemAddAixinwuController) Post() {
 	}
 	// get jacount info
 	o := orm.NewOrm()
-	jinfo := TypeLcnJacountInfo{
+	jinfo := TypeAixinwuJaccountInfo{
 		Jaccount_id: request.Item.JAcountID,
 	}
 	err = o.Read(&jinfo, "jaccount_id")
