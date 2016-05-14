@@ -99,6 +99,7 @@ func (c *ItemAddAixinwuController) Post() {
 		// TODO check product id here
 		Description: request.Item.Desc,
 		Is_delete:   0,
+		Quantity:    1,
 		Validity:    time.Now(),
 	}
 	_, err = o.Insert(&itemInfo)

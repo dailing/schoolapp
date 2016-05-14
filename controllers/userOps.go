@@ -39,6 +39,11 @@ func GetUserInfo(name string) (info TypeUserInfo, err error) {
 		info.Username = ""
 		return
 	}
+	if info.JAccount != "" {
+		info.Coins = GetCoinNumber(info.ID)
+	} else {
+		info.Coins = -1
+	}
 	return
 }
 
@@ -250,4 +255,36 @@ func GetChat(itemID, buyerID int) []TypeChatInfo {
 		chats[i].Content = baseDecode(chats[i].Content)
 	}
 	return chats
+}
+
+func GetCoinNumber(userID int) float64 {
+	var userInfo TypeUserInfo
+	userInfo.ID = userID
+	o := orm.NewOrm()
+	err := o.Read(&userInfo)
+	ErrReport(err)
+	if err != nil {
+		return -1
+	}
+	beego.Trace("User ID: ", userInfo.ID, "jaccount: ", userInfo.JAccount)
+	if userInfo.JAccount == "" {
+		return -1
+	}
+	jaccountInfo := TypeAixinwuJaccountInfo{
+		Jaccount_id: userInfo.JAccount,
+	}
+	err = o.Read(&jaccountInfo, "jaccount_id")
+	ErrReport(err)
+	if err != nil {
+		return -1
+	}
+	cash := TypeAixinwuCustomCash{
+		User_id: jaccountInfo.Customer_id,
+	}
+	err = o.Read(&cash, "user_id")
+	ErrReport(err)
+	if err != nil {
+		return -1
+	}
+	return cash.Total
 }

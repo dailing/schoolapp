@@ -34,13 +34,14 @@ type TypeImgResp struct {
 }
 
 type TypeUserInfo struct {
-	ID       int    `json:"ID"       orm:"pk;auto;column(Uid)"`
-	Username string `json:"username" orm:"type(text);unique;column(username)"`
-	Password string `json:"password" orm:"column(password)"`
-	NickName string `json:"nickname" orm:"type(text);column(nickname)"`
-	Phone    string `json:"phone"    orm:"column(phone)"`
-	Email    string `json:"email"    orm:"column(email)"`
-	Coins    int    `josn:"coins"    orm:"column(coins)"`
+	ID       int     `json:"ID"       orm:"pk;auto;column(Uid)"`
+	Username string  `json:"username" orm:"type(text);unique;column(username)"`
+	Password string  `json:"password" orm:"column(password)"`
+	NickName string  `json:"nickname" orm:"type(text);column(nickname)"`
+	Phone    string  `json:"phone"    orm:"column(phone)"`
+	Email    string  `json:"email"    orm:"column(email)"`
+	Coins    float64 `josn:"coins"    orm:"column(coins)"`
+	JAccount string  `json:"jaccount" orm:"column(jaccount)"`
 }
 
 /*
@@ -247,6 +248,31 @@ type TypeAixinwuItem struct {
 
 func (u *TypeAixinwuItem) TableName() string {
 	return "lcn_item"
+}
+
+type TypeAixinwuJaccountInfo struct {
+	Id          int    `json:"id"            orm:"colume(id)"`
+	Customer_id int    `json:"customer_id"   orm:"colume(customer_id)"`
+	Jaccount_id string `json:"jaccount_id"   orm:"colume(jaccount_id)"`
+	Citizenid   string `json:"citizenid"     orm:"colume(citizenid)"`
+	Realname    string `json:"realname"      orm:"colume(realname)"`
+	Dept        string `json:"dept"          orm:"colume(dept)"`
+	Tel         string `json:"tel"           orm:"colume(tel)"`
+	Snum        string `json:"snum"          orm:"colume(snum)"`
+	Is_student  string `json:"is_student"    orm:"colume(is_student)"`
+}
+
+func (u *TypeAixinwuJaccountInfo) TableName() string {
+	return "lcn_jaccount_info"
+}
+
+type TypeAixinwuCustomCash struct {
+	User_id int     `json:"user_id"  orm:"colume(user_id)"`
+	Total   float64 `json:"total"    orm:"colume(total)"`
+}
+
+func (u *TypeAixinwuCustomCash) TableName() string {
+	return "lcn_customer_cash"
 }
 
 /*
