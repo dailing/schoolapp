@@ -10,7 +10,7 @@ type ChatGetController struct {
 }
 
 func (c *ChatGetController) Post() {
-	beego.Debug("add user")
+	beego.Debug("chart get")
 	request := TypeChatReq{}
 	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
 	beego.Info("Post Body is:", string(body))

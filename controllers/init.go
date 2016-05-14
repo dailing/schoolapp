@@ -16,6 +16,7 @@ func init() {
 	orm.RegisterModel(new(TypeLcnJacountInfo))
 	orm.RegisterModel(new(TypeLcnDonateBatch))
 	orm.RegisterModel(new(TypeAixinwuProduct))
+	orm.RegisterModel(new(TypeAixinwuItem))
 	createTable()
 }
 

@@ -166,7 +166,7 @@ func GetItemsByUserID(id int) []TypeItemInfo {
 	//o.Using("default")
 	_, err := o.Raw("select * from type_item_info where owner_i_d = ?", id).QueryRows(&itemids)
 	ErrReport(err)
-	for i := 0; i < len(itemids); i++{
+	for i := 0; i < len(itemids); i++ {
 		itemids[i].Description = baseDecode(itemids[i].Description)
 	}
 	return itemids
@@ -178,7 +178,7 @@ func GetAllItem() []TypeItemInfo {
 	//o.Using("default")
 	_, err := o.Raw("select * from type_item_info").QueryRows(&itemids)
 	ErrReport(err)
-	for i := 0; i < len(itemids); i++{
+	for i := 0; i < len(itemids); i++ {
 		itemids[i].Description = baseDecode(itemids[i].Description)
 	}
 	return itemids
@@ -227,14 +227,18 @@ func AddChat(chat TypeChatInfo) (int, error) {
  *	Since a chat environment is determined by itemID-OwnerID and The Buyer.
  *	There are multiple ways to retrieve chat information.
  * 	Here Use OwnerID and Buyer ID if both are given.
+ *
+ *	NOTICE
+ *      itemID is now ignores
  */
 func GetChat(itemID, buyerID int) []TypeChatInfo {
 	chats := make([]TypeChatInfo, 0)
 	o := orm.NewOrm()
 	//o.Using("default")
-	_, err := o.Raw("select * from aixinwu_test.type_chat_info where item_id = ? and buyer_id = ?", itemID, buyerID).QueryRows(&chats)
+	//_, err := o.Raw("select * from aixinwu_test.type_chat_info where item_id = ? and buyer_id = ?", itemID, buyerID).QueryRows(&chats)
+	_, err := o.Raw("select * from aixinwu_test.type_chat_info where buyer_id = ?", buyerID).QueryRows(&chats)
 	ErrReport(err)
-	for i:= 0; i < len(chats); i++{
+	for i := 0; i < len(chats); i++ {
 		chats[i].Content = baseDecode(chats[i].Content)
 	}
 	return chats
