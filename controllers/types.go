@@ -35,9 +35,9 @@ type TypeImgResp struct {
 
 type TypeUserInfo struct {
 	ID       int    `json:"ID"       orm:"pk;auto;column(Uid)"`
-	Username string `json:"username" orm:"unique;column(username)"`
+	Username string `json:"username" orm:"type(text);unique;column(username)"`
 	Password string `json:"password" orm:"column(password)"`
-	NickName string `json:"nickname" orm:"column(nickname)"`
+	NickName string `json:"nickname" orm:"type(text);column(nickname)"`
 	Phone    string `json:"phone"    orm:"column(phone)"`
 	Email    string `json:"email"    orm:"column(email)"`
 	Coins    int    `josn:"coins"    orm:"column(coins)"`
@@ -48,26 +48,34 @@ type TypeUserInfo struct {
  */
 type TypeItemInfo struct {
 	ID                      int       `json:"ID"                       orm:"pk;auto;colume(id)"`
-	Caption                 string    `json:"caption"                  orm:"colume(caption)"`
-	BoughtAt                time.Time `json:"boughtAt"                 orm:"colume(boughtAt)"`
-	ItemCondition           int       `json:"itemCondition"            orm:"colume(itemCondition)"`
-	EstimatedPriceByUser    int       `json:"estimatedPriceByUser"     orm:"colume(estimatedPriceByUser)"`
-	EstimatedPriceByAiXinWu int       `json:"estimatedPriceByAiXinWu"  orm:"colume(estimatedPriceByAiXinWu)"`
-	Location                string    `json:"location"                 orm:"colume(location)"`
-	Category                int       `json:"category"                 orm:"colume(category)"`
-	PublishedAt             time.Time `json:"publishedAt"              orm:"colume(publishedAt)"`
-	UnShelveReason          string    `json:"unShelveReason"           orm:"colume(unShelveReason)"`
-	Description             string    `json:"description"              orm:"colume(description)"`
-	OwnerID                 int       `json:"ownerID"                  orm:"colume(ownerID)"`
-	Price                   int       `json:"price"                    orm:"colume(price)"`
-	Images                  string    `json:"images"                   orm:"colume(images)"`
-	Status                  int       `json:"status"                   orm:"colume(status)"`
+	Caption                 string    `json:"caption"                  orm:"colume(caption);type(text);null"`
+	BoughtAt                time.Time `json:"boughtAt"                 orm:"colume(boughtAt);null"`
+	ItemCondition           int       `json:"itemCondition"            orm:"colume(itemCondition);null"`
+	EstimatedPriceByUser    int       `json:"estimatedPriceByUser"     orm:"colume(estimatedPriceByUser);null"`
+	EstimatedPriceByAiXinWu int       `json:"estimatedPriceByAiXinWu"  orm:"colume(estimatedPriceByAiXinWu);null"`
+	Location                string    `json:"location"                 orm:"colume(location);type(text);null"`
+	Category                int       `json:"category"                 orm:"colume(category);null"`
+	PublishedAt             time.Time `json:"publishedAt"              orm:"colume(publishedAt);null"`
+	UnShelveReason          string    `json:"unShelveReason"           orm:"colume(unShelveReason);type(text);null"`
+	Description             string    `json:"description"              orm:"colume(description);type(text);null"`
+	OwnerID                 int       `json:"ownerID"                  orm:"colume(ownerID);null"`
+	Price                   int       `json:"price"                    orm:"colume(price);null"`
+	Images                  string    `json:"images"                   orm:"colume(images);type(text);null"`
+	Status                  int       `json:"status"                   orm:"colume(status);null"`
 }
 
 type TypeItemReqResp struct {
 	MataData TypeMataData `json:"mataData"`
 	Token    string       `json:"token"`
 	ItemInfo TypeItemInfo `json:"itemInfo"`
+	Status   TypeStatus   `json:"status"`
+}
+
+type TypeItemGetAllReq struct {
+	MataData TypeMataData `json:"mataData"`
+	Token    string       `json:"token"`
+	StartAt  int          `json:"startAt"`
+	Length   int          `json:"length"`
 	Status   TypeStatus   `json:"status"`
 }
 
@@ -82,7 +90,7 @@ type TypeGetItemsResp struct {
  */
 type TypeItemComments struct {
 	ID          int       `json:"ID"            orm:"pk;auto;colume(id)"`
-	Content     string    `json:"content"       orm:"colume(content)"`
+	Content     string    `json:"content"       orm:"colume(content);type(text)"`
 	ItemId      int       `json:"itemID"        orm:"colume(itemID)"`
 	PublisherID int       `json:"publisherID"   orm:"colume(publisherID)"`
 	Created     time.Time `json:"created"       orm:"auto_now_add;type(datetime)"`
@@ -107,7 +115,7 @@ type TypeCommentResp struct {
  */
 type TypeChatInfo struct {
 	ID          int       `json:"ID"            orm:"pk;auto;colume(id)"`
-	Content     string    `json:"content"       orm:"colume(content)"`
+	Content     string    `json:"content"       orm:"colume(content);type(text)"`
 	ItemID      int       `json:"itemID"        orm:"colume(item_id)"`
 	BuyerID     int       `json:"buyerID"       orm:"colume(buyer_id)"`
 	PublisherID int       `json:"publisherID"   orm:"colume(publisher_id)"`
@@ -237,15 +245,18 @@ type TypeAixinwuItem struct {
 	Image_name     string    `json:"image_name"       orm:"colume(image_name)"`
 }
 
-func (u *TypeAixinwuItem) TableName() string{
-	return "lcn_item";
+func (u *TypeAixinwuItem) TableName() string {
+	return "lcn_item"
 }
 
 /*
  * Static infomationo
  */
 type TypeStaticInfo struct {
-	VisitCounter int `json:"visitCounter"`
+	Visit string `json:"visitCounter"`
+	Money string `json:"money"`
+	User  string `json:"user"`
+	Item  string `json:"item"`
 }
 type TypeStaticInfoResp struct {
 	MataData   TypeMataData   `json:"mataData"`

@@ -12,14 +12,22 @@ import (
  * 	User profile related operations
  */
 
+var encode = true
+
 func baseEncode(str string) string {
-	return base64.StdEncoding.EncodeToString([]byte(str))
+	if encode {
+		return base64.StdEncoding.EncodeToString([]byte(str))
+	}
+	return str
 }
 
 func baseDecode(str string) string {
-	body, err := base64.StdEncoding.DecodeString(str)
-	ErrReport(err)
-	return string(body)
+	if encode {
+		body, err := base64.StdEncoding.DecodeString(str)
+		ErrReport(err)
+		return string(body)
+	}
+	return str
 }
 
 func GetUserInfo(name string) (info TypeUserInfo, err error) {
@@ -172,11 +180,11 @@ func GetItemsByUserID(id int) []TypeItemInfo {
 	return itemids
 }
 
-func GetAllItem() []TypeItemInfo {
+func GetAllItem(startat int, length int) []TypeItemInfo {
 	itemids := make([]TypeItemInfo, 0)
 	o := orm.NewOrm()
 	//o.Using("default")
-	_, err := o.Raw("select * from type_item_info").QueryRows(&itemids)
+	_, err := o.Raw("select * from type_item_info where i_d > ? and i_d <= ?", startat, startat+length).QueryRows(&itemids)
 	ErrReport(err)
 	for i := 0; i < len(itemids); i++ {
 		itemids[i].Description = baseDecode(itemids[i].Description)
