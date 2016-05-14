@@ -98,12 +98,8 @@ func AddUser(usrInfo TypeUserInfo) (int, error) {
 		beego.Error(err)
 		return -1, errors.New("User name already exists")
 	}
-	s := TypeUserInfo{
-		Username: usrInfo.Username,
-		Password: usrInfo.Password,
-		NickName: usrInfo.NickName,
-		Coins:    0,
-	}
+	s := usrInfo
+	s.Coins = -1
 	id, err := o.Insert(&s)
 	if err != nil {
 		return -1, err
