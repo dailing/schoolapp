@@ -274,7 +274,7 @@ func GetCoinNumber(userID int) float64 {
 	if err != nil {
 		return -1
 	}
-	beego.Trace("custom　ID: ", jaccountInfo.Jaccount_id)
+	beego.Trace("custom　ID: ", jaccountInfo.Customer_id)
 	cash := TypeAixinwuCustomCash{
 		User_id: jaccountInfo.Customer_id,
 	}
