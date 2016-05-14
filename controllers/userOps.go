@@ -262,10 +262,10 @@ func GetCoinNumber(userID int) float64 {
 	if err != nil {
 		return -1
 	}
-	beego.Trace("User ID: ", userInfo.ID, "jaccount: ", userInfo.JAccount)
 	if userInfo.JAccount == "" {
 		return -1
 	}
+	beego.Trace("User ID: ", userInfo.ID, "jaccount: ", userInfo.JAccount)
 	jaccountInfo := TypeAixinwuJaccountInfo{
 		Jaccount_id: userInfo.JAccount,
 	}
@@ -274,6 +274,7 @@ func GetCoinNumber(userID int) float64 {
 	if err != nil {
 		return -1
 	}
+	beego.Trace("custom　ID: ", jaccountInfo.Jaccount_id)
 	cash := TypeAixinwuCustomCash{
 		User_id: jaccountInfo.Customer_id,
 	}
