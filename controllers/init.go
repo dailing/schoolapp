@@ -13,7 +13,7 @@ func SysInit() {
 		fmt.Println(err)
 		log.Fatal(err)
 	}
-	err = orm.RegisterDataBase("default", "mysql", "aixinwu_test:$AIXINWU_test@tcp(localhost:3306)/aixinwu_test?charset=utf8;sslmode=disable")
+	err = orm.RegisterDataBase("default", "mysql", "aixinwu_test:$AIXINWU_test@tcp(localhost:3306)/aixinwu_test?charset=utf8")
 	if err != nil {
 		fmt.Println(err)
 		log.Fatal(err)

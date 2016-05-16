@@ -255,11 +255,12 @@ func AddChat(chat TypeChatInfo) (int, error) {
  *      itemID is now ignores
  */
 func GetChat(itemID, buyerID int) []TypeChatInfo {
+	beego.Trace("getting chat for user :", buyerID)
 	chats := make([]TypeChatInfo, 0)
 	o := orm.NewOrm()
 	//o.Using("default")
 	//_, err := o.Raw("select * from aixinwu_test.type_chat_info where item_id = ? and buyer_id = ?", itemID, buyerID).QueryRows(&chats)
-	_, err := o.Raw("select * from aixinwu_test.type_chat_info where buyer_id = ? or publisher_id = ?", buyerID, buyerID).QueryRows(&chats)
+	_, err := o.Raw("select * from aixinwu_test.type_chat_info where buyer_i_d = ?", buyerID).QueryRows(&chats)
 	ErrReport(err)
 	for i := 0; i < len(chats); i++ {
 		chats[i].Content = baseDecode(chats[i].Content)
