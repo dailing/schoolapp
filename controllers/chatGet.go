@@ -30,7 +30,7 @@ func (c *ChatGetController) Post() {
 		return
 	}
 	// ser parameters
-	response.Chat = GetChat(request.Chat.ItemID, request.Chat.BuyerID)
+	response.Chat = GetChat(request.Chat.ItemID, tInfo.UserID)
 	ErrReport(err)
 	response.Status = GenStatus(StatusCodeOK)
 	//response.ItemInfo = itemInfo
