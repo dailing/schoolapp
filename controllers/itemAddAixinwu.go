@@ -96,8 +96,9 @@ func (c *ItemAddAixinwuController) Post() {
 		Barcode:     dinfo.Barcode,
 		Status:      1,
 		Donation_id: int(donationID),
-		Valuation:   request.Item.Valuation,
-		// TODO check product id here
+		// TODO  change this back
+		//Valuation:   request.Item.Valuation,
+		Valuation:   123,
 		Description: request.Item.Desc,
 		Is_delete:   0,
 		Quantity:    1,
