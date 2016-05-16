@@ -19,7 +19,7 @@ type TypeLoginResp struct {
 func (c *LoginController) Post() {
 	info := TypeUserReq{}
 	body := c.Ctx.Input.CopyBody(1024 * 1024)
-	beego.Trace(string(body))
+	beego.Trace("login")
 	err := json.Unmarshal(body, &info)
 	ErrReport(err)
 	if err != nil {
