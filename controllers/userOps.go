@@ -148,6 +148,20 @@ func CheckUserNameExist(name string) (bool, error) {
 /*
  * 	Item Related Operations
  */
+func SetItem(iteminfo TypeItemInfo) error {
+	// Note that some fields is not changeable
+	originalInfo := TypeItemInfo{
+		ID: iteminfo.ID,
+	}
+	o := orm.NewOrm()
+	o.Read(&originalInfo)
+	if originalInfo.OwnerID != iteminfo.OwnerID {
+		beego.Warning("ID not match")
+		iteminfo.OwnerID = originalInfo.OwnerID
+	}
+	return nil
+}
+
 func AddItem(itemInfo TypeItemInfo) (int, error) {
 	o := orm.NewOrm()
 	//o.Using("default")

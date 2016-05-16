@@ -4,11 +4,20 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"log"
 )
 
 func SysInit() {
-	orm.RegisterDriver("mysql", orm.DRMySQL)
-	orm.RegisterDataBase("default", "mysql", "aixinwu_test:$AIXINWU_test@tcp(localhost:3306)/aixinwu_test?charset=UTF8")
+	err := orm.RegisterDriver("mysql", orm.DRMySQL)
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal(err)
+	}
+	err = orm.RegisterDataBase("default", "mysql", "aixinwu_test:$AIXINWU_test@tcp(localhost:3306)/aixinwu_test?charset=utf8;sslmode=disable")
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal(err)
+	}
 	orm.RegisterModel(new(TypeUserInfo))
 	orm.RegisterModel(new(TypeItemInfo))
 	orm.RegisterModel(new(TypeItemComments))
