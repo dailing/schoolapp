@@ -159,6 +159,7 @@ func SetItem(iteminfo TypeItemInfo) error {
 func AddItem(itemInfo TypeItemInfo) (int, error) {
 	o := orm.NewOrm()
 	//o.Using("default")
+	itemInfo.Caption = baseEncode(itemInfo.Caption)
 	itemInfo.Description = baseEncode(itemInfo.Description)
 	id, err := o.Insert(&itemInfo)
 	ErrReport(err)
@@ -174,6 +175,7 @@ func GetItemByID(id int) (TypeItemInfo, error) {
 	err := o.Read(&itemInfo)
 	ErrReport(err)
 	itemInfo.Description = baseDecode(itemInfo.Description)
+	itemInfo.Caption = baseDecode(itemInfo.Caption)
 	return itemInfo, err
 }
 
@@ -185,6 +187,7 @@ func GetItemsByUserID(id int) []TypeItemInfo {
 	ErrReport(err)
 	for i := 0; i < len(itemids); i++ {
 		itemids[i].Description = baseDecode(itemids[i].Description)
+		itemids[i].Caption = baseDecode(itemids[i].Caption)
 	}
 	return itemids
 }
@@ -213,6 +216,7 @@ func GetAllItem(startat int, length int) []TypeItemInfo {
 	ErrReport(err)
 	for i := 0; i < len(itemids); i++ {
 		itemids[i].Description = baseDecode(itemids[i].Description)
+		itemids[i].Caption = baseDecode(itemids[i].Caption)
 	}
 	return itemids
 }
