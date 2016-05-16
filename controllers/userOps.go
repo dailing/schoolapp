@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"regexp"
+	"strconv"
 )
 
 /*
@@ -189,10 +190,23 @@ func GetItemsByUserID(id int) []TypeItemInfo {
 }
 
 func GetAllItem(startat int, length int) []TypeItemInfo {
+	maxvalStr := ""
 	itemids := make([]TypeItemInfo, 0)
 	o := orm.NewOrm()
 	//o.Using("default")
-	_, err := o.Raw("select * from type_item_info where i_d > ? and i_d <= ? and status = 0", startat, startat+length).QueryRows(&itemids)
+	o.Raw("select max(i_d) from type_item_info").QueryRow(&maxvalStr)
+	maxval, err := strconv.ParseInt(maxvalStr, 10, 64)
+	ErrReport(err)
+	beego.Trace("maxvalue ", maxval)
+	startindex := maxval - length - startat
+	if startindex < 0 {
+		startindex = 0
+	}
+	endIndex := startindex + length
+	if endIndex > maxval {
+		endIndex = maxval
+	}
+	_, err = o.Raw("select * from type_item_info where i_d > ? and i_d <= ? and status = 0", startindex, endIndex).QueryRows(&itemids)
 	ErrReport(err)
 	for i := 0; i < len(itemids); i++ {
 		itemids[i].Description = baseDecode(itemids[i].Description)

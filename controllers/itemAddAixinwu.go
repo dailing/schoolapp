@@ -99,6 +99,7 @@ func (c *ItemAddAixinwuController) Post() {
 		// TODO  change this back
 		//Valuation:   request.Item.Valuation,
 		Valuation:   123,
+		Name:        request.Item.Desc,
 		Description: request.Item.Desc,
 		Is_delete:   0,
 		Quantity:    1,
