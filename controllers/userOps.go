@@ -199,10 +199,13 @@ func GetAllItem(startat int, length int) []TypeItemInfo {
 	ErrReport(err)
 	beego.Trace("maxvalue ", maxval)
 	startindex := int(maxval) - length - startat
+	endIndex := startindex + length
 	if startindex < 0 {
 		startindex = 0
 	}
-	endIndex := startindex + length
+	if endIndex < 0 {
+		endIndex = 0
+	}
 	if endIndex > int(maxval) {
 		endIndex = int(maxval)
 	}
