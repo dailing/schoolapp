@@ -145,6 +145,7 @@ type TypeChatResp struct {
 type TypeItemAixinwuInfo struct {
 	JAcountID string `json:"jacount_id"`
 	Desc      string `json:"desc"`
+	Valuation int    `json:"valuation"`
 }
 type TypeItemAixinwuReq struct {
 	MataData TypeMataData        `json:"mataData"`
