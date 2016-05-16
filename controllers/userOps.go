@@ -271,7 +271,7 @@ func GetChat(itemID, buyerID int) []TypeChatInfo {
 	//o.Using("default")
 	//_, err := o.Raw("select * from aixinwu_test.type_chat_info where item_id = ? and buyer_id = ?", itemID, buyerID).QueryRows(&chats)
 	//_, err := o.Raw("select * from aixinwu_test.type_chat_info where buyer_i_d = ?", buyerID).QueryRows(&chats)
-	_, err := o.Raw("select * from aixinwu_test.type_chat_info where buyer_i_d = ? or publisher_i_d=?", buyerID, buyerID).QueryRows(&chats)
+	_, err := o.Raw("select * from aixinwu_test.type_chat_info where buyer_i_d = ? or publisher_i_d=? order  by  i_d desc", buyerID, buyerID).QueryRows(&chats)
 	ErrReport(err)
 	for i := 0; i < len(chats); i++ {
 		chats[i].Content = baseDecode(chats[i].Content)
