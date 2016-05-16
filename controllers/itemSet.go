@@ -5,6 +5,10 @@ import (
 	"github.com/astaxie/beego"
 )
 
+/*
+ *  Notice that this controller only updates the status codes.
+ */
+
 type ItemSetController struct {
 	beego.Controller
 }
@@ -24,16 +28,34 @@ func (c *ItemSetController) Post() {
 		MataData: GenMataData(),
 	}
 	// check token
-	//tInfo := ParseToken(request.Token)
-	//if tInfo.UserID <= 0 {
-	//	c.Abort("401")
-	//	return
-	//}
-	// ser parameters
-	itemInfo, err := GetItemByID(request.ItemInfo.ID)
+	tInfo := ParseToken(request.Token)
+	if tInfo.UserID <= 0 {
+		c.Abort("401")
+		return
+	}
+	item, err := GetItemByID(request.ItemInfo.ID)
 	ErrReport(err)
-	response.Status = GenStatus(StatusCodeOK)
-	response.ItemInfo = itemInfo
+	if err != nil {
+		c.Abort("500")
+		beego.Trace()
+		return
+	}
+	originalItem, err := GetItemByID(request.ItemInfo.ID)
+	if originalItem.OwnerID != tInfo.UserID {
+		c.Abort("403")
+		return
+	}
+	err = SetItem(item)
+	// ser parameters
+	ErrReport(err)
+	if err != nil {
+		response.Status.Code = 200
+		response.Status.Description = err.Error()
+	}
+	if response.Status.Code == 0 {
+		response.Status = GenStatus(StatusCodeOK)
+	}
+	//response.ItemInfo = itemInfo
 	c.Data["json"] = response
 	c.ServeJSON()
 }

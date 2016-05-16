@@ -150,16 +150,9 @@ func CheckUserNameExist(name string) (bool, error) {
  */
 func SetItem(iteminfo TypeItemInfo) error {
 	// Note that some fields is not changeable
-	originalInfo := TypeItemInfo{
-		ID: iteminfo.ID,
-	}
 	o := orm.NewOrm()
-	o.Read(&originalInfo)
-	if originalInfo.OwnerID != iteminfo.OwnerID {
-		beego.Warning("ID not match")
-		iteminfo.OwnerID = originalInfo.OwnerID
-	}
-	return nil
+	_, err := o.Update(iteminfo)
+	return err
 }
 
 func AddItem(itemInfo TypeItemInfo) (int, error) {
@@ -199,7 +192,7 @@ func GetAllItem(startat int, length int) []TypeItemInfo {
 	itemids := make([]TypeItemInfo, 0)
 	o := orm.NewOrm()
 	//o.Using("default")
-	_, err := o.Raw("select * from type_item_info where i_d > ? and i_d <= ?", startat, startat+length).QueryRows(&itemids)
+	_, err := o.Raw("select * from type_item_info where i_d > ? and i_d <= ? and status = 0", startat, startat+length).QueryRows(&itemids)
 	ErrReport(err)
 	for i := 0; i < len(itemids); i++ {
 		itemids[i].Description = baseDecode(itemids[i].Description)

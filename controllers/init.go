@@ -55,5 +55,13 @@ func makeFakeUser() {
 		JAccount: "liangyuding",
 	}
 	AddUser(user)
+	user.Username = "b@b.com"
+	user.JAccount = "SJTULR"
+	user.NickName = "bbb"
+	AddUser(user)
+	user.Username = "c@c.com"
+	user.JAccount = "----lihengfu"
+	user.NickName = "ccc"
+	AddUser(user)
 	beego.Trace("Finished fake users ......")
 }
