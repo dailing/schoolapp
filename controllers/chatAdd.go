@@ -32,6 +32,7 @@ func (c *ChatAddController) Post() {
 	// set parameters
 	request.Chat.PublisherID = tInfo.UserID
 	// do insert
+	beego.Trace("buyerID:", request.Chat.BuyerID)
 	_, err = AddChat(request.Chat)
 	ErrReport(err)
 	//request.ItemInfo.OwnerID = tInfo.UserID
