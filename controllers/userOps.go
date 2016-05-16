@@ -203,8 +203,8 @@ func GetAllItem(startat int, length int) []TypeItemInfo {
 		startindex = 0
 	}
 	endIndex := startindex + length
-	if endIndex > maxval {
-		endIndex = maxval
+	if endIndex > int(maxval) {
+		endIndex = int(maxval)
 	}
 	_, err = o.Raw("select * from type_item_info where i_d > ? and i_d <= ? and status = 0", startindex, endIndex).QueryRows(&itemids)
 	ErrReport(err)
