@@ -121,8 +121,8 @@ type TypeChatInfo struct {
 	ID          int       `json:"ID"            orm:"pk;auto;(id)"`
 	Content     string    `json:"content"       orm:"(content);type(text)"`
 	ItemID      int       `json:"itemID"        orm:"(item_id)"`
-	BuyerID     int       `json:"buyerID"       orm:"(buyer_id)"`
-	PublisherID int       `json:"publisherID"   orm:"(publisher_id)"`
+	BuyerID     int       `json:"buyer_id"      orm:"(buyer_id)"`
+	PublisherID int       `json:"publisher_id"  orm:"(publisher_id)"`
 	Created     time.Time `json:"created"       orm:"auto_now_add;type(datetime)"`
 }
 
