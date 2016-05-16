@@ -37,6 +37,8 @@ func (c *ItemGetAllController) Post() {
 		request.Length = 1000
 	}
 	itemInfo := GetAllItem(request.StartAt, request.Length)
+	jsonstr, _ := json.Marshal(itemInfo)
+	beego.Trace(string(jsonstr))
 	response.Status = GenStatus(StatusCodeOK)
 	response.Items = itemInfo
 	c.Data["json"] = response
