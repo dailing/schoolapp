@@ -152,7 +152,7 @@ func CheckUserNameExist(name string) (bool, error) {
 func SetItem(iteminfo TypeItemInfo) error {
 	// Note that some fields is not changeable
 	o := orm.NewOrm()
-	_, err := o.Update(&iteminfo)
+	_, err := o.Update(&iteminfo, "status")
 	return err
 }
 
