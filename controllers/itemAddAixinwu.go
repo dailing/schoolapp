@@ -91,14 +91,12 @@ func (c *ItemAddAixinwuController) Post() {
 	}
 	donationID, err := o.Insert(&dinfo)
 	ErrReport(err)
-	// TODO also add this information to item database
 	itemInfo := TypeAixinwuItem{
 		Barcode:     dinfo.Barcode,
 		Status:      1,
 		Donation_id: int(donationID),
-		// TODO  change this back
-		//Valuation:   request.Item.Valuation,
-		Valuation:   123,
+		Valuation:   request.Item.Valuation,
+		//Valuation:   123,
 		Name:        request.Item.Desc,
 		Description: request.Item.Desc,
 		Is_delete:   0,

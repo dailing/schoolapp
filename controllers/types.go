@@ -316,6 +316,17 @@ type TypeTokenInfo struct {
 	UserID   int
 }
 
+type TypeParameters struct {
+	ID           int    `json:"homePageItem"        orm:"pk;(homePageItem)"`
+	HomePageItem string `json:"homePageItem"        orm:"(homePageItem)"`
+}
+
+type TypeParametersRwqResp struct {
+	MataData   TypeMataData   `json:"mataData"`
+	Parameters TypeParameters `json:"parameter"`
+	Status     TypeStatus     `json:"status"`
+}
+
 const (
 	StatusCodeOK             = iota
 	StatusCodeErrorLoginInfo = iota
