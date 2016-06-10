@@ -152,7 +152,7 @@ func CheckUserNameExist(name string) (bool, error) {
 func SetItem(iteminfo TypeItemInfo) error {
 	// Note that some fields is not changeable
 	o := orm.NewOrm()
-	_, err := o.Update(iteminfo)
+	_, err := o.Update(&iteminfo, "status")
 	return err
 }
 
@@ -212,7 +212,8 @@ func GetAllItem(startat int, length int) []TypeItemInfo {
 	if endIndex > int(maxval) {
 		endIndex = int(maxval)
 	}
-	_, err = o.Raw("select * from type_item_info where i_d > ? and i_d <= ? and status = 0  order  by  i_d desc", startindex, endIndex).QueryRows(&itemids)
+	//_, err = o.Raw("select * from type_item_info where i_d > ? and i_d <= ? and status = 0  order  by  i_d desc", startindex, endIndex).QueryRows(&itemids)
+	_, err = o.Raw("select * from type_item_info where i_d > ? and i_d <= ?  order  by  i_d desc", startindex, endIndex).QueryRows(&itemids)
 	ErrReport(err)
 	for i := 0; i < len(itemids); i++ {
 		itemids[i].Description = baseDecode(itemids[i].Description)

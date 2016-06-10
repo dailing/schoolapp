@@ -45,6 +45,7 @@ func (c *ItemSetController) Post() {
 		c.Abort("403")
 		return
 	}
+	item.Status = request.ItemInfo.Status
 	err = SetItem(item)
 	// ser parameters
 	ErrReport(err)
