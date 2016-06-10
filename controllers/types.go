@@ -327,6 +327,12 @@ type TypeParametersRwqResp struct {
 	Status     TypeStatus     `json:"status"`
 }
 
+type TypeHomePage struct {
+	MataData   TypeMataData   `json:"mataData"`
+	Parameters TypeParameters `json:"items"`
+	Status     TypeStatus     `json:"status"`
+}
+
 const (
 	StatusCodeOK             = iota
 	StatusCodeErrorLoginInfo = iota

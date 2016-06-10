@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"strconv"
+	"strings"
 )
 
 type ParamsGet struct {
@@ -21,13 +23,29 @@ func (c *ParamsGet) Post() {
 		c.Abort("400")
 		return
 	}
-	response := TypeParametersRwqResp{
+	response := TypeGetItemsResp{
 		MataData: GenMataData(),
+		Status:   GenStatus(StatusCodeOK),
 	}
-	// ser parameters
+
 	o := orm.NewOrm()
-	response.Parameters.ID = 1
-	o.Read(&response.Parameters)
+	request.Parameters.ID = 1
+	o.Read(&request.Parameters)
+
+	// ser parameters
+	strs := strings.Split(request.Parameters.HomePageItem, ",")
+	response.Items = make([]TypeItemInfo, 0)
+	for _, str := range strs {
+		id, err := strconv.ParseInt(str, 10, 32)
+		ErrReport(err)
+		if err == nil {
+			item, err := GetItemByID(int(id))
+			ErrReport(err)
+			if err == nil {
+				response.Items = append(response.Items, item)
+			}
+		}
+	}
 	c.Data["json"] = response
 	c.ServeJSON()
 }
