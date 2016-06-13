@@ -22,6 +22,7 @@ func init() {
 	beego.Router("/api/item_set", &controllers.ItemSetController{})
 	beego.Router("/api/item_get_all", &controllers.ItemGetAllController{})
 	beego.Router("/api/item_get_list", &controllers.ItemGetListController{})
+	beego.Router("/api/item_mainpage", &controllers.ParamsGet{})
 	beego.Router("/api/item_add_comment", &controllers.CommentAddController{})
 	beego.Router("/api/item_get_comment", &controllers.CommentGetController{})
 	beego.Router("/api/item_add_aixinwu", &controllers.ItemAddAixinwuController{})
