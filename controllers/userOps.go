@@ -15,14 +15,14 @@ import (
 
 var encode = true
 
-func baseEncode(str string) string {
+func BaseEncode(str string) string {
 	if encode {
 		return base64.StdEncoding.EncodeToString([]byte(str))
 	}
 	return str
 }
 
-func baseDecode(str string) string {
+func BaseDecode(str string) string {
 	if encode {
 		body, err := base64.StdEncoding.DecodeString(str)
 		ErrReport(err)
@@ -48,6 +48,28 @@ func GetUserInfo(name string) (info TypeUserInfo, err error) {
 	return
 }
 
+func GetUserInfoByID(id string) (info TypeUserInfo, err error) {
+	o := orm.NewOrm()
+	nid, err := strconv.ParseInt(id, 10, 64)
+	ErrReport(err)
+	if err != nil {
+		return
+	}
+	info.ID = int(nid)
+	err = o.Read(&info)
+	ErrReport(err)
+	if err != nil {
+		info.Username = ""
+		return
+	}
+	if info.JAccount != "" {
+		info.Coins = GetCoinNumber(info.ID)
+	} else {
+		info.Coins = -1
+	}
+	return
+}
+
 func GetUserInfoByToken(token string) TypeUserInfo {
 	tokenInfo := ParseToken(token)
 	if tokenInfo.UserName == "" {
@@ -56,6 +78,19 @@ func GetUserInfoByToken(token string) TypeUserInfo {
 	usrInfo, err := GetUserInfo(tokenInfo.UserName)
 	ErrReport(err)
 	return usrInfo
+}
+
+func GenerateTokenByUserID(id string) string {
+	userInfo, err := GetUserInfoByID(id)
+	ErrReport(err)
+	if err != nil {
+		return ""
+	}
+	tokenInfo := TypeTokenInfo{
+		UserID:   userInfo.ID,
+		UserName: userInfo.Username,
+	}
+	return GenToken(tokenInfo)
 }
 
 func UpdateUserInfo(usrinfo TypeUserInfo) error {
@@ -159,8 +194,8 @@ func SetItem(iteminfo TypeItemInfo) error {
 func AddItem(itemInfo TypeItemInfo) (int, error) {
 	o := orm.NewOrm()
 	//o.Using("default")
-	itemInfo.Caption = baseEncode(itemInfo.Caption)
-	itemInfo.Description = baseEncode(itemInfo.Description)
+	itemInfo.Caption = BaseEncode(itemInfo.Caption)
+	itemInfo.Description = BaseEncode(itemInfo.Description)
 	id, err := o.Insert(&itemInfo)
 	ErrReport(err)
 	return int(id), err
@@ -174,8 +209,8 @@ func GetItemByID(id int) (TypeItemInfo, error) {
 	}
 	err := o.Read(&itemInfo)
 	ErrReport(err)
-	itemInfo.Description = baseDecode(itemInfo.Description)
-	itemInfo.Caption = baseDecode(itemInfo.Caption)
+	itemInfo.Description = BaseDecode(itemInfo.Description)
+	itemInfo.Caption = BaseDecode(itemInfo.Caption)
 	return itemInfo, err
 }
 
@@ -186,8 +221,8 @@ func GetItemsByUserID(id int) []TypeItemInfo {
 	_, err := o.Raw("select * from type_item_info where owner_i_d = ?", id).QueryRows(&itemids)
 	ErrReport(err)
 	for i := 0; i < len(itemids); i++ {
-		itemids[i].Description = baseDecode(itemids[i].Description)
-		itemids[i].Caption = baseDecode(itemids[i].Caption)
+		itemids[i].Description = BaseDecode(itemids[i].Description)
+		itemids[i].Caption = BaseDecode(itemids[i].Caption)
 	}
 	return itemids
 }
@@ -216,8 +251,8 @@ func GetAllItem(startat int, length int) []TypeItemInfo {
 	_, err = o.Raw("select * from type_item_info where i_d > ? and i_d <= ?  order  by  i_d desc", startindex, endIndex).QueryRows(&itemids)
 	ErrReport(err)
 	for i := 0; i < len(itemids); i++ {
-		itemids[i].Description = baseDecode(itemids[i].Description)
-		itemids[i].Caption = baseDecode(itemids[i].Caption)
+		itemids[i].Description = BaseDecode(itemids[i].Description)
+		itemids[i].Caption = BaseDecode(itemids[i].Caption)
 	}
 	return itemids
 }
@@ -228,7 +263,7 @@ func GetAllItem(startat int, length int) []TypeItemInfo {
 func AddComments(comment TypeItemComments) (int, error) {
 	o := orm.NewOrm()
 	//o.Using("default")
-	comment.Content = baseEncode(comment.Content)
+	comment.Content = BaseEncode(comment.Content)
 	id, err := o.Insert(&comment)
 	ErrReport(err)
 	if err != nil {
@@ -244,7 +279,7 @@ func GetComments(itemid int) []TypeItemComments {
 	_, err := o.Raw("select * from type_item_comments where item_id = ?", itemid).QueryRows(&comments)
 	ErrReport(err)
 	for i := 0; i < len(comments); i++ {
-		comments[i].Content = baseDecode(comments[i].Content)
+		comments[i].Content = BaseDecode(comments[i].Content)
 	}
 	return comments
 }
@@ -252,7 +287,7 @@ func GetComments(itemid int) []TypeItemComments {
 func AddChat(chat TypeChatInfo) (int, error) {
 	o := orm.NewOrm()
 	//o.Using("default")
-	chat.Content = baseEncode(chat.Content)
+	chat.Content = BaseEncode(chat.Content)
 	id, err := o.Insert(&chat)
 	ErrReport(err)
 	if err != nil {
@@ -279,7 +314,7 @@ func GetChat(itemID, buyerID int) []TypeChatInfo {
 	_, err := o.Raw("select * from aixinwu_test.type_chat_info where buyer_i_d = ? or publisher_i_d=?", buyerID, buyerID).QueryRows(&chats)
 	ErrReport(err)
 	for i := 0; i < len(chats); i++ {
-		chats[i].Content = baseDecode(chats[i].Content)
+		chats[i].Content = BaseDecode(chats[i].Content)
 	}
 	return chats
 }
