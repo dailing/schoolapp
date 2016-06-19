@@ -208,7 +208,10 @@ func SetMainPageItem(items string) (int, error) {
 		ID:           1,
 		HomePageItem: items,
 	}
-	id, err := o.Update(param, "homePageItem")
+	succ, id, err := o.ReadOrCreate(param, "homePageItem")
+	if !succ {
+		beego.Error("Create Not Succ")
+	}
 	ErrReport(err)
 	return int(id), err
 }
