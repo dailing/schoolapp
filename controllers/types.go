@@ -317,8 +317,8 @@ type TypeTokenInfo struct {
 }
 
 type TypeParameters struct {
-	ID           int    `json:"homePageItem"        orm:"pk;(id)"`
-	HomePageItem string `json:"homePageItem"        orm:"(homePageItem)"`
+	ID           int    `json:"homePageItem"        orm:"pk;column(id)"`
+	HomePageItem string `json:"homePageItem"        orm:"column(homePageItem)"`
 }
 
 type TypeParametersRwqResp struct {
