@@ -201,6 +201,18 @@ func AddItem(itemInfo TypeItemInfo) (int, error) {
 	return int(id), err
 }
 
+func SetMainPageItem(items string) (int, error) {
+	o := orm.NewOrm()
+	//o.Using("default")
+	param := TypeParameters{
+		ID:           1,
+		HomePageItem: items,
+	}
+	id, err := o.Update(param, "homePageItem")
+	ErrReport(err)
+	return int(id), err
+}
+
 func GetItemByID(id int) (TypeItemInfo, error) {
 	o := orm.NewOrm()
 	//o.Using("default")

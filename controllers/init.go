@@ -28,6 +28,7 @@ func SysInit() {
 	orm.RegisterModel(new(TypeAixinwuItem))
 	orm.RegisterModel(new(TypeAixinwuJaccountInfo))
 	orm.RegisterModel(new(TypeAixinwuCustomCash))
+	orm.RegisterModel(new(TypeParameters))
 	createTable()
 	makeFakeUser()
 }
@@ -64,4 +65,5 @@ func makeFakeUser() {
 	user.NickName = "ccc"
 	AddUser(user)
 	beego.Trace("Finished fake users ......")
+	SetMainPageItem("1,2,3,4,5,6")
 }
