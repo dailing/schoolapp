@@ -65,5 +65,5 @@ func makeFakeUser() {
 	user.NickName = "ccc"
 	AddUser(user)
 	beego.Trace("Finished fake users ......")
-	SetMainPageItem("1,2,3,4,5,6")
+	SetMainPageItem("8,7,3,4,5,6")
 }

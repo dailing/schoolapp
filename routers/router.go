@@ -32,6 +32,8 @@ func init() {
 
 	beego.Router("/img/:imgid([\\w]+)", &controllers.ImgGetRestfulRController{})
 
+	beego.Router("/api/static", &controllers.StaticsGetController{})
+
 	beego.Router("/api/search/:searchField([\\w]+)", &controllers.SearchRestfulRController{})
 
 	beego.ErrorHandler("404", serve404)

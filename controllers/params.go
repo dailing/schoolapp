@@ -15,14 +15,14 @@ type ParamsGet struct {
 func (c *ParamsGet) Post() {
 	beego.Debug("add user")
 	request := TypeParametersRwqResp{}
-	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
-	beego.Info("Post Body is:", string(body))
-	err := json.Unmarshal(body, &request)
-	ErrReport(err)
-	if err != nil {
-		c.Abort("400")
-		return
-	}
+	//body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
+	//beego.Info("Post Body is:", string(body))
+	//err := json.Unmarshal(body, &request)
+	//ErrReport(err)
+	//if err != nil {
+	//	c.Abort("400")
+	//	return
+	//}
 	response := TypeGetItemsResp{
 		MataData: GenMataData(),
 		Status:   GenStatus(StatusCodeOK),
@@ -34,18 +34,23 @@ func (c *ParamsGet) Post() {
 
 	// ser parameters
 	strs := strings.Split(request.Parameters.HomePageItem, ",")
+	beego.Info(request.Parameters.HomePageItem)
 	response.Items = make([]TypeItemInfo, 0)
 	for _, str := range strs {
 		id, err := strconv.ParseInt(str, 10, 32)
 		ErrReport(err)
+		beego.Debug("Adding ", id)
 		if err == nil {
 			item, err := GetItemByID(int(id))
 			ErrReport(err)
 			if err == nil {
 				response.Items = append(response.Items, item)
 			}
+			beego.Trace(item)
 		}
 	}
+	b, _ := json.Marshal(response)
+	beego.Trace(string(b))
 	c.Data["json"] = response
 	c.ServeJSON()
 }
