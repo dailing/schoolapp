@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"log"
 )
 
 func SysInit() {
@@ -31,6 +32,10 @@ func SysInit() {
 	orm.RegisterModel(new(TypeParameters))
 	createTable()
 	makeFakeUser()
+
+	//	val := GetAixintuItems(10, 10)
+	//	content, _ := json.Marshal(val)
+	//	beego.Info(string(content))
 }
 
 func createTable() {

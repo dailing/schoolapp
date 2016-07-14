@@ -3,10 +3,11 @@ package controllers
 import (
 	"encoding/base64"
 	"errors"
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
 	"regexp"
 	"strconv"
+
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 )
 
 /*
@@ -366,4 +367,15 @@ func GetCoinNumber(userID int) float64 {
 		return -1
 	}
 	return cash.Total
+}
+
+func GetAixintuItems(start int, length int) []TypeAixinwuItem {
+	o := orm.NewOrm()
+	qs := o.QueryTable("lcn_item")
+	retval := make([]TypeAixinwuItem, 0)
+	intretval, err := qs.Limit(length, start).All(&retval)
+	ErrReport(err)
+	beego.Info("returned ", intretval)
+	beego.Info(qs)
+	return retval
 }

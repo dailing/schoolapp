@@ -254,6 +254,15 @@ func (u *TypeAixinwuItem) TableName() string {
 	return "lcn_item"
 }
 
+type TypeAixinwuItemReqResp struct {
+	MataData     TypeMataData      `json:"mataData"`
+	Token        string            `json:"token"`
+	StartAt      int               `json:"startAt"`
+	Length       int               `json:"length"`
+	Status       TypeStatus        `json:"status"`
+	AixinwuItems []TypeAixinwuItem `json:"items"`
+}
+
 type TypeAixinwuJaccountInfo struct {
 	Id          int    `json:"id"            orm:"pk;auto;(id)"`
 	Customer_id int    `json:"customer_id"   orm:"(customer_id)"`

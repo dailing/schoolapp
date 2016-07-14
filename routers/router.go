@@ -36,6 +36,9 @@ func init() {
 
 	beego.Router("/api/search/:searchField([\\w]+)", &controllers.SearchRestfulRController{})
 
+	// Aixinwu Item fetch
+	beego.Router("/api/item_aixinwu_item_get_list", &controllers.AixintuItemGetController{})
+
 	beego.ErrorHandler("404", serve404)
 }
 
