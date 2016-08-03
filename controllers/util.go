@@ -7,6 +7,7 @@ import (
 
 	"encoding/json"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
 	"github.com/dvsekhvalnov/jose2go"
 	"strings"
 )
@@ -88,4 +89,24 @@ func getSqlSearchAixinwu(keywords string) string {
 		}
 	}
 	return retval
+}
+
+type InterfaceRandomSNData interface {
+	GetSN() string
+	SetSN(string)
+}
+
+func GenerateRandSN(randSNData InterfaceRandomSNData) string {
+	o := orm.NewOrm()
+	stop := false
+	for !stop {
+		randSNData.SetSN(getDonationSN())
+		if err := o.Read(&randSNData); err == orm.ErrNoRows {
+			stop = true
+		} else if err != nil {
+			ErrReport(err)
+			return ""
+		}
+	}
+	return randSNData.GetSN()
 }

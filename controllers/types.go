@@ -189,65 +189,192 @@ func (u *TypeLcnDonateBatch) TableName() string {
 /*
  * 	Aixinwu product databese
  */
+
+type InterfaceAixinwuProduct interface {
+	SetID(id int)
+	GetID() int
+	GetStock() int
+	SetStock(int)
+	GetName() string
+	GetPrice() float64
+	GetCategory() int
+	GetWeight() int
+}
+
 //Table: lcn_product
 type TypeAixinwuProduct struct {
-	Id                     int       `json:"id"                      orm:"pk;auto;(id)"`
-	Cat_id                 int       `json:"cat_id"                  orm:"(cat_id)"`
-	Brand_id               int       `json:"brand_id"                orm:"(brand_id)"`
-	Attr_set_id            int       `json:"attr_set_id"             orm:"(attr_set_id)"`
-	Price                  int       `json:"price"                   orm:"(price)"`
-	Market_price           int       `json:"market_price"            orm:"(market_price)"`
-	Special_price          int       `json:"special_price"           orm:"(special_price)"`
-	Name                   string    `json:"name"                    orm:"(name)"`
-	Short_name             string    `json:"short_name"              orm:"(short_name)"`
-	Url_alias              string    `json:"url_alias"               orm:"(url_alias)"`
-	Short_desc             string    `json:"short_desc"              orm:"(short_desc)"`
-	Desc                   string    `json:"desc"                    orm:"(desc)"`
-	Weight                 int       `json:"weight"                  orm:"(weight)"`
-	Stock                  int       `json:"stock"                   orm:"(stock)"`
-	Limit                  int       `json:"limit"                   orm:"(limit)"`
-	Is_on_sale             int       `json:"is_on_sale"              orm:"(is_on_sale)"`
-	On_sale_at             time.Time `json:"on_sale_at"              orm:"(on_sale_at)"`
-	Tag                    string    `json:"tag"                     orm:"(tag)"`
-	Meta_title             string    `json:"meta_title"              orm:"(meta_title)"`
-	Meta_keywords          string    `json:"meta_keywords"           orm:"(meta_keywords)"`
-	Meta_desc              string    `json:"meta_desc"               orm:"(meta_desc)"`
-	Is_new                 int       `json:"is_new"                  orm:"(is_new)"`
-	Is_hot                 int       `json:"is_hot"                  orm:"(is_hot)"`
-	Is_special_price       int       `json:"is_special_price"        orm:"(is_special_price)"`
-	Special_price_start_at time.Time `json:"special_price_start_at"  orm:"(special_price_start_at)"`
-	Special_price_end_at   time.Time `json:"special_price_end_at"    orm:"(special_price_end_at)"`
-	Is_commend             int       `json:"is_commend"              orm:"(is_commend)"`
-	Is_delete              int       `json:"is_delete"               orm:"(is_delete)"`
-	Created_at             time.Time `json:"created_at"              orm:"(created_at)"`
-	Updated_at             time.Time `json:"updated_at"              orm:"(updated_at)"`
-	Code                   string    `json:"code"                    orm:"(code)"`
-	Barcode                string    `json:"barcode"                 orm:"(barcode)"`
-	Is_borrow              int       `json:"is_borrow"               orm:"(is_borrow)"`
-	Is_cash                int       `json:"is_cash"                 orm:"(is_cash)"`
+	Id                     int       `json:"id"                      orm:"pk;auto;column(id)"`
+	Cat_id                 int       `json:"cat_id"                  orm:"column(cat_id)"`
+	Brand_id               int       `json:"brand_id"                orm:"column(brand_id)"`
+	Attr_set_id            int       `json:"attr_set_id"             orm:"column(attr_set_id)"`
+	Price                  int       `json:"price"                   orm:"column(price)"`
+	Market_price           int       `json:"market_price"            orm:"column(market_price)"`
+	Special_price          int       `json:"special_price"           orm:"column(special_price)"`
+	Name                   string    `json:"name"                    orm:"column(name)"`
+	Short_name             string    `json:"short_name"              orm:"column(short_name)"`
+	Url_alias              string    `json:"url_alias"               orm:"column(url_alias)"`
+	Short_desc             string    `json:"short_desc"              orm:"column(short_desc)"`
+	Desc                   string    `json:"desc"                    orm:"column(desc)"`
+	Weight                 int       `json:"weight"                  orm:"column(weight)"`
+	Stock                  int       `json:"stock"                   orm:"column(stock)"`
+	Limit                  int       `json:"limit"                   orm:"column(limit)"`
+	Is_on_sale             int       `json:"is_on_sale"              orm:"column(is_on_sale)"`
+	On_sale_at             time.Time `json:"on_sale_at"              orm:"column(on_sale_at)"`
+	Tag                    string    `json:"tag"                     orm:"column(tag)"`
+	Meta_title             string    `json:"meta_title"              orm:"column(meta_title)"`
+	Meta_keywords          string    `json:"meta_keywords"           orm:"column(meta_keywords)"`
+	Meta_desc              string    `json:"meta_desc"               orm:"column(meta_desc)"`
+	Is_new                 int       `json:"is_new"                  orm:"column(is_new)"`
+	Is_hot                 int       `json:"is_hot"                  orm:"column(is_hot)"`
+	Is_special_price       int       `json:"is_special_price"        orm:"column(is_special_price)"`
+	Special_price_start_at time.Time `json:"special_price_start_at"  orm:"column(special_price_start_at)"`
+	Special_price_end_at   time.Time `json:"special_price_end_at"    orm:"column(special_price_end_at)"`
+	Is_commend             int       `json:"is_commend"              orm:"column(is_commend)"`
+	Is_delete              int       `json:"is_delete"               orm:"column(is_delete)"`
+	Created_at             time.Time `json:"created_at"              orm:"column(created_at)"`
+	Updated_at             time.Time `json:"updated_at"              orm:"column(updated_at)"`
+	Code                   string    `json:"code"                    orm:"column(code)"`
+	Barcode                string    `json:"barcode"                 orm:"column(barcode)"`
+	Is_borrow              int       `json:"is_borrow"               orm:"column(is_borrow)"`
+	Is_cash                int       `json:"is_cash"                 orm:"column(is_cash)"`
 }
 
 func (u *TypeAixinwuProduct) TableName() string {
 	return "lcn_product"
 }
+func (u *TypeAixinwuProduct) SetID(id int) {
+	u.Id = id
+}
+func (u *TypeAixinwuProduct) GetID() int {
+	return u.Id
+}
+func (u *TypeAixinwuProduct) GetStock() int {
+	return u.Stock
+}
+func (u *TypeAixinwuProduct) SetStock(stock int) {
+	u.Stock = stock
+}
+func (u *TypeAixinwuProduct) GetName() string {
+	return u.Name
+}
+func (u *TypeAixinwuProduct) GetPrice() float64 {
+	return float64(u.Price)
+}
+func (u *TypeAixinwuProduct) GetCategory() int {
+	return 0
+}
+func (u *TypeAixinwuProduct) GetWeight() int {
+	return u.Weight
+}
+
+type TypeAixinwuBook struct {
+	ISBN       string  `json:"ISBN"        orm:"pk;column(ISBN)"`
+	Image      string  `json:"image"       orm:"column(image)"`
+	Title      string  `json:"title"       orm:"column(title)"`
+	Author     string  `json:"author"      orm:"column(author)"`
+	Press      string  `json:"press"       orm:"column(press)"`
+	Pubyear    string  `json:"pubyear"     orm:"column(pubyear)"`
+	Pagecnt    int     `json:"pagecnt"     orm:"column(pagecnt)"`
+	Price      float64 `json:"price"       orm:"column(price)"`
+	Sold       int     `json:"sold"        orm:"column(sold)"`
+	Discard    int     `json:"discard"     orm:"column(discard)"`
+	Stock      int     `json:"stock"       orm:"column(stock)"`
+	Sale_price float64 `json:"sale_price"  orm:"column(sale_price)"`
+}
+
+func (u *TypeAixinwuBook) TableName() string {
+	return "lcn_booktrade_books"
+}
+
+func (u *TypeAixinwuBook) SetID(id int) {
+	ErrReport("Not Implemented")
+}
+func (u *TypeAixinwuBook) GetID() int {
+	ErrReport("Not Implemented")
+	return 0
+}
+func (u *TypeAixinwuBook) GetStock() int {
+	return u.Stock
+}
+func (u *TypeAixinwuBook) SetStock(stock int) {
+	u.Stock = stock
+}
+func (u *TypeAixinwuBook) GetName() string {
+	return u.Title
+}
+func (u *TypeAixinwuBook) GetPrice() float64 {
+	return u.Price
+}
+func (u *TypeAixinwuBook) GetCategory() int {
+	return 2
+}
+func (u *TypeAixinwuBook) GetWeight() int {
+	return 0
+}
+
+type TypeAixinwuOrder struct {
+	Id                  int       `json:"id"                    orm:"auto;pk;column(id)"`
+	Order_sn            string    `json:"order_sn"              orm:"column(order_sn)"`
+	Customer_id         int       `json:"customer_id"           orm:"column(customer_id)"`
+	Payment_id          int       `json:"payment_id"            orm:"column(payment_id)"`
+	Shipping_id         int       `json:"shipping_id"           orm:"column(shipping_id)"`
+	Total_product_price float64   `json:"total_product_price"   orm:"column(total_product_price)"`
+	Total_weight        int       `json:"total_weight"          orm:"column(total_weight)"`
+	Auto_freight_fee    float64   `json:"auto_freight_fee"      orm:"column(auto_freight_fee)"`
+	Actual_freight_fee  float64   `json:"actual_freight_fee"    orm:"column(actual_freight_fee)"`
+	Payment_fee         float64   `json:"payment_fee"           orm:"column(payment_fee)"`
+	Total_cost          float64   `json:"total_cost"            orm:"column(total_cost)"`
+	Total_price         float64   `json:"total_price"           orm:"column(total_price)"`
+	Need_pay            float64   `json:"need_pay"              orm:"column(need_pay)"`
+	Already_pay         float64   `json:"already_pay"           orm:"column(already_pay)"`
+	Is_need_invoice     int       `json:"is_need_invoice"       orm:"column(is_need_invoice)"`
+	Customer_remark     string    `json:"customer_remark"       orm:"column(customer_remark)"`
+	Status              int       `json:"status"                orm:"column(status)"`
+	Is_delete           int       `json:"is_delete"             orm:"column(is_delete)"`
+	Place_at            time.Time `json:"place_at"              orm:"column(place_at)"`
+	Barcode             string    `json:"barcode"               orm:"column(barcode)"`
+	Consignee_id        int       `json:"consignee_id"          orm:"column(consignee_id)"`
+	Update_at           time.Time `json:"update_at"             orm:"column(update_at)"`
+}
+
+func (u *TypeAixinwuOrder) TableName() string {
+	return "lcn_order"
+}
+func (u *TypeAixinwuOrder) GetSN() string {
+	return u.Order_sn
+}
+func (u *TypeAixinwuOrder) SetSN(sn string) {
+	u.Order_sn = sn
+}
+
+type TypeAixinwuOrderItem struct {
+	Id           int     `json:"id"               orm:"auto;pk;column(id)"`
+	Order_id     int     `json:"order_id"         orm:"column(order_id)"`
+	Product_id   string  `json:"product_id"       orm:"column(product_id)"`
+	Product_name string  `json:"product_name"     orm:"column(product_name)"`
+	Quantity     int     `json:"quantity"         orm:"column(quantity)"`
+	Price        float64 `json:"price"            orm:"column(price)"`
+	Weight       int     `json:"weight"           orm:"column(weight)"`
+	Category     int     `json:"category"         orm:"column(category)"`
+}
 
 type TypeAixinwuItem struct {
-	Id             int       `json:"id"               orm:"pk;auto;(id)"`
-	Barcode        string    `json:"barcode"          orm:"(barcode)"`
-	Name           string    `json:"name"             orm:"(name)"`
-	Valuation      int       `json:"valuation"        orm:"(valuation)"`
-	Status         int       `json:"status"           orm:"(status)"`
-	Quantity       int       `json:"quantity"         orm:"(quantity)"`
-	Quantity_saled int       `json:"quantity_saled"   orm:"(quantity_saled)"`
-	Category       int       `json:"category"         orm:"(category)"`
-	Donation_id    int       `json:"donation_id"      orm:"(donation_id)"`
-	Product_id     int       `json:"product_id"       orm:"(product_id)"`
-	Order_id       string    `json:"order_id"         orm:"(order_id)"`
-	Description    string    `json:"description"      orm:"(description)"`
-	Create_time    time.Time `json:"create_time"      orm:"(create_time)"`
-	Validity       time.Time `json:"validity"         orm:"(validity)"`
-	Is_delete      int       `json:"is_delete"        orm:"(is_delete)"`
-	Image_name     string    `json:"image_name"       orm:"(image_name)"`
+	Id             int       `json:"id"               orm:"pk;auto;column(id)"`
+	Barcode        string    `json:"barcode"          orm:"column(barcode)"`
+	Name           string    `json:"name"             orm:"column(name)"`
+	Valuation      int       `json:"valuation"        orm:"column(valuation)"`
+	Status         int       `json:"status"           orm:"column(status)"`
+	Quantity       int       `json:"quantity"         orm:"column(quantity)"`
+	Quantity_saled int       `json:"quantity_saled"   orm:"column(quantity_saled)"`
+	Category       int       `json:"category"         orm:"column(category)"`
+	Donation_id    int       `json:"donation_id"      orm:"column(donation_id)"`
+	Product_id     int       `json:"product_id"       orm:"column(product_id)"`
+	Order_id       string    `json:"order_id"         orm:"column(order_id)"`
+	Description    string    `json:"description"      orm:"column(description)"`
+	Create_time    time.Time `json:"create_time"      orm:"column(create_time)"`
+	Validity       time.Time `json:"validity"         orm:"column(validity)"`
+	Is_delete      int       `json:"is_delete"        orm:"column(is_delete)"`
+	Image_name     string    `json:"image_name"       orm:"column(image_name)"`
 }
 
 func (u *TypeAixinwuItem) TableName() string {
@@ -264,15 +391,15 @@ type TypeAixinwuItemReqResp struct {
 }
 
 type TypeAixinwuJaccountInfo struct {
-	Id          int    `json:"id"            orm:"pk;auto;(id)"`
-	Customer_id int    `json:"customer_id"   orm:"(customer_id)"`
-	Jaccount_id string `json:"jaccount_id"   orm:"(jaccount_id)"`
-	Citizenid   string `json:"citizenid"     orm:"(citizenid)"`
-	Realname    string `json:"realname"      orm:"(realname)"`
-	Dept        string `json:"dept"          orm:"(dept)"`
-	Tel         string `json:"tel"           orm:"(tel)"`
-	Snum        string `json:"snum"          orm:"(snum)"`
-	Is_student  string `json:"is_student"    orm:"(is_student)"`
+	Id          int    `json:"id"            orm:"pk;auto;column(id)"`
+	Customer_id int    `json:"customer_id"   orm:"column(customer_id)"`
+	Jaccount_id string `json:"jaccount_id"   orm:"column(jaccount_id)"`
+	Citizenid   string `json:"citizenid"     orm:"column(citizenid)"`
+	Realname    string `json:"realname"      orm:"column(realname)"`
+	Dept        string `json:"dept"          orm:"column(dept)"`
+	Tel         string `json:"tel"           orm:"column(tel)"`
+	Snum        string `json:"snum"          orm:"column(snum)"`
+	Is_student  string `json:"is_student"    orm:"column(is_student)"`
 }
 
 func (u *TypeAixinwuJaccountInfo) TableName() string {
@@ -342,12 +469,32 @@ type TypeHomePage struct {
 	Status     TypeStatus     `json:"status"`
 }
 
+type TypeOrderProduct struct {
+	ProductID int  `json:"product_id"`
+	IsBook    bool `json:"is_book"`
+	Quantity  int  `json:"quantity"`
+}
+
+type TypeOrderProductReqResp struct {
+	OrderID  int          `json:"order_id"` // this is output value
+	MataData TypeMataData `json:"mataData"`
+	Status   TypeStatus   `json:"status"`
+	// the following are input values
+	OrderInfo   []TypeOrderProduct `json:"order_info"`
+	ConsigneeID int                `json:"consignee_id"`
+	Token       string             `json:"token"`
+}
+
 const (
 	StatusCodeOK             = iota
 	StatusCodeErrorLoginInfo = iota
+	StatusCodeUndefinedError = iota
+	StatusCodeNotImplemented = iota
 )
 
 var ErrorDesp = map[int]string{
 	StatusCodeOK:             "OK",
 	StatusCodeErrorLoginInfo: "Wrong username or password",
+	StatusCodeUndefinedError: "Not specified",
+	StatusCodeNotImplemented: "Not implemented",
 }

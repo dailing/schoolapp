@@ -38,6 +38,7 @@ func init() {
 
 	// Aixinwu Item fetch
 	beego.Router("/api/item_aixinwu_item_get_list", &controllers.AixintuItemGetController{})
+	beego.Router("/api/item_aixinwu_item_make_order", &controllers.OrderProductController{})
 
 	beego.ErrorHandler("404", serve404)
 }

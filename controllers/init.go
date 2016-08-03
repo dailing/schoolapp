@@ -29,6 +29,8 @@ func SysInit() {
 	orm.RegisterModel(new(TypeAixinwuItem))
 	orm.RegisterModel(new(TypeAixinwuJaccountInfo))
 	orm.RegisterModel(new(TypeAixinwuCustomCash))
+	orm.RegisterModel(new(TypeAixinwuBook))
+	orm.RegisterModel(new(TypeAixinwuOrder))
 	orm.RegisterModel(new(TypeParameters))
 	createTable()
 	makeFakeUser()
