@@ -30,7 +30,7 @@ func init() {
 	beego.Router("/api/item_add_chart", &controllers.ChatAddController{})
 	beego.Router("/api/item_get_chart", &controllers.ChatGetController{})
 
-	beego.Router("/img/:imgid([\\w]+)", &controllers.ImgGetRestfulRController{})
+	beego.Router("/img/:imgid", &controllers.ImgGetRestfulRController{})
 
 	beego.Router("/api/static", &controllers.StaticsGetController{})
 

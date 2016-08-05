@@ -21,7 +21,7 @@ func (c *ImgGetController) Post() {
 		c.Abort("400")
 		return
 	}
-	img, err := ioutil.ReadFile(imgPath + imgInfo.ImageID)
+	img, err := ioutil.ReadFile(imgPath[0] + imgInfo.ImageID)
 	ErrReport(err)
 	if err != nil {
 		c.Abort("500")

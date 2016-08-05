@@ -17,7 +17,7 @@ func (c *SearchRestfulRController) Get() {
 		beego.Warning("No image")
 		c.Abort("500")
 	}
-	img, err := ioutil.ReadFile(imgPath + imgID)
+	img, err := ioutil.ReadFile(imgPath[0] + imgID)
 	ErrReport(err)
 	err = c.Ctx.Output.Body(img)
 	ErrReport(err)

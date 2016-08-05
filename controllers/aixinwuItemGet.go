@@ -12,7 +12,9 @@ type AixintuItemGetController struct {
 
 func (c *AixintuItemGetController) Post() {
 	beego.Debug("add user")
-	request := TypeAixinwuItemReqResp{}
+	request := TypeAixinwuItemReqResp{
+		Category: -1,
+	}
 	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
 	beego.Info("Post Body is:", string(body))
 	err := json.Unmarshal(body, &request)
@@ -32,7 +34,7 @@ func (c *AixintuItemGetController) Post() {
 	//	}
 	//	//
 	//		ErrReport(err)
-	response.AixinwuItems = GetAixintuItems(request.StartAt, request.Length)
+	response.AixinwuItems = GetAixintuItems(request.StartAt, request.Length, request.Category)
 	c.Data["json"] = response
 	c.ServeJSON()
 }

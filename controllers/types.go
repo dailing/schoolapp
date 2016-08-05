@@ -207,9 +207,9 @@ type TypeAixinwuProduct struct {
 	Cat_id                 int       `json:"cat_id"                  orm:"column(cat_id)"`
 	Brand_id               int       `json:"brand_id"                orm:"column(brand_id)"`
 	Attr_set_id            int       `json:"attr_set_id"             orm:"column(attr_set_id)"`
-	Price                  int       `json:"price"                   orm:"column(price)"`
-	Market_price           int       `json:"market_price"            orm:"column(market_price)"`
-	Special_price          int       `json:"special_price"           orm:"column(special_price)"`
+	Price                  float64   `json:"price"                   orm:"column(price)"`
+	Market_price           float64   `json:"market_price"            orm:"column(market_price)"`
+	Special_price          float64   `json:"special_price"           orm:"column(special_price)"`
 	Name                   string    `json:"name"                    orm:"column(name)"`
 	Short_name             string    `json:"short_name"              orm:"column(short_name)"`
 	Url_alias              string    `json:"url_alias"               orm:"column(url_alias)"`
@@ -382,12 +382,13 @@ func (u *TypeAixinwuItem) TableName() string {
 }
 
 type TypeAixinwuItemReqResp struct {
-	MataData     TypeMataData      `json:"mataData"`
-	Token        string            `json:"token"`
-	StartAt      int               `json:"startAt"`
-	Length       int               `json:"length"`
-	Status       TypeStatus        `json:"status"`
-	AixinwuItems []TypeAixinwuItem `json:"items"`
+	MataData     TypeMataData         `json:"mataData"`
+	Token        string               `json:"token"`
+	StartAt      int                  `json:"startAt"`
+	Length       int                  `json:"length"`
+	Category     int                  `json:"category"`
+	Status       TypeStatus           `json:"status"`
+	AixinwuItems []TypeAixinwuProduct `json:"items"`
 }
 
 type TypeAixinwuJaccountInfo struct {

@@ -16,7 +16,14 @@ func (c *ImgGetRestfulRController) Get() {
 		beego.Warning("No image")
 		c.Abort("500")
 	}
-	img, err := ioutil.ReadFile(imgPath + imgID)
+	var img []byte
+	var err error
+	for _, ipath := range imgPath {
+		img, err = ioutil.ReadFile(ipath + imgID)
+		if err == nil {
+			break
+		}
+	}
 	ErrReport(err)
 	err = c.Ctx.Output.Body(img)
 	ErrReport(err)

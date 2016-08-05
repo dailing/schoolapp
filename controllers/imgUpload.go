@@ -11,7 +11,10 @@ type ImgUploadController struct {
 	beego.Controller
 }
 
-var imgPath = "./uploadimgs/"
+var imgPath = [...]string{
+	"./uploadimgs/",
+	"/home/sjtu/Sites/test.aixinwu.sjtu.edu.cn/admin/uploads/webcam/",
+}
 
 func (c *ImgUploadController) Post() {
 	beego.Trace("Recv Post")
@@ -21,7 +24,7 @@ func (c *ImgUploadController) Post() {
 	fileContent, err := ioutil.ReadAll(file)
 	ErrReport(err)
 	fileToken := GenRandToken()
-	ioutil.WriteFile(imgPath+fileToken, fileContent, os.FileMode(0644))
+	ioutil.WriteFile(imgPath[0]+fileToken, fileContent, os.FileMode(0644))
 	file.Close()
 	resp := TypeImgResp{
 		MataData: GenMataData(),

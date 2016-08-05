@@ -369,13 +369,25 @@ func GetCoinNumber(userID int) float64 {
 	return cash.Total
 }
 
-func GetAixintuItems(start int, length int) []TypeAixinwuItem {
+func GetAixintuItems(start int, length int, category int) []TypeAixinwuProduct {
 	o := orm.NewOrm()
-	qs := o.QueryTable("lcn_item")
-	retval := make([]TypeAixinwuItem, 0)
-	intretval, err := qs.Limit(length, start).All(&retval)
+	qs := o.QueryTable("lcn_product")
+	retval := make([]TypeAixinwuProduct, 0)
+	var err error
+	if category >= 0 {
+		qs = qs.Filter("cat_id", category)
+	}
+	_, err = qs.Filter("is_delete", 0).Filter("stock__gt", 0).Limit(length, start).All(&retval)
 	ErrReport(err)
-	beego.Info("returned ", intretval)
+	//for index, _ := range retval {
+	//	if retval[index].Image_name == "test" {
+	//		retval[index].Image_name = ""
+	//	} else if retval[index].Image_name != "" {
+	//		retval[index].Image_name =
+	//			retval[index].Image_name + ".jpg"
+	//	}
+	//}
+	//beego.Info("returned ", intretval)
 	beego.Info(qs)
 	return retval
 }
