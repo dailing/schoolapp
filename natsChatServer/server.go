@@ -102,6 +102,8 @@ func (c *NatsServer) Start() {
 			userInfo.UserID,
 			" --> ",
 			destination,
+			":",
+			string(msg.Data),
 		)
 		messages := Messages{}
 		err := json.Unmarshal(msg.Data, &messages)
@@ -128,6 +130,9 @@ func (c *NatsServer) Start() {
 			msgs, err := c.FetchMessage(destination)
 			levlog.E(err)
 			if err != nil {
+				continue
+			}
+			if msgs.Msgs == nil || len(msgs.Msgs) <= 0 {
 				continue
 			}
 			err = c.SentMessages(msgs)
@@ -215,6 +220,7 @@ func (c *NatsServer) FetchMessage(destination string) (msg Messages, err error) 
 		err = json.Unmarshal([]byte(mText), &tmp)
 		levlog.E(err)
 		if err != nil {
+			levlog.Error("Msg is:", string(mText))
 			return
 		}
 		msg.Msgs = append(msg.Msgs, tmp)
@@ -251,13 +257,25 @@ func (c *NatsServer) Store(msgs Messages) error {
 	}
 	// TODO change this to a transaction or pipe
 	for key, val := range msgMap {
-		tmpList := make([]interface{}, 0)
-		tmpList = append(tmpList, key)
-		tmpList = append(tmpList, val...)
-		_, err := conn.Do("RPUSH", tmpList...)
-		levlog.E(err)
-		if err != nil {
-			return err
+		/* since redis in aixinwu is old , no multi insert is avil
+		change to single add this time
+		*/
+		//tmpList := make([]interface{}, 0)
+		//tmpList = append(tmpList, key)
+		//tmpList = append(tmpList, val...)
+		//levlog.Println("push cmd is :: ", tmpList)
+		//_, err := conn.Do("RPUSH", tmpList...)
+		//levlog.E(err)
+		//if err != nil {
+		//	return err
+		//}
+		////////////////////////////////// single add implementation
+		for _, v := range val {
+			_, err := conn.Do("RPUSH", key, v)
+			levlog.E(err)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
