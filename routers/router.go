@@ -31,6 +31,7 @@ func init() {
 	beego.Router("/api/item_get_chart", &controllers.ChatGetController{})
 
 	beego.Router("/img/:imgid", &controllers.ImgGetRestfulRController{})
+	beego.Router("/img/product/:productid/:imgid", &controllers.ImgGetRestfulRController{})
 
 	beego.Router("/api/static", &controllers.StaticsGetController{})
 
@@ -38,6 +39,7 @@ func init() {
 
 	// Aixinwu Item fetch
 	beego.Router("/api/item_aixinwu_item_get_list", &controllers.AixintuItemGetController{})
+	beego.Router("/api/item_aixinwu_item_desp/:productID", &controllers.AixintuProductDescriptionRestfulRController{})
 	beego.Router("/api/item_aixinwu_item_make_order", &controllers.OrderProductController{})
 
 	beego.ErrorHandler("404", serve404)

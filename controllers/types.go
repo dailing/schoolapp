@@ -237,6 +237,8 @@ type TypeAixinwuProduct struct {
 	Barcode                string    `json:"barcode"                 orm:"column(barcode)"`
 	Is_borrow              int       `json:"is_borrow"               orm:"column(is_borrow)"`
 	Is_cash                int       `json:"is_cash"                 orm:"column(is_cash)"`
+	Image                  string    `json:"image"                   orm:"-"` // ignore this field in database
+	DespUrl                string    `json:"desp_url"                orm:"-"` // ignore field
 }
 
 func (u *TypeAixinwuProduct) TableName() string {
@@ -265,6 +267,26 @@ func (u *TypeAixinwuProduct) GetCategory() int {
 }
 func (u *TypeAixinwuProduct) GetWeight() int {
 	return u.Weight
+}
+
+type TypeAixinwuProductImage struct {
+	Id         int       `json:"id"           orm:"auto;pk;column(id)"`
+	Product_id int       `json:"product_id"   orm:"column(product_id)"`
+	Image_name string    `json:"image_name"   orm:"column(image_name)"`
+	File       string    `json:"file"         orm:"column(file)"`
+	File_ext   string    `json:"file_ext"     orm:"column(file_ext)"`
+	File_mime  string    `json:"file_mime"    orm:"column(file_mime)"`
+	Width      int       `json:"width"        orm:"column(width)"`
+	Height     int       `json:"height"       orm:"column(height)"`
+	File_size  int       `json:"file_size"    orm:"column(file_size)"`
+	Is_base    int       `json:"is_base"      orm:"column(is_base)"`
+	Sort_order int       `json:"sort_order"   orm:"column(sort_order)"`
+	Created_at time.Time `json:"created_at"   orm:"column(created_at)"`
+	Updated_at time.Time `json:"updated_at"   orm:"column(updated_at)"`
+}
+
+func (u *TypeAixinwuProductImage) TableName() string {
+	return "lcn_product_image"
 }
 
 type TypeAixinwuBook struct {

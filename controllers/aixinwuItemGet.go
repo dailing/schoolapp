@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
+	"html/template"
+	"strconv"
 )
 
 type AixintuItemGetController struct {
@@ -11,7 +14,7 @@ type AixintuItemGetController struct {
 }
 
 func (c *AixintuItemGetController) Post() {
-	beego.Debug("add user")
+	beego.Debug("get product")
 	request := TypeAixinwuItemReqResp{
 		Category: -1,
 	}
@@ -26,15 +29,26 @@ func (c *AixintuItemGetController) Post() {
 	response := TypeAixinwuItemReqResp{
 		MataData: GenMataData(),
 	}
-	//	// check token
-	//	tInfo := ParseToken(request.Token)
-	//	if tInfo.UserID <= 0 {
-	//		c.Abort("401")
-	//		return
-	//	}
-	//	//
-	//		ErrReport(err)
 	response.AixinwuItems = GetAixintuItems(request.StartAt, request.Length, request.Category)
 	c.Data["json"] = response
 	c.ServeJSON()
+}
+
+type AixintuProductDescriptionRestfulRController struct {
+	beego.Controller
+}
+
+func (c *AixintuProductDescriptionRestfulRController) Get() {
+	beego.Trace("desp for : ", c.Ctx.Input.Param(":productID"))
+	c.TplName = "desp.tpl"
+	c.Data["id"] = c.Ctx.Input.Param(":productID")
+
+	o := orm.NewOrm()
+	id, err := strconv.ParseInt(c.Ctx.Input.Param(":productID"), 10, 64)
+	ErrReport(err)
+	product := TypeAixinwuProduct{
+		Id: int(id),
+	}
+	o.Read(&product)
+	c.Data["desp"] = template.HTML(product.Desc)
 }

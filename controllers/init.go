@@ -26,6 +26,7 @@ func SysInit() {
 	//orm.RegisterModel(new(TypeLcnJacountInfo))
 	orm.RegisterModel(new(TypeLcnDonateBatch))
 	orm.RegisterModel(new(TypeAixinwuProduct))
+	orm.RegisterModel(new(TypeAixinwuProductImage))
 	orm.RegisterModel(new(TypeAixinwuItem))
 	orm.RegisterModel(new(TypeAixinwuJaccountInfo))
 	orm.RegisterModel(new(TypeAixinwuCustomCash))

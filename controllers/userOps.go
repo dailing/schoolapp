@@ -379,15 +379,23 @@ func GetAixintuItems(start int, length int, category int) []TypeAixinwuProduct {
 	}
 	_, err = qs.Filter("is_delete", 0).Filter("stock__gt", 0).Limit(length, start).All(&retval)
 	ErrReport(err)
-	//for index, _ := range retval {
-	//	if retval[index].Image_name == "test" {
-	//		retval[index].Image_name = ""
-	//	} else if retval[index].Image_name != "" {
-	//		retval[index].Image_name =
-	//			retval[index].Image_name + ".jpg"
-	//	}
-	//}
-	//beego.Info("returned ", intretval)
 	beego.Info(qs)
+	// get pictures
+	for index, _ := range retval {
+		images := make([]TypeAixinwuProductImage, 0)
+		_, err = o.QueryTable("lcn_product_image").
+			Filter("product_id", retval[index].Id).
+			All(&images)
+		ErrReport(err)
+		if err != nil || len(images) == 0 {
+			continue
+		}
+		imageStr := ""
+		for _, imgs := range images {
+			imageStr += "img/" + imgs.File + ","
+		}
+		imageStr = imageStr[:len(imageStr)-1]
+		retval[index].Image = imageStr
+	}
 	return retval
 }
