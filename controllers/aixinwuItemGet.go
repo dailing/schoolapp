@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"html/template"
+	"io/ioutil"
 	"strconv"
 )
 
@@ -51,4 +52,20 @@ func (c *AixintuProductDescriptionRestfulRController) Get() {
 	}
 	o.Read(&product)
 	c.Data["desp"] = template.HTML(product.Desc)
+	c.Data["baseurl"] = "originalSite"
+	c.Data["product"] = product
+
+}
+
+type AixintuProductDescriptionImgRestfulRController struct {
+	beego.Controller
+}
+
+func (c *AixintuProductDescriptionImgRestfulRController) Get() {
+	beego.Trace("desp img for : ", c.Ctx.Input.Param(":productID"), "path : ", c.Ctx.Input.Param(":imgpath"))
+	pathPrefix := "/home/sjtu/Sites/test.aixinwu.sjtu.edu.cn/"
+	img, err := ioutil.ReadFile(pathPrefix +
+		c.Ctx.Input.Param(":imgpath"))
+	c.Ctx.Output.Body(img)
+	ErrReport(err)
 }

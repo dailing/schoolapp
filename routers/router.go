@@ -8,7 +8,9 @@ import (
 )
 
 func init() {
-	beego.Router("/", &controllers.MainController{})
+	beego.SetStaticPath("/ckfinder", "/home/sjtu/Sites/test.aixinwu.sjtu.edu.cn/ckfinder")
+	beego.SetStaticPath("/originalSite", "/home/sjtu/Sites/test.aixinwu.sjtu.edu.cn/")
+	//beego.Router("/", &controllers.MainController{})
 	beego.Router("/api/login", &controllers.LoginController{})
 	beego.Router("/api/usr_add", &controllers.UserAddController{})
 	beego.Router("/api/usr_get", &controllers.UserGetController{})
@@ -40,6 +42,7 @@ func init() {
 	// Aixinwu Item fetch
 	beego.Router("/api/item_aixinwu_item_get_list", &controllers.AixintuItemGetController{})
 	beego.Router("/api/item_aixinwu_item_desp/:productID", &controllers.AixintuProductDescriptionRestfulRController{})
+	//beego.Router("/:imgpath", &controllers.AixintuProductDescriptionImgRestfulRController{})
 	beego.Router("/api/item_aixinwu_item_make_order", &controllers.OrderProductController{})
 
 	beego.ErrorHandler("404", serve404)

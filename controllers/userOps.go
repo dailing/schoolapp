@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 )
@@ -396,6 +397,7 @@ func GetAixintuItems(start int, length int, category int) []TypeAixinwuProduct {
 		}
 		imageStr = imageStr[:len(imageStr)-1]
 		retval[index].Image = imageStr
+		retval[index].DespUrl = fmt.Sprintf("item_aixinwu_item_desp/%d", retval[index].Id)
 	}
 	return retval
 }

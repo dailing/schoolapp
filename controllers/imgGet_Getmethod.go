@@ -16,7 +16,7 @@ func (c *ImgGetRestfulRController) Get() {
 	for {
 		if c.Ctx.Input.Param(":productid") != "" {
 			beego.Trace("Img get product image, product ID : " + c.Ctx.Input.Param(":productid"))
-			img, err = ioutil.ReadFile("/home/d/test.aixinwu.sjtu.edu.cn/uploads/product/" +
+			img, err = ioutil.ReadFile("/home/sjtu/Sites/test.aixinwu.sjtu.edu.cn/uploads/product/" +
 				c.Ctx.Input.Param(":productid") +
 				"/" +
 				c.Ctx.Input.Param(":imgid"))
