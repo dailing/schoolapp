@@ -403,7 +403,7 @@ func (u *TypeAixinwuItem) TableName() string {
 	return "lcn_item"
 }
 
-const AixinwuItemType = struct {
+var AixinwuItemType = struct {
 	AixinwuItemType_exchange string
 	AixinwuItemType_rent     string
 	AixinwuItemType_cash     string
