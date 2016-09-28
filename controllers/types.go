@@ -403,12 +403,27 @@ func (u *TypeAixinwuItem) TableName() string {
 	return "lcn_item"
 }
 
+const AixinwuItemType = struct {
+	AixinwuItemType_exchange string
+	AixinwuItemType_rent     string
+	AixinwuItemType_cash     string
+}{
+	AixinwuItemType_exchange: "置换",
+	AixinwuItemType_rent:     "租赁",
+	AixinwuItemType_cash:     "现金",
+}
+
 type TypeAixinwuItemReqResp struct {
-	MataData     TypeMataData         `json:"mataData"`
-	Token        string               `json:"token"`
-	StartAt      int                  `json:"startAt"`
-	Length       int                  `json:"length"`
-	Category     int                  `json:"category"`
+	MataData TypeMataData `json:"mataData"`
+	Token    string       `json:"token"`
+	StartAt  int          `json:"startAt"`
+	Length   int          `json:"length"`
+	Category int          `json:"category"`
+	/*
+	 * the value of Type field must be one value in
+	 * AixinwuItemType struct
+	 */
+	Type         string               `json:"type"`
 	Status       TypeStatus           `json:"status"`
 	AixinwuItems []TypeAixinwuProduct `json:"items"`
 }

@@ -10,12 +10,19 @@
     <script type="text/javascript" src="/{{.baseurl}}/js/jquery.boxy.js"></script>
     <script type="text/javascript" src="/{{.baseurl}}/js/jquery-ui-1.8.21.custom.min.js"></script>
 
-    <link type="text/css" rel="stylesheet" href="/{{.baseurl}}/css/common.css"/>
-    <link type="text/css" rel="stylesheet" href="/{{.baseurl}}/css/boxy.css"/>
-    <link type="text/css" rel="stylesheet" href="/{{.baseurl}}/css/jquery_ui/jquery-ui-1.8.21.custom.css"/>
-    <link type="text/css" rel="stylesheet" href="/{{.baseurl}}/css/home2010.css"/>
-    <!--FontAwesome-->
-    <link type="text/css" rel="stylesheet" href="/{{.baseurl}}/plugin/font-awesome/font-awesome.min.css"/>
+    <!--<link type="text/css" rel="stylesheet" href="/{{.baseurl}}/css/common.css"/>-->
+    <!--<link type="text/css" rel="stylesheet" href="/{{.baseurl}}/css/boxy.css"/>-->
+    <!--<link type="text/css" rel="stylesheet" href="/{{.baseurl}}/css/jquery_ui/jquery-ui-1.8.21.custom.css"/>-->
+    <!--<link type="text/css" rel="stylesheet" href="/{{.baseurl}}/css/home2010.css"/>-->
+    <!--&lt;!&ndash;FontAwesome&ndash;&gt;-->
+    <!--<link type="text/css" rel="stylesheet" href="/{{.baseurl}}/plugin/font-awesome/font-awesome.min.css"/>-->
+
+    <style>
+        img
+        {
+            width: 100%;
+        }
+    </style>
 
 
     <script>
@@ -105,6 +112,9 @@
             fade: 250 ,
             extraClass: "pretty fancy"
         });
+        $('img').width('100%');
+        $('img').height('100%');
+//        alert("change");
     });
 </script>
 

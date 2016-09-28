@@ -370,7 +370,7 @@ func GetCoinNumber(userID int) float64 {
 	return cash.Total
 }
 
-func GetAixintuItems(start int, length int, category int) []TypeAixinwuProduct {
+func GetAixintuItems(start int, length int, category int, itemType string) []TypeAixinwuProduct {
 	o := orm.NewOrm()
 	qs := o.QueryTable("lcn_product")
 	retval := make([]TypeAixinwuProduct, 0)
@@ -378,11 +378,21 @@ func GetAixintuItems(start int, length int, category int) []TypeAixinwuProduct {
 	if category >= 0 {
 		qs = qs.Filter("cat_id", category)
 	}
-	_, err = qs.Filter("is_delete", 0).Filter("stock__gt", 0).Limit(length, start).All(&retval)
+	qs = qs.Filter("is_delete", 0).Filter("stock__gt", 0).Filter("is_on_sale", 1).Limit(length, start)
+	if itemType == AixinwuItemType.AixinwuItemType_exchange {
+		qs = qs.Filter("is_borrow", 0).Filter("is_cash", 0)
+	} else if itemType == AixinwuItemType.AixinwuItemType_rent {
+		qs = qs.Filter("is_borrow", 1)
+	} else if itemType == "" {
+		beego.Warn("Type of Aixinwu item not given")
+	} else {
+		beego.Error("Value:\"", itemType, "\" of Field Type not recognized")
+	}
+	_, err = qs.All(&retval)
 	ErrReport(err)
 	beego.Info(qs)
 	// get pictures
-	for index, _ := range retval {
+	for index := range retval {
 		images := make([]TypeAixinwuProductImage, 0)
 		_, err = o.QueryTable("lcn_product_image").
 			Filter("product_id", retval[index].Id).

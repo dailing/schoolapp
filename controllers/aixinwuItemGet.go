@@ -30,7 +30,7 @@ func (c *AixintuItemGetController) Post() {
 	response := TypeAixinwuItemReqResp{
 		MataData: GenMataData(),
 	}
-	response.AixinwuItems = GetAixintuItems(request.StartAt, request.Length, request.Category)
+	response.AixinwuItems = GetAixintuItems(request.StartAt, request.Length, request.Category, request.Type)
 	c.Data["json"] = response
 	c.ServeJSON()
 }
