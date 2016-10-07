@@ -1,6 +1,8 @@
 package controllers
 
-import "time"
+import (
+	"time"
+)
 
 type TypeMataData struct {
 	TimeStamp int
@@ -380,6 +382,10 @@ type TypeAixinwuOrderItem struct {
 	Category     int     `json:"category"         orm:"column(category)"`
 }
 
+func (u *TypeAixinwuOrderItem) TableName() string {
+	return "lcn_order_item"
+}
+
 type TypeAixinwuItem struct {
 	Id             int       `json:"id"               orm:"pk;auto;column(id)"`
 	Barcode        string    `json:"barcode"          orm:"column(barcode)"`
@@ -528,6 +534,8 @@ const (
 	StatusCodeErrorLoginInfo = iota
 	StatusCodeUndefinedError = iota
 	StatusCodeNotImplemented = iota
+	StatusCodeNotEnoughMoney = iota
+	StatusCodeDatabaseErr    = iota
 )
 
 var ErrorDesp = map[int]string{
@@ -535,4 +543,6 @@ var ErrorDesp = map[int]string{
 	StatusCodeErrorLoginInfo: "Wrong username or password",
 	StatusCodeUndefinedError: "Not specified",
 	StatusCodeNotImplemented: "Not implemented",
+	StatusCodeNotEnoughMoney: "Not enourgh money",
+	StatusCodeDatabaseErr:    "Database error",
 }

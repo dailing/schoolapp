@@ -96,12 +96,12 @@ type InterfaceRandomSNData interface {
 	SetSN(string)
 }
 
-func GenerateRandSN(randSNData InterfaceRandomSNData) string {
+func GenerateRandSN(randSNData *TypeAixinwuOrder) string {
 	o := orm.NewOrm()
 	stop := false
 	for !stop {
 		randSNData.SetSN(getDonationSN())
-		if err := o.Read(&randSNData); err == orm.ErrNoRows {
+		if err := o.Read(randSNData, "order_sn"); err == orm.ErrNoRows {
 			stop = true
 		} else if err != nil {
 			ErrReport(err)

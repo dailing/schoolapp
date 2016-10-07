@@ -13,15 +13,15 @@ type OrderProductController struct {
 }
 
 func (c *OrderProductController) Post() {
-	beego.Debug("add user")
+	beego.Debug("Make Order")
 	request := TypeOrderProductReqResp{}
 	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
-	beego.Info("Post Body is:", string(body))
+	beego.Info("Post Body is:", string(body), "Length: ", len(body))
 	err := json.Unmarshal(body, &request)
 	ErrReport(err)
 	if err != nil {
-		c.Abort("400")
-		return
+		c.Abort("500")
+		//return
 	}
 	response := TypeOrderProductReqResp{
 		MataData: GenMataData(),
@@ -32,6 +32,11 @@ func (c *OrderProductController) Post() {
 	if tInfo.UserID <= 0 {
 		c.Abort("401")
 		return
+	}
+	usrInfo, err := GetUserInfoByID(fmt.Sprint(tInfo.UserID))
+	if err != nil {
+		ErrReport(err)
+		c.Abort("500")
 	}
 	// delete stock in product
 	o := orm.NewOrm()
@@ -46,11 +51,15 @@ func (c *OrderProductController) Post() {
 	ItemsInfo := make([]InterfaceAixinwuProduct, 0)
 	for {
 		for _, item := range request.OrderInfo {
-			var product InterfaceAixinwuProduct
+			var product *TypeAixinwuProduct
 			if !item.IsBook {
-				product = &TypeAixinwuProduct{
+				_product := TypeAixinwuProduct{
 					Id: item.ProductID,
 				}
+				beego.Trace("adding ", item.ProductID)
+				err := o.Read(&_product)
+				ErrReport(err)
+				product = &_product
 			} else {
 				// TODO fix this
 				response.Status = GenStatus(StatusCodeNotImplemented)
@@ -58,7 +67,6 @@ func (c *OrderProductController) Post() {
 				//	ISBN: item.ProductID,
 				//}
 			}
-			err := o.Read(&product)
 			ItemsInfo = append(ItemsInfo, product)
 			if err != nil {
 				ErrReport(err)
@@ -66,6 +74,7 @@ func (c *OrderProductController) Post() {
 				response.Status.Description = err.Error()
 				break
 			}
+			beego.Trace("Product:", product.GetName(), " id:", product.GetID(), " stock ", product.GetStock(), " querying:", item.Quantity)
 			if product.GetStock() < item.Quantity {
 				response.Status.Code = StatusCodeUndefinedError
 				response.Status.Description = fmt.Sprint("Product:",
@@ -82,7 +91,36 @@ func (c *OrderProductController) Post() {
 				response.Status.Description = err.Error()
 				break
 			}
-			total_price += product.GetPrice()
+			total_price += product.GetPrice() * float64(item.Quantity)
+		}
+		if usrInfo.Coins < total_price {
+			response.Status = GenStatus(StatusCodeNotEnoughMoney)
+		} else {
+			jaccountInfo := TypeAixinwuJaccountInfo{
+				Jaccount_id: usrInfo.JAccount,
+			}
+			err = o.Read(&jaccountInfo, "jaccount_id")
+			ErrReport(err)
+			if err != nil {
+				response.Status = GenStatus(StatusCodeDatabaseErr)
+			}
+			beego.Trace("custom　ID: ", jaccountInfo.Customer_id)
+			cash := TypeAixinwuCustomCash{
+				User_id: jaccountInfo.Customer_id,
+			}
+			err = o.Read(&cash, "user_id")
+			ErrReport(err)
+			cash.Total -= total_price
+			if cash.Total < 0 {
+				response.Status = GenStatus(StatusCodeNotEnoughMoney)
+				break
+			}
+			_, err = o.Update(&cash, "total")
+			ErrReport(err)
+			if err != nil {
+				response.Status = GenStatus(StatusCodeDatabaseErr)
+				break
+			}
 		}
 		if response.Status.Code != StatusCodeOK {
 			break
@@ -98,6 +136,7 @@ func (c *OrderProductController) Post() {
 			Order_sn:            GenerateRandSN(&TypeAixinwuOrder{}),
 		}
 		orderID, err := o.Insert(&order)
+		response.OrderID = int(orderID)
 		if err != nil {
 			ErrReport(err)
 			response.Status.Code = StatusCodeUndefinedError
@@ -108,6 +147,7 @@ func (c *OrderProductController) Post() {
 			ErrReport("Invilid order id" + fmt.Sprint(orderID))
 			response.Status.Code = StatusCodeUndefinedError
 			response.Status.Description = "Invilid ID, DB ERROR"
+			break
 		}
 
 		// add order items to order
@@ -130,31 +170,42 @@ func (c *OrderProductController) Post() {
 				break
 			}
 			if orderItem.Category == 0 {
-				orderIDs += fmt.Sprint(itemID) + ","
+				orderIDs += fmt.Sprint(itemID)
 			}
-		}
-		if response.Status.Code != StatusCodeOK {
-			break
-		}
-		// set orderID in item database
-		if len(orderIDs) > 0 {
-			// the mysql here is copied from original file
-			orderIDs = orderIDs[:len(orderIDs)-1]
-			barcodes := make(map[string]int)
-			for _, product := range ItemsInfo {
-				pp, succ := product.(*TypeAixinwuProduct)
+			if response.Status.Code != StatusCodeOK {
+				break
+			}
+			// set orderID in item database
+			if len(orderIDs) > 0 {
+				// the mysql here is copied from original file
+				//barcodes := make(map[string]int)
+				//for _, product := range ItemsInfo {
+				//	pp, succ := product.(*TypeAixinwuProduct)
+				//	if !succ {
+				//		ErrReport("Things are strange here")
+				//		continue
+				//	}
+				//	barcodes[pp.Barcode] = 1
+				//}
+				//for barcode, _ := range barcodes {
+				pp, succ := ItemsInfo[index].(*TypeAixinwuProduct)
 				if !succ {
 					ErrReport("Things are strange here")
 					continue
 				}
-				barcodes[pp.Barcode] = 1
-			}
-			for barcode, _ := range barcodes {
-				aixinwuItem := TypeAixinwuItem{
-					Barcode: barcode,
+				barcode := pp.Barcode
+				if barcode == "" {
+					continue
 				}
-				err = o.Read(&aixinwuItem, "barcode")
+				aixinwuItem := TypeAixinwuItem{}
+				//beego.Error("select * from lcn_item where barcode =  " + barcode)
+				err = o.Raw("select * from lcn_item where barcode =  " + barcode).QueryRow(&aixinwuItem)
+				ErrReport(err)
+				_iteminfo, err := json.Marshal(&aixinwuItem)
+				beego.Trace(string(_iteminfo))
+				//err = o.Read(&aixinwuItem, "barcode")
 				if err != nil {
+					beego.Error("querying lcn_item where barcode = " + aixinwuItem.Barcode)
 					ErrReport(err)
 					response.Status.Code = StatusCodeUndefinedError
 					response.Status.Description = err.Error()
@@ -165,13 +216,14 @@ func (c *OrderProductController) Post() {
 				} else {
 					aixinwuItem.Order_id += "," + orderIDs
 				}
-				_, err = o.Update(&aixinwuItem)
+				_, err = o.Update(&aixinwuItem, "order_id")
 				if err != nil {
 					ErrReport(err)
 					response.Status.Code = StatusCodeUndefinedError
 					response.Status.Description = err.Error()
 					break
 				}
+				//}
 			}
 		}
 		// make sure there is a break at the end of this for loop
@@ -179,6 +231,7 @@ func (c *OrderProductController) Post() {
 		break
 	}
 	if response.Status.Code != StatusCodeOK {
+		beego.Trace("Rolling back")
 		o.Rollback()
 	} else {
 		o.Commit()
