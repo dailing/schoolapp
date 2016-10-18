@@ -536,6 +536,7 @@ const (
 	StatusCodeNotImplemented = iota
 	StatusCodeNotEnoughMoney = iota
 	StatusCodeDatabaseErr    = iota
+	StatusNoJaccountInfo     = iota
 )
 
 var ErrorDesp = map[int]string{
@@ -545,4 +546,5 @@ var ErrorDesp = map[int]string{
 	StatusCodeNotImplemented: "Not implemented",
 	StatusCodeNotEnoughMoney: "Not enourgh money",
 	StatusCodeDatabaseErr:    "Database error",
+	StatusNoJaccountInfo:     "No jaccount information found",
 }

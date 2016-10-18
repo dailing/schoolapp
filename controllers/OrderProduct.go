@@ -50,6 +50,19 @@ func (c *OrderProductController) Post() {
 	// reserve information fo future usage
 	ItemsInfo := make([]InterfaceAixinwuProduct, 0)
 	for {
+		if usrInfo.JAccount == "" {
+			response.Status = GenStatus(StatusNoJaccountInfo)
+			break
+		}
+		jaccountInfo := TypeAixinwuJaccountInfo{
+			Jaccount_id: usrInfo.JAccount,
+		}
+		err = o.Read(&jaccountInfo, "jaccount_id")
+		ErrReport(err)
+		if err != nil {
+			response.Status = GenStatus(StatusCodeDatabaseErr)
+		}
+
 		for _, item := range request.OrderInfo {
 			var product *TypeAixinwuProduct
 			if !item.IsBook {
@@ -96,14 +109,6 @@ func (c *OrderProductController) Post() {
 		if usrInfo.Coins < total_price {
 			response.Status = GenStatus(StatusCodeNotEnoughMoney)
 		} else {
-			jaccountInfo := TypeAixinwuJaccountInfo{
-				Jaccount_id: usrInfo.JAccount,
-			}
-			err = o.Read(&jaccountInfo, "jaccount_id")
-			ErrReport(err)
-			if err != nil {
-				response.Status = GenStatus(StatusCodeDatabaseErr)
-			}
 			beego.Trace("custom　ID: ", jaccountInfo.Customer_id)
 			cash := TypeAixinwuCustomCash{
 				User_id: jaccountInfo.Customer_id,
@@ -127,11 +132,11 @@ func (c *OrderProductController) Post() {
 		}
 		// make a record
 		order := TypeAixinwuOrder{
-			Customer_id:         tInfo.UserID,
+			Customer_id:         jaccountInfo.Customer_id,
 			Total_price:         total_price,
 			Total_product_price: total_price,
-			Consignee_id:        request.ConsigneeID,
-			Status:              1,
+			Consignee_id:        jaccountInfo.Customer_id,
+			Status:              3,
 			Place_at:            time.Now(),
 			Order_sn:            GenerateRandSN(&TypeAixinwuOrder{}),
 		}
