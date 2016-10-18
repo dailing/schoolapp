@@ -39,18 +39,18 @@ func (c *ParamsGet) Post() {
 	for _, str := range strs {
 		id, err := strconv.ParseInt(str, 10, 32)
 		ErrReport(err)
-		beego.Debug("Adding ", id)
+		//beego.Debug("Adding ", id)
 		if err == nil {
 			item, err := GetItemByID(int(id))
 			ErrReport(err)
 			if err == nil {
 				response.Items = append(response.Items, item)
 			}
-			beego.Trace(item)
+			//beego.Trace(item)
 		}
 	}
-	b, _ := json.Marshal(response)
-	beego.Trace(string(b))
+	//b, _ := json.Marshal(response)
+	//beego.Trace(string(b))
 	c.Data["json"] = response
 	c.ServeJSON()
 }

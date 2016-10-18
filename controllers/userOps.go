@@ -371,6 +371,7 @@ func GetCoinNumber(userID int) float64 {
 }
 
 func GetAixintuItems(start int, length int, category int, itemType string) []TypeAixinwuProduct {
+	beego.Trace("getting ", itemType, " type")
 	o := orm.NewOrm()
 	qs := o.QueryTable("lcn_product")
 	retval := make([]TypeAixinwuProduct, 0)
