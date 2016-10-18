@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/garyburd/redigo/redis"
 )
 
 /*
@@ -124,13 +125,6 @@ func UpdateUserInfo(usrinfo TypeUserInfo) error {
 
 func AddUser(usrInfo TypeUserInfo) (int, error) {
 	o := orm.NewOrm()
-	//o.Using("default")
-	// check user name
-	//if succ, err := CheckUserNameLegal(usrInfo.Username); err != nil {
-	//	return -1, err
-	//} else if succ == false {
-	//	return -1, errors.New("Unknown Errors.")
-	//}
 	// check if user already exist
 	if succ, err := CheckUserNameExist(usrInfo.Username); succ {
 		beego.Error(err)
@@ -138,6 +132,20 @@ func AddUser(usrInfo TypeUserInfo) (int, error) {
 	}
 	s := usrInfo
 	s.Coins = -1
+	// check phone via text message
+	conn, err := redisPool.Dial()
+	ErrReport(err)
+	if err != nil {
+		return -1, err
+	}
+	num, err := redis.String(conn.Do("GET", fmt.Sprint("Phone_verification", usrInfo.Phone)))
+	ErrReport(err)
+	if err != nil {
+		return -1, err
+	}
+	if num != usrInfo.VerificationCode {
+		return -1, errors.New("Error verifivation code")
+	}
 	id, err := o.Insert(&s)
 	if err != nil {
 		return -1, err

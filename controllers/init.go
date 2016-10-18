@@ -6,7 +6,21 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/garyburd/redigo/redis"
+	"time"
 )
+
+var redisPool = redis.Pool{
+	MaxIdle:     100,
+	IdleTimeout: 240 * time.Second,
+	Dial: func() (redis.Conn, error) {
+		c, err := redis.Dial("tcp", "localhost:6379")
+		if err != nil {
+			return nil, err
+		}
+		return c, err
+	},
+}
 
 func SysInit() {
 	err := orm.RegisterDriver("mysql", orm.DRMySQL)

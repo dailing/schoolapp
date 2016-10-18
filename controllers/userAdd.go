@@ -2,8 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/astaxie/beego"
 	_ "github.com/go-sql-driver/mysql"
+	"io/ioutil"
+	"math/rand"
+	"net/http"
 )
 
 type UserAddController struct {
@@ -19,7 +23,7 @@ func (c *UserAddController) Post() {
 	beego.Debug("add user")
 	info := TypeUserInfo{}
 	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
-	beego.Info("Post Body is:", string(body))
+	beego.Trace("Post Body is:", string(body))
 	err := json.Unmarshal(body, &info)
 	ErrReport(err)
 	if err != nil {
@@ -35,4 +39,47 @@ func (c *UserAddController) Post() {
 	c.Data["json"] = retVal
 	c.ServeJSON()
 
+}
+
+type TextMessageVerificationController struct {
+	beego.Controller
+}
+
+func (c *TextMessageVerificationController) Post() {
+	beego.Debug("add user")
+	info := TestMessageVerification{}
+	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
+	beego.Trace("Post Body is:", string(body))
+	err := json.Unmarshal(body, &info)
+	ErrReport(err)
+	if err != nil {
+		c.Abort("400")
+	}
+	num := fmt.Sprint(rand.Int() % 1000000)
+	urlstr := fmt.Sprintf(`http://api.sms.cn/sms/?ac=send&uid=aixinwu&pwd=6118209e858c6a52f87c32d5c7295322&mobile=%s&content={"code":"%s"}&template=390283`,
+		info.Phone,
+		num,
+	)
+	resp, err := http.Get(urlstr)
+	ErrReport(err)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+	if err != nil {
+		c.Abort("400")
+	}
+	conn, err := redisPool.Dial()
+	ErrReport(err)
+	if err != nil {
+		c.Abort("500")
+	}
+	_, err = conn.Do("SETEX", fmt.Sprint("Phone_verification", info.Phone), 600, num)
+	ErrReport(err)
+	content, err := ioutil.ReadAll(resp.Body)
+	ErrReport(err)
+	responseText := string(content)
+	beego.Trace(responseText)
+	info.Status = GenStatus(StatusCodeOK)
+	c.Data["json"] = info
+	c.ServeJSON()
 }

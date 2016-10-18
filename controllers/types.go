@@ -36,14 +36,15 @@ type TypeImgResp struct {
 }
 
 type TypeUserInfo struct {
-	ID       int     `json:"ID"       orm:"pk;auto;column(Uid)"`
-	Username string  `json:"username" orm:"type(text);unique;column(username)"`
-	Password string  `json:"password" orm:"column(password)"`
-	NickName string  `json:"nickname" orm:"type(text);column(nickname)"`
-	Phone    string  `json:"phone"    orm:"column(phone)"`
-	Email    string  `json:"email"    orm:"column(email)"`
-	Coins    float64 `json:"coins"    orm:"column(coins)"`
-	JAccount string  `json:"jaccount" orm:"column(jaccount)"`
+	ID               int     `json:"ID"       orm:"pk;auto;column(Uid)"`
+	Username         string  `json:"username" orm:"type(text);unique;column(username)"`
+	Password         string  `json:"password" orm:"column(password)"`
+	VerificationCode string  `json:"verification_code"`
+	NickName         string  `json:"nickname" orm:"type(text);column(nickname)"`
+	Phone            string  `json:"phone"    orm:"column(phone)"`
+	Email            string  `json:"email"    orm:"column(email)"`
+	Coins            float64 `json:"coins"    orm:"column(coins)"`
+	JAccount         string  `json:"jaccount" orm:"column(jaccount)"`
 }
 
 /*
@@ -527,6 +528,12 @@ type TypeOrderProductReqResp struct {
 	OrderInfo   []TypeOrderProduct `json:"order_info"`
 	ConsigneeID int                `json:"consignee_id"`
 	Token       string             `json:"token"`
+}
+
+type TestMessageVerification struct {
+	MataData TypeMataData `json:"mataData"`
+	Phone    string       `json:"phone"`
+	Status   TypeStatus   `json:"status"`
 }
 
 const (
