@@ -134,20 +134,33 @@ func AddUser(usrInfo TypeUserInfo) (int, error) {
 	s.Coins = -1
 	// check phone via text message
 	conn, err := redisPool.Dial()
-	ErrReport(err)
 	if err != nil {
+		ErrReport(err)
 		return -1, err
 	}
-	num, err := redis.String(conn.Do("GET", fmt.Sprint("Phone_verification", usrInfo.Phone)))
+	num, err := redis.String(conn.Do("GET", fmt.Sprint("Phone_verification", usrInfo.Username)))
 	ErrReport(err)
 	if err != nil {
+		beego.Trace("Key:", fmt.Sprint("Phone_verification", usrInfo.Username))
 		return -1, err
 	}
 	if num != usrInfo.VerificationCode {
+		beego.Trace("code given by user:", usrInfo.VerificationCode, " actual code:", num)
 		return -1, errors.New("Error verifivation code")
+	}
+	// associate jaccount
+	jaccount := TypeAixinwuJaccountInfo{
+		Tel: usrInfo.Username,
+	}
+	err = o.Read(&jaccount, "tel")
+	beego.Trace(jaccount)
+	ErrReport(err)
+	if err == nil {
+		s.JAccount = jaccount.Jaccount_id
 	}
 	id, err := o.Insert(&s)
 	if err != nil {
+		ErrReport(err)
 		return -1, err
 	}
 	beego.Info("Adding user name")
@@ -398,6 +411,36 @@ func GetAixintuItems(start int, length int, category int, itemType string) []Typ
 		beego.Error("Value:\"", itemType, "\" of Field Type not recognized")
 	}
 	_, err = qs.All(&retval)
+	ErrReport(err)
+	beego.Info(qs)
+	// get pictures
+	for index := range retval {
+		images := make([]TypeAixinwuProductImage, 0)
+		_, err = o.QueryTable("lcn_product_image").
+			Filter("product_id", retval[index].Id).
+			All(&images)
+		ErrReport(err)
+		if err != nil || len(images) == 0 {
+			continue
+		}
+		imageStr := ""
+		for _, imgs := range images {
+			imageStr += "img/" + imgs.File + ","
+		}
+		imageStr = imageStr[:len(imageStr)-1]
+		retval[index].Image = imageStr
+		retval[index].DespUrl = fmt.Sprintf("item_aixinwu_item_desp/%d", retval[index].Id)
+	}
+	return retval
+}
+func GetAixintuItemsByID(id int) []TypeAixinwuProduct {
+	o := orm.NewOrm()
+	qs := o.QueryTable("lcn_product")
+	retval := make([]TypeAixinwuProduct, 0)
+	retval = append(retval, TypeAixinwuProduct{
+		Id: id,
+	})
+	err := o.Read(&retval[0])
 	ErrReport(err)
 	beego.Info(qs)
 	// get pictures

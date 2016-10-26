@@ -67,6 +67,7 @@ type TypeItemInfo struct {
 	Description             string    `json:"description"              orm:"(description);type(text);null"`
 	OwnerID                 int       `json:"ownerID"                  orm:"(ownerID);null"`
 	Price                   int       `json:"price"                    orm:"(price);null"`
+	UserSuggestedPrice      int       `json:"user_suggested_price"    orm:"(user_suggested_price);null"`
 	Images                  string    `json:"images"                   orm:"(images);type(text);null"`
 	Status                  int       `json:"status"                   orm:"(status);null"`
 }
@@ -533,7 +534,35 @@ type TypeOrderProductReqResp struct {
 type TestMessageVerification struct {
 	MataData TypeMataData `json:"mataData"`
 	Phone    string       `json:"phone"`
+	Code     string       `json:"code"`
 	Status   TypeStatus   `json:"status"`
+}
+
+type TypeAixinwuAddress struct {
+	Id           int       `json:"id"             orm:"column(id);auto;pk"`
+	Customer_id  string    `json:"customer_id"    orm:"column(customer_id)"`
+	Address_name string    `json:"address_name"   orm:"column(address_name)"`
+	Consignee    string    `json:"consignee"      orm:"column(consignee)"`
+	Phone        string    `json:"phone"          orm:"column(phone)"`
+	Mobile       string    `json:"mobile"         orm:"column(mobile)"`
+	Fax          string    `json:"fax"            orm:"column(fax)"`
+	Postcode     string    `json:"postcode"       orm:"column(postcode)"`
+	Address      string    `json:"address"        orm:"column(address)"`
+	Province_id  int       `json:"province_id"    orm:"column(province_id)"`
+	City_id      int       `json:"city_id"        orm:"column(city_id)"`
+	District_id  int       `json:"district_id"    orm:"column(district_id)"`
+	Is_default   int       `json:"is_default"     orm:"column(is_default)"`
+	Invoice_head string    `json:"invoice_head"   orm:"column(invoice_head)"`
+	Remark       string    `json:"remark"         orm:"column(remark)"`
+	Created_at   time.Time `json:"created_at"     orm:"column(created_at)"`
+	Updated_at   time.Time `json:"updated_at"     orm:"column(updated_at)"`
+	Snum         string    `json:"snum"           orm:"column(snum)"`
+	Email        string    `json:"email"          orm:"column(email)"`
+	Is_deleted   int       `json:"is_deleted"     orm:"column(is_deleted)"`
+}
+
+func (u *TypeAixinwuAddress) TableName() string {
+	return "lcn_customer_address"
 }
 
 const (

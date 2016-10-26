@@ -42,6 +42,7 @@ func init() {
 
 	// Aixinwu Item fetch
 	beego.Router("/api/item_aixinwu_item_get_list", &controllers.AixintuItemGetController{})
+	beego.Router("/api/item_aixinwu_item_get/:productID", &controllers.AixintuItemGetRestfulRController{})
 	beego.Router("/api/item_aixinwu_item_desp/:productID", &controllers.AixintuProductDescriptionRestfulRController{})
 	//beego.Router("/:imgpath", &controllers.AixintuProductDescriptionImgRestfulRController{})
 	beego.Router("/api/item_aixinwu_item_make_order", &controllers.OrderProductController{})

@@ -6,7 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
-	"math/rand"
+	//"math/rand"
 	"net/http"
 )
 
@@ -35,6 +35,7 @@ func (c *UserAddController) Post() {
 	}
 	// check username and psw
 	_, err = AddUser(info)
+	ErrReport(err)
 	retVal.Status = GenStatus(StatusCodeOK)
 	c.Data["json"] = retVal
 	c.ServeJSON()
@@ -55,7 +56,8 @@ func (c *TextMessageVerificationController) Post() {
 	if err != nil {
 		c.Abort("400")
 	}
-	num := fmt.Sprint(rand.Int() % 1000000)
+	//num := fmt.Sprint(rand.Int() % 1000000)
+	num := "666666"
 	urlstr := fmt.Sprintf(`http://api.sms.cn/sms/?ac=send&uid=aixinwu&pwd=6118209e858c6a52f87c32d5c7295322&mobile=%s&content={"code":"%s"}&template=390283`,
 		info.Phone,
 		num,
@@ -80,6 +82,8 @@ func (c *TextMessageVerificationController) Post() {
 	responseText := string(content)
 	beego.Trace(responseText)
 	info.Status = GenStatus(StatusCodeOK)
+	info.Code = num
+	beego.Trace("The Code is ", num)
 	c.Data["json"] = info
 	c.ServeJSON()
 }

@@ -48,6 +48,7 @@ func SysInit() {
 	orm.RegisterModel(new(TypeAixinwuOrder))
 	orm.RegisterModel(new(TypeAixinwuOrderItem))
 	orm.RegisterModel(new(TypeParameters))
+	orm.RegisterModel(new(TypeAixinwuAddress))
 	createTable()
 	makeFakeUser()
 

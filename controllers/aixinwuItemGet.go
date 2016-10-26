@@ -5,6 +5,7 @@ import (
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/dailing/levlog"
 	"html/template"
 	"io/ioutil"
 	"strconv"
@@ -69,4 +70,20 @@ func (c *AixintuProductDescriptionImgRestfulRController) Get() {
 		c.Ctx.Input.Param(":imgpath"))
 	c.Ctx.Output.Body(img)
 	ErrReport(err)
+}
+
+type AixintuItemGetRestfulRController struct {
+	beego.Controller
+}
+
+func (c *AixintuItemGetRestfulRController) Get() {
+	itemID, err := strconv.ParseInt(c.Ctx.Input.Param(":productID"), 10, 64)
+	levlog.E(err)
+	items := GetAixintuItemsByID(int(itemID))
+	resp := TypeAixinwuItemReqResp{
+		AixinwuItems: items,
+		Status:       GenStatus(StatusCodeOK),
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
 }
