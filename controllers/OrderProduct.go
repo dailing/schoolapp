@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"strconv"
 	"time"
 )
 
@@ -245,4 +246,47 @@ func (c *OrderProductController) Post() {
 	// set parameters
 	c.Data["json"] = response
 	c.ServeJSON()
+}
+
+type AixinwuOrderGetController struct {
+	beego.Controller
+}
+
+func (c *AixinwuOrderGetController) Get() {
+	strId := c.Ctx.Input.Param(":uid")
+	strSart := c.Ctx.Input.Param(":start")
+	strLength := c.Ctx.Input.Param(":len")
+	id, _ := strconv.ParseInt(strId, 10, 64)
+	start, _ := strconv.ParseInt(strSart, 10, 64)
+	length, _ := strconv.ParseInt(strLength, 10, 64)
+	retval := c.GetList(int(id), int(length), int(start))
+	c.Data["json"] = retval
+	c.ServeJSON()
+}
+
+func (c *AixinwuOrderGetController) Post() {
+	beego.Debug("get Order")
+	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
+	beego.Info("Post Body is:", string(body), "Length: ", len(body))
+	c.Data["json"] = nil
+	c.ServeJSON()
+}
+
+func (c *AixinwuOrderGetController) GetList(id int,
+	length int,
+	offset int) []TypeAixinwuOrder {
+	o := orm.NewOrm()
+	qs := o.QueryTable(&TypeAixinwuOrder{})
+	qs = qs.OrderBy("-id").
+		Filter("is_delete", 0).
+		Filter("customer_id", id).
+		Offset(offset).
+		Limit(length)
+	retval := make([]TypeAixinwuOrder, 0)
+	_, err := qs.All(&retval)
+	if err != nil {
+		ErrReport(err)
+		return nil
+	}
+	return retval
 }

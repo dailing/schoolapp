@@ -1,8 +1,27 @@
 package controllers
 
 import (
+	"encoding/json"
 	"time"
 )
+
+type AWXtime struct {
+	time.Time
+}
+
+const ctLayout = "2006-01-02 15:04:05"
+
+//func (ct *AWXtime) UnmarshalJSON(b []byte) (err error) {
+//	if b[0] == '"' && b[len(b)-1] == '"' {
+//		b = b[1 : len(b)-1]
+//	}
+//	ct.Time, err = time.Parse(ctLayout, string(b))
+//	return
+//}
+
+func (ct AWXtime) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + ct.Time.Local().Format(ctLayout) + `"`), nil
+}
 
 type TypeMataData struct {
 	TimeStamp int
@@ -56,7 +75,7 @@ type TypeUserInfo struct {
 type TypeItemInfo struct {
 	ID                      int       `json:"ID"                       orm:"pk;auto;(id)"`
 	Caption                 string    `json:"caption"                  orm:"(caption);type(text);null"`
-	BoughtAt                time.Time `json:"boughtAt"                 orm:"(boughtAt);null"`
+	BoughtAt                time.Time `json:"boughtAt"                 orm:"(boughtAt);type(datetime)null"`
 	ItemCondition           int       `json:"itemCondition"            orm:"(itemCondition);null"`
 	EstimatedPriceByUser    int       `json:"estimatedPriceByUser"     orm:"(estimatedPriceByUser);null"`
 	EstimatedPriceByAiXinWu int       `json:"estimatedPriceByAiXinWu"  orm:"(estimatedPriceByAiXinWu);null"`
@@ -70,6 +89,19 @@ type TypeItemInfo struct {
 	UserSuggestedPrice      int       `json:"user_suggested_price"    orm:"(user_suggested_price);null"`
 	Images                  string    `json:"images"                   orm:"(images);type(text);null"`
 	Status                  int       `json:"status"                   orm:"(status);null"`
+}
+
+func (t *TypeItemInfo) MarshalJSON() ([]byte, error) {
+	type Alias TypeItemInfo
+	return json.Marshal(&struct {
+		*Alias
+		BoughtAt    AWXtime `json:"boughtAt"`
+		PublishedAt AWXtime `json:"publishedAt"              orm:"(publishedAt);null"`
+	}{
+		BoughtAt:    AWXtime{t.BoughtAt},
+		PublishedAt: AWXtime{t.PublishedAt},
+		Alias:       (*Alias)(t),
+	})
 }
 
 type TypeItemReqResp struct {
@@ -104,6 +136,17 @@ type TypeItemComments struct {
 	Created     time.Time `json:"created"       orm:"auto_now_add;type(datetime)"`
 }
 
+func (t *TypeItemComments) MarshalJSON() ([]byte, error) {
+	type Alias TypeItemComments
+	return json.Marshal(&struct {
+		*Alias
+		Created AWXtime `json:"created"       orm:"auto_now_add;type(datetime)"`
+	}{
+		Created: AWXtime{t.Created},
+		Alias:   (*Alias)(t),
+	})
+}
+
 type TypeCommentReq struct {
 	MataData TypeMataData     `json:"mataData"`
 	Token    string           `json:"token"`
@@ -128,6 +171,17 @@ type TypeChatInfo struct {
 	BuyerID     int       `json:"buyer_id"      orm:"(buyer_id)"`
 	PublisherID int       `json:"publisher_id"  orm:"(publisher_id)"`
 	Created     time.Time `json:"created"       orm:"auto_now_add;type(datetime)"`
+}
+
+func (t *TypeChatInfo) MarshalJSON() ([]byte, error) {
+	type Alias TypeChatInfo
+	return json.Marshal(&struct {
+		*Alias
+		Created AWXtime `json:"created"       orm:"auto_now_add;type(datetime)"`
+	}{
+		Created: AWXtime{t.Created},
+		Alias:   (*Alias)(t),
+	})
 }
 
 type TypeChatReq struct {
@@ -184,6 +238,17 @@ type TypeLcnDonateBatch struct {
 	Donation_sn string    `json:"donation_sn"    orm:"(donation_sn)"`
 	Barcode     string    `json:"barcode"        orm:"(barcode)"`
 	Status      int       `json:"status"         orm:"(status)"`
+}
+
+func (t *TypeLcnDonateBatch) MarshalJSON() ([]byte, error) {
+	type Alias TypeLcnDonateBatch
+	return json.Marshal(&struct {
+		*Alias
+		Produced_at AWXtime `json:"produced_at"    orm:"auto_now_add;type(datetime);(produced_at)"`
+	}{
+		Produced_at: AWXtime{t.Produced_at},
+		Alias:       (*Alias)(t),
+	})
 }
 
 func (u *TypeLcnDonateBatch) TableName() string {
@@ -245,6 +310,25 @@ type TypeAixinwuProduct struct {
 	DespUrl                string    `json:"desp_url"                orm:"-"` // ignore field
 }
 
+func (t *TypeAixinwuProduct) MarshalJSON() ([]byte, error) {
+	type Alias TypeAixinwuProduct
+	return json.Marshal(&struct {
+		*Alias
+		On_sale_at             AWXtime `json:"on_sale_at"              orm:"column(on_sale_at)"`
+		Special_price_start_at AWXtime `json:"special_price_start_at"  orm:"column(special_price_start_at)"`
+		Special_price_end_at   AWXtime `json:"special_price_end_at"    orm:"column(special_price_end_at)"`
+		Created_at             AWXtime `json:"created_at"              orm:"column(created_at)"`
+		Updated_at             AWXtime `json:"updated_at"              orm:"column(updated_at)"`
+	}{
+		On_sale_at:             AWXtime{t.On_sale_at},
+		Special_price_start_at: AWXtime{t.Special_price_start_at},
+		Special_price_end_at:   AWXtime{t.Special_price_end_at},
+		Created_at:             AWXtime{t.Created_at},
+		Updated_at:             AWXtime{t.Updated_at},
+		Alias:                  (*Alias)(t),
+	})
+}
+
 func (u *TypeAixinwuProduct) TableName() string {
 	return "lcn_product"
 }
@@ -287,6 +371,19 @@ type TypeAixinwuProductImage struct {
 	Sort_order int       `json:"sort_order"   orm:"column(sort_order)"`
 	Created_at time.Time `json:"created_at"   orm:"column(created_at)"`
 	Updated_at time.Time `json:"updated_at"   orm:"column(updated_at)"`
+}
+
+func (t *TypeAixinwuProductImage) MarshalJSON() ([]byte, error) {
+	type Alias TypeAixinwuProductImage
+	return json.Marshal(&struct {
+		*Alias
+		Created_at AWXtime `json:"created_at"   orm:"column(created_at)"`
+		Updated_at AWXtime `json:"updated_at"   orm:"column(updated_at)"`
+	}{
+		Created_at: AWXtime{t.Created_at},
+		Updated_at: AWXtime{t.Updated_at},
+		Alias:      (*Alias)(t),
+	})
 }
 
 func (u *TypeAixinwuProductImage) TableName() string {
@@ -357,10 +454,23 @@ type TypeAixinwuOrder struct {
 	Customer_remark     string    `json:"customer_remark"       orm:"column(customer_remark)"`
 	Status              int       `json:"status"                orm:"column(status)"`
 	Is_delete           int       `json:"is_delete"             orm:"column(is_delete)"`
-	Place_at            time.Time `json:"place_at"              orm:"column(place_at)"`
 	Barcode             string    `json:"barcode"               orm:"column(barcode)"`
 	Consignee_id        int       `json:"consignee_id"          orm:"column(consignee_id)"`
+	Place_at            time.Time `json:"place_at"              orm:"column(place_at)"`
 	Update_at           time.Time `json:"update_at"             orm:"column(update_at)"`
+}
+
+func (t *TypeAixinwuOrder) MarshalJSON() ([]byte, error) {
+	type Alias TypeAixinwuOrder
+	return json.Marshal(&struct {
+		*Alias
+		Place_at  AWXtime `json:"place_at"              orm:"column(place_at)"`
+		Update_at AWXtime `json:"update_at"             orm:"column(update_at)"`
+	}{
+		Place_at:  AWXtime{t.Place_at},
+		Update_at: AWXtime{t.Update_at},
+		Alias:     (*Alias)(t),
+	})
 }
 
 func (u *TypeAixinwuOrder) TableName() string {
@@ -405,6 +515,19 @@ type TypeAixinwuItem struct {
 	Validity       time.Time `json:"validity"         orm:"column(validity)"`
 	Is_delete      int       `json:"is_delete"        orm:"column(is_delete)"`
 	Image_name     string    `json:"image_name"       orm:"column(image_name)"`
+}
+
+func (t *TypeAixinwuItem) MarshalJSON() ([]byte, error) {
+	type Alias TypeAixinwuItem
+	return json.Marshal(&struct {
+		*Alias
+		Create_time AWXtime `json:"create_time"      orm:"column(create_time)"`
+		Validity    AWXtime `json:"validity"         orm:"column(validity)"`
+	}{
+		Create_time: AWXtime{t.Create_time},
+		Validity:    AWXtime{t.Validity},
+		Alias:       (*Alias)(t),
+	})
 }
 
 func (u *TypeAixinwuItem) TableName() string {
@@ -563,6 +686,12 @@ type TypeAixinwuAddress struct {
 
 func (u *TypeAixinwuAddress) TableName() string {
 	return "lcn_customer_address"
+}
+
+type TypeAixinwuAddressResp struct {
+	MataData TypeMataData         `json:"mata_data"`
+	Address  []TypeAixinwuAddress `json:"address"`
+	Status   TypeStatus           `json:"status"`
 }
 
 const (
