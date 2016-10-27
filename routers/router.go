@@ -15,6 +15,8 @@ func init() {
 	beego.Router("/api/usr_add", &controllers.UserAddController{})
 	beego.Router("/api/phone_verification", &controllers.TextMessageVerificationController{})
 	beego.Router("/api/usr_get", &controllers.UserGetController{})
+	beego.Router("/api/usr_get_address", &controllers.UserGetAddressController{})
+	beego.Router("/api/usr_get_by_id/:uid", &controllers.UserGetRestfulController{})
 	beego.Router("/api/usr_update", &controllers.UserUpdateController{})
 
 	beego.Router("/api/img_upload", &controllers.ImgUploadController{})
@@ -46,6 +48,9 @@ func init() {
 	beego.Router("/api/item_aixinwu_item_desp/:productID", &controllers.AixintuProductDescriptionRestfulRController{})
 	//beego.Router("/:imgpath", &controllers.AixintuProductDescriptionImgRestfulRController{})
 	beego.Router("/api/item_aixinwu_item_make_order", &controllers.OrderProductController{})
+
+	beego.Router("/api/aixinwu_order_get", &controllers.AixinwuOrderGetController{})
+	beego.Router("/api/aixinwu_order_get/:uid/:start/:len", &controllers.AixinwuOrderGetController{})
 
 	beego.ErrorHandler("404", serve404)
 }
