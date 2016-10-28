@@ -308,6 +308,7 @@ type TypeAixinwuProduct struct {
 	Is_cash                int       `json:"is_cash"                 orm:"column(is_cash)"`
 	Image                  string    `json:"image"                   orm:"-"` // ignore this field in database
 	DespUrl                string    `json:"desp_url"                orm:"-"` // ignore field
+	OriginalPrice          float64   `json:"original_price"          orm:"-"`
 }
 
 func (t *TypeAixinwuProduct) MarshalJSON() ([]byte, error) {
@@ -712,6 +713,57 @@ type TypeAixinwuOrderItemGetReq struct {
 type TypeAixinwuOrderItemResp struct {
 	Items  []TypeAixinwuOrderItem `json:"items"`
 	Status TypeStatus             `json:"status"`
+}
+
+type TypeAixinwuVolunteerAct struct {
+	Id         int       `json:"id"         orm:"column(id)"`
+	Name       string    `json:"name"       orm:"column(name)"`
+	Poster     string    `json:"poster"     orm:"column(poster)"`
+	About      string    `json:"about"      orm:"column(about)"`
+	Content    string    `json:"content"    orm:"column(content)"`
+	Work_date  time.Time `json:"work_date"  orm:"column(work_date)"`
+	Workload   int       `json:"workload"   orm:"column(workload)"`
+	Site       string    `json:"site"       orm:"column(site)"`
+	Status     int       `json:"status"     orm:"column(status)"`
+	Pay_cash   int       `json:"pay_cash"   orm:"column(pay_cash)"`
+	Num_needed int       `json:"num_needed" orm:"column(num_needed)"`
+	Num_signed int       `json:"num_signed" orm:"column(num_signed)"`
+	Created_at time.Time `json:"created_at" orm:"column(created_at)"`
+	Updated_at time.Time `json:"updated_at" orm:"column(updated_at)"`
+}
+
+func (u *TypeAixinwuVolunteerAct) TableName() string {
+	return "lcn_volunteer_act"
+}
+
+type TypeServerParameters struct {
+	Id    int    `orm:"column(id);pk;auto"`
+	Key   string `orm:"column(key);unique"`
+	Value string `orm:"column(value)"`
+}
+
+type TypeAixinwuVolunteer struct {
+	Id         int       `json:"id"          orm:"column(id)"`
+	Uid        int       `json:"uid"         orm:"column(uid)"`
+	Project_id int       `json:"project_id"  orm:"column(project_id)"`
+	Project    string    `json:"project"     orm:"column(project)"`
+	Work_date  time.Time `json:"work_date"   orm:"column(work_date)"`
+	Update_at  time.Time `json:"update_at"   orm:"column(update_at)"`
+	Workload   float64   `json:"workload"    orm:"column(workload)"`
+	Content    string    `json:"content"     orm:"column(content)"`
+	Tel        string    `json:"tel"         orm:"column(tel)"`
+	Pay_cash   int       `json:"pay_cash"    orm:"column(pay_cash)"`
+}
+
+func (u *TypeAixinwuVolunteer) TableName() string {
+	return "lcn_volunteer"
+}
+
+type TypeAixinwuVolunteerJoinReq struct {
+	Token      string    `json:"token"`
+	Project_id int       `json:"project_id"`
+	Work_date  time.Time `json:"work_date"`
+	Tel        string    `json:"tel"`
 }
 
 const (

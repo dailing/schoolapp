@@ -413,6 +413,13 @@ func GetAixintuItems(start int, length int, category int, itemType string) []Typ
 	_, err = qs.All(&retval)
 	ErrReport(err)
 	beego.Info(qs)
+	// check half price
+	var isHalf bool
+	if ServerParameterGet("halfPrice") == "yes" {
+		isHalf = true
+	} else {
+		isHalf = false
+	}
 	// get pictures
 	for index := range retval {
 		images := make([]TypeAixinwuProductImage, 0)
@@ -430,6 +437,10 @@ func GetAixintuItems(start int, length int, category int, itemType string) []Typ
 		imageStr = imageStr[:len(imageStr)-1]
 		retval[index].Image = imageStr
 		retval[index].DespUrl = fmt.Sprintf("item_aixinwu_item_desp/%d", retval[index].Id)
+		retval[index].OriginalPrice = retval[index].Price
+		if isHalf {
+			retval[index].Price = retval[index].Price / 2
+		}
 	}
 	return retval
 }
@@ -462,4 +473,49 @@ func GetAixintuItemsByID(id int) []TypeAixinwuProduct {
 		retval[index].DespUrl = fmt.Sprintf("item_aixinwu_item_desp/%d", retval[index].Id)
 	}
 	return retval
+}
+
+func ServerParameterGet(key string) string {
+	o := orm.NewOrm()
+	param := TypeServerParameters{
+		Key: key,
+	}
+	err := o.Read(&param, "key")
+	ErrReport(err)
+	return param.Value
+}
+
+func ServerParameterHas(key string) bool {
+	o := orm.NewOrm()
+	param := TypeServerParameters{
+		Key: key,
+	}
+	err := o.Read(&param, "key")
+	if err == nil {
+		return true
+	}
+	if err == orm.ErrNoRows {
+		return false
+	}
+	ErrReport(err)
+	return false
+}
+
+func ServerParameterSet(key string, value string) error {
+	o := orm.NewOrm()
+	param := TypeServerParameters{
+		Key: key,
+	}
+	err := o.Read(&param, "key")
+	if err != nil && err != orm.ErrNoRows {
+		return err
+	}
+	param.Value = value
+	if err == orm.ErrNoRows {
+		_, err = o.Insert(&param)
+		ErrReport(err)
+		return err
+	}
+	_, err = o.Update(&param)
+	return err
 }

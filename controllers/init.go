@@ -38,7 +38,6 @@ func SysInit() {
 	orm.RegisterModel(new(TypeItemInfo))
 	orm.RegisterModel(new(TypeItemComments))
 	orm.RegisterModel(new(TypeChatInfo))
-	//orm.RegisterModel(new(TypeLcnJacountInfo))
 	orm.RegisterModel(new(TypeLcnDonateBatch))
 	orm.RegisterModel(new(TypeAixinwuProduct))
 	orm.RegisterModel(new(TypeAixinwuProductImage))
@@ -50,8 +49,13 @@ func SysInit() {
 	orm.RegisterModel(new(TypeAixinwuOrderItem))
 	orm.RegisterModel(new(TypeParameters))
 	orm.RegisterModel(new(TypeAixinwuAddress))
+	orm.RegisterModel(new(TypeAixinwuVolunteerAct))
+	orm.RegisterModel(new(TypeServerParameters))
+	orm.RegisterModel(new(TypeAixinwuVolunteer))
 	createTable()
 	makeFakeUser()
+
+	ServerParameterSet("halfPrice", "yes")
 
 	//	val := GetAixintuItems(10, 10)
 	//	content, _ := json.Marshal(val)

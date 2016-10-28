@@ -349,6 +349,7 @@ func (c *AixinwuOrderItemGetController) Post() {
 		retval := make([]TypeAixinwuOrderItem, 0)
 		qs.All(&retval)
 		response.Items = retval
+		break
 	}
 	c.Data["json"] = response
 	c.ServeJSON()
