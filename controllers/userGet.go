@@ -83,6 +83,12 @@ func (c *UserGetRestfulController) Get() {
 		ErrReport(err)
 		c.Abort("400")
 	}
-	c.Data["json"] = userinfo
+	c.Data["json"] = struct {
+		Username string `json:"username" orm:"type(text);unique;column(username)"`
+		NickName string `json:"nickname" orm:"type(text);column(nickname)"`
+	}{
+		Username: userinfo.Username,
+		NickName: userinfo.NickName,
+	}
 	c.ServeJSON()
 }
