@@ -50,6 +50,7 @@ func init() {
 	beego.Router("/api/item_aixinwu_item_make_order", &controllers.OrderProductController{})
 
 	beego.Router("/api/aixinwu_order_get", &controllers.AixinwuOrderGetController{})
+	beego.Router("/api/aixinwu_order_item_get", &controllers.AixinwuOrderItemGetController{})
 	beego.Router("/api/aixinwu_order_get/:uid/:start/:len", &controllers.AixinwuOrderGetController{})
 
 	beego.ErrorHandler("404", serve404)

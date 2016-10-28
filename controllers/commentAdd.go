@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/astaxie/beego"
+	"time"
 )
 
 type CommentAddController struct {
@@ -31,6 +32,8 @@ func (c *CommentAddController) Post() {
 	}
 	// set parameters
 	request.Comment.PublisherID = tInfo.UserID
+	request.Comment.Created = time.Now()
+	beego.Error(request.Comment.Created)
 	// do insert
 	_, err = AddComments(request.Comment)
 	ErrReport(err)

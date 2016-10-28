@@ -268,7 +268,22 @@ func (c *AixinwuOrderGetController) Post() {
 	beego.Debug("get Order")
 	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
 	beego.Info("Post Body is:", string(body), "Length: ", len(body))
-	c.Data["json"] = nil
+	request := TypeAixinwuOrderGetReq{}
+	err := json.Unmarshal(body, &request)
+	ErrReport(err)
+	if err != nil {
+		c.Abort("400")
+	}
+	tokeninfo := ParseToken(request.Token)
+	if tokeninfo.UserID <= 0 {
+		beego.Warn("token err:", request.Token)
+		c.Abort("400")
+	}
+	response := TypeAixinwuOrderGetResp{
+		Status: GenStatus(StatusCodeOK),
+		Orders: c.GetList(tokeninfo.UserID, request.Length, request.Offset),
+	}
+	c.Data["json"] = response
 	c.ServeJSON()
 }
 
@@ -289,4 +304,52 @@ func (c *AixinwuOrderGetController) GetList(id int,
 		return nil
 	}
 	return retval
+}
+
+type AixinwuOrderItemGetController struct {
+	beego.Controller
+}
+
+func (c *AixinwuOrderItemGetController) Post() {
+	beego.Debug("get Order")
+	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
+	beego.Info("Post Body is:", string(body), "Length: ", len(body))
+	request := TypeAixinwuOrderItemGetReq{}
+	response := TypeAixinwuOrderItemResp{
+		Status: GenStatus(StatusCodeOK),
+	}
+	err := json.Unmarshal(body, &request)
+	ErrReport(err)
+	if err != nil {
+		c.Abort("400")
+	}
+	for {
+		o := orm.NewOrm()
+		tokeninfo := ParseToken(request.Token)
+
+		orderInfo := TypeAixinwuOrder{
+			Id: request.OrderID,
+		}
+		err = o.Read(&orderInfo)
+		if err != nil {
+			ErrReport(err)
+			response.Status = GenStatus(StatusCodeDatabaseErr)
+			break
+		}
+		if tokeninfo.UserID != orderInfo.Customer_id {
+			beego.Warn("custumos id and order id not match:",
+				tokeninfo.UserID, " ,, ",
+				orderInfo.Customer_id,
+			)
+			response.Status = GenStatus(StatusCodeUndefinedError)
+			break
+		}
+		qs := o.QueryTable(&TypeAixinwuOrderItem{})
+		qs = qs.Filter("order_id", request.OrderID)
+		retval := make([]TypeAixinwuOrderItem, 0)
+		qs.All(&retval)
+		response.Items = retval
+	}
+	c.Data["json"] = response
+	c.ServeJSON()
 }

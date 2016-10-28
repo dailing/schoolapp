@@ -694,6 +694,26 @@ type TypeAixinwuAddressResp struct {
 	Status   TypeStatus           `json:"status"`
 }
 
+type TypeAixinwuOrderGetReq struct {
+	Token  string `json:"token"`
+	Offset int    `json:"offset"`
+	Length int    `json:"length"`
+}
+
+type TypeAixinwuOrderGetResp struct {
+	Status TypeStatus         `json:"status"`
+	Orders []TypeAixinwuOrder `json:"orders"`
+}
+
+type TypeAixinwuOrderItemGetReq struct {
+	Token   string `json:"token"`
+	OrderID int    `json:"order_id"`
+}
+type TypeAixinwuOrderItemResp struct {
+	Items  []TypeAixinwuOrderItem `json:"items"`
+	Status TypeStatus             `json:"status"`
+}
+
 const (
 	StatusCodeOK             = iota
 	StatusCodeErrorLoginInfo = iota
