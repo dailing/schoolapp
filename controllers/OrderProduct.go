@@ -290,6 +290,10 @@ func (c *AixinwuOrderGetController) Post() {
 func (c *AixinwuOrderGetController) GetList(id int,
 	length int,
 	offset int) []TypeAixinwuOrder {
+	beego.Trace("Getting Order List len:",
+		length, " offset ",
+		offset,
+	)
 	o := orm.NewOrm()
 	qs := o.QueryTable(&TypeAixinwuOrder{})
 	qs = qs.OrderBy("-id").
@@ -348,6 +352,22 @@ func (c *AixinwuOrderItemGetController) Post() {
 		qs = qs.Filter("order_id", request.OrderID)
 		retval := make([]TypeAixinwuOrderItem, 0)
 		qs.All(&retval)
+		for index := range retval {
+			images := make([]TypeAixinwuProductImage, 0)
+			_, err = o.QueryTable("lcn_product_image").
+				Filter("product_id", retval[index].Product_id).
+				All(&images)
+			ErrReport(err)
+			if err != nil || len(images) == 0 {
+				continue
+			}
+			imageStr := ""
+			for _, imgs := range images {
+				imageStr += "img/" + imgs.File + ","
+			}
+			imageStr = imageStr[:len(imageStr)-1]
+			retval[index].Image = imageStr
+		}
 		response.Items = retval
 		break
 	}

@@ -493,6 +493,7 @@ type TypeAixinwuOrderItem struct {
 	Price        float64 `json:"price"            orm:"column(price)"`
 	Weight       int     `json:"weight"           orm:"column(weight)"`
 	Category     int     `json:"category"         orm:"column(category)"`
+	Image        string  `json:"image"            orm:"-"`
 }
 
 func (u *TypeAixinwuOrderItem) TableName() string {
@@ -730,6 +731,8 @@ type TypeAixinwuVolunteerAct struct {
 	Num_signed int       `json:"num_signed" orm:"column(num_signed)"`
 	Created_at time.Time `json:"created_at" orm:"column(created_at)"`
 	Updated_at time.Time `json:"updated_at" orm:"column(updated_at)"`
+	Image      string    `json:"image"      orm:"-"`
+	Joined     int       `json:"joined"     orm:"-"`
 }
 
 func (u *TypeAixinwuVolunteerAct) TableName() string {
@@ -764,6 +767,13 @@ type TypeAixinwuVolunteerJoinReq struct {
 	Project_id int       `json:"project_id"`
 	Work_date  time.Time `json:"work_date"`
 	Tel        string    `json:"tel"`
+}
+
+type TypeSetAddressReq struct {
+	Token     string `json:"token"`
+	Consignee string `json:"consignee"      orm:"column(consignee)"`
+	Mobile    string `json:"mobile"         orm:"column(mobile)"`
+	Snum      string `json:"snum"           orm:"column(snum)"`
 }
 
 const (

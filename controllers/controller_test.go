@@ -16,6 +16,6 @@ func TestStaticGetMoney(t *testing.T) {
 }
 
 func TestGetAllItem(t *testing.T) {
-	items := GetAllItem(0,10);
+	items := GetAllItem(0, 10)
 	fmt.Println(items)
 }

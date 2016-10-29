@@ -50,16 +50,26 @@ func (c *UserGetAddressController) Post() {
 	info := TypeRegularReq{}
 	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
 	beego.Info("Post Body is:", string(body))
+	err := json.Unmarshal(body, &info)
+	ErrReport(err)
 	tokeninfo := ParseToken(info.Token)
 	if tokeninfo.UserID <= 0 {
 		c.Abort("400")
 	}
-	strId := fmt.Sprint(tokeninfo.UserID)
 	o := orm.NewOrm()
-	qs := o.QueryTable("lcn_customer_address")
+	localuserino, err := GetUserInfoByID(fmt.Sprint(tokeninfo.UserID))
+	ErrReport(err)
+	aixinwuUserinfo := TypeAixinwuJaccountInfo{
+		Jaccount_id: localuserino.JAccount,
+	}
+	ErrReport(o.Read(&aixinwuUserinfo, "jaccount_id"))
+
+	strId := fmt.Sprint(aixinwuUserinfo.Customer_id)
+	qs := o.QueryTable(&TypeAixinwuAddress{})
 	qs = qs.Filter("customer_id", strId).Filter("is_deleted", 0)
 	retval := make([]TypeAixinwuAddress, 0)
-	_, err := qs.All(&retval)
+	_, err = qs.All(&retval)
+	beego.Trace("UserID :", strId, " ", retval)
 	ErrReport(err)
 	if err != nil {
 		c.Abort("500")

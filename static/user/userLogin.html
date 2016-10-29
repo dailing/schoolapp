@@ -12,6 +12,20 @@
             console.info(token);
             document.getElementById("resp").innerHTML = token;
         }
+        function getOrder() {
+            var Name = document.getElementById("usr_add_name").value;
+            var psw = document.getElementById("usr_add_psw").value;
+            var token = user_login(Name, psw);
+            console.info(token);
+            var jobj = {
+                token: token,
+                offset:0,
+                length:1
+            };
+            resp = doAjaxCall(jobj,"/api/aixinwu_order_get");
+            document.getElementById("resp").innerHTML = JSON.stringify(resp);
+
+        }
     </script>
 
 </head>
@@ -28,6 +42,7 @@
         </tr>
     </table>
     <input type="button" value="Submit" id="usr_add_submit" onclick="btnFunc()">
+    <input type="button" value="Order" onclick="getOrder()">
 </form>
 <div id = "resp"></div>
 

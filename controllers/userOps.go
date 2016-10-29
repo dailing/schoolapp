@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -148,16 +149,35 @@ func AddUser(usrInfo TypeUserInfo) (int, error) {
 		beego.Trace("code given by user:", usrInfo.VerificationCode, " actual code:", num)
 		return -1, errors.New("Error verifivation code")
 	}
+	tmp, _ := json.Marshal(&usrInfo)
+	beego.Trace(string(tmp))
 	// associate jaccount
-	jaccount := TypeAixinwuJaccountInfo{
-		Tel: usrInfo.Username,
+	address := TypeAixinwuAddress{
+		Mobile:     usrInfo.Username,
+		Is_default: 1,
 	}
-	err = o.Read(&jaccount, "tel")
-	beego.Trace(jaccount)
+	tmp, _ = json.Marshal(&address)
+	beego.Trace(string(tmp))
+	err = o.Read(&address, "mobile", "is_default")
+	tmp, _ = json.Marshal(&address)
+	beego.Trace(string(tmp))
 	ErrReport(err)
-	if err == nil {
-		s.JAccount = jaccount.Jaccount_id
+	if address.Id > 0 {
+		i, err := strconv.ParseInt(address.Customer_id, 10, 64)
+		ErrReport(err)
+		jaccount := TypeAixinwuJaccountInfo{
+			Customer_id: int(i),
+		}
+		err = o.Read(&jaccount, "customer_id")
+		tmp, _ := json.Marshal(&jaccount)
+		beego.Trace(string(tmp))
+		beego.Trace(jaccount)
+		ErrReport(err)
+		if err == nil {
+			s.JAccount = jaccount.Jaccount_id
+		}
 	}
+
 	id, err := o.Insert(&s)
 	if err != nil {
 		ErrReport(err)
@@ -439,7 +459,7 @@ func GetAixintuItems(start int, length int, category int, itemType string) []Typ
 		retval[index].DespUrl = fmt.Sprintf("item_aixinwu_item_desp/%d", retval[index].Id)
 		retval[index].OriginalPrice = retval[index].Price
 		if isHalf {
-			retval[index].Price = retval[index].Price / 2
+			retval[index].Price /= 2 // retval[index].Price / 2
 		}
 	}
 	return retval
@@ -455,6 +475,12 @@ func GetAixintuItemsByID(id int) []TypeAixinwuProduct {
 	ErrReport(err)
 	beego.Info(qs)
 	// get pictures
+	var isHalf bool
+	if ServerParameterGet("halfPrice") == "yes" {
+		isHalf = true
+	} else {
+		isHalf = false
+	}
 	for index := range retval {
 		images := make([]TypeAixinwuProductImage, 0)
 		_, err = o.QueryTable("lcn_product_image").
@@ -471,6 +497,10 @@ func GetAixintuItemsByID(id int) []TypeAixinwuProduct {
 		imageStr = imageStr[:len(imageStr)-1]
 		retval[index].Image = imageStr
 		retval[index].DespUrl = fmt.Sprintf("item_aixinwu_item_desp/%d", retval[index].Id)
+		retval[index].OriginalPrice = retval[index].Price
+		if isHalf {
+			retval[index].Price /= 2 // retval[index].Price / 2
+		}
 	}
 	return retval
 }
@@ -518,4 +548,17 @@ func ServerParameterSet(key string, value string) error {
 	}
 	_, err = o.Update(&param)
 	return err
+}
+
+func TransferLocalIDtoAixinwuID(id int) int {
+	o := orm.NewOrm()
+
+	userinfo, err := GetUserInfoByID(fmt.Sprint(id))
+	ErrReport(err)
+	jainfo := TypeAixinwuJaccountInfo{
+		Jaccount_id: userinfo.JAccount,
+	}
+	ErrReport(o.Read(&jainfo, "jaccount_id"))
+
+	return jainfo.Customer_id
 }
