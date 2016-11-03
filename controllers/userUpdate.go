@@ -14,6 +14,7 @@ func (c *UserUpdateController) Post() {
 	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
 	beego.Info("Post Body is:", string(body))
 	err := json.Unmarshal(body, &info)
+	beego.Trace(string(body))
 	ErrReport(err)
 	if err != nil {
 		c.Abort("500")

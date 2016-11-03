@@ -13,7 +13,7 @@ type ImgUploadController struct {
 
 var imgPath = [...]string{
 	"./uploadimgs/",
-	"/home/sjtu/Sites/test.aixinwu.sjtu.edu.cn/admin/uploads/webcam/",
+	"/home/sjtu/Sites/aixinwu.sjtu.edu.cn/admin/uploads/webcam/",
 }
 
 func (c *ImgUploadController) Post() {

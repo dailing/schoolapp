@@ -67,16 +67,18 @@ func (c *OrderProductController) Post() {
 		for _, item := range request.OrderInfo {
 			var product *TypeAixinwuProduct
 			if !item.IsBook {
-				_product := TypeAixinwuProduct{
-					Id: item.ProductID,
-				}
-				beego.Trace("adding ", item.ProductID)
-				err := o.Read(&_product)
-				ErrReport(err)
-				product = &_product
+				//_product := TypeAixinwuProduct{
+				//	Id: item.ProductID,
+				//}
+				//beego.Trace("adding ", item.ProductID)
+				//err := o.Read(&_product)
+				//ErrReport(err)
+				product = &(GetAixintuItemsByID(item.ProductID)[0])
+				beego.Error("order", " original ", product.OriginalPrice, " now ", product.GetPrice())
 			} else {
 				// TODO fix this
 				response.Status = GenStatus(StatusCodeNotImplemented)
+				beego.Error("Not implementled")
 				//product = &TypeAixinwuBook{
 				//	ISBN: item.ProductID,
 				//}
@@ -132,11 +134,12 @@ func (c *OrderProductController) Post() {
 			break
 		}
 		// make a record
+		address := getAddress(jaccountInfo.Customer_id)
 		order := TypeAixinwuOrder{
 			Customer_id:         jaccountInfo.Customer_id,
 			Total_price:         total_price,
 			Total_product_price: total_price,
-			Consignee_id:        jaccountInfo.Customer_id,
+			Consignee_id:        address.Id,
 			Status:              3,
 			Place_at:            time.Now(),
 			Order_sn:            GenerateRandSN(&TypeAixinwuOrder{}),
@@ -281,7 +284,7 @@ func (c *AixinwuOrderGetController) Post() {
 	}
 	response := TypeAixinwuOrderGetResp{
 		Status: GenStatus(StatusCodeOK),
-		Orders: c.GetList(tokeninfo.UserID, request.Length, request.Offset),
+		Orders: c.GetList(TransferLocalIDtoAixinwuID(tokeninfo.UserID), request.Length, request.Offset),
 	}
 	c.Data["json"] = response
 	c.ServeJSON()
@@ -306,6 +309,9 @@ func (c *AixinwuOrderGetController) GetList(id int,
 	if err != nil {
 		ErrReport(err)
 		return nil
+	}
+	for index, _ := range retval {
+		retval[index].Items = getItems(retval[index].Id)
 	}
 	return retval
 }
@@ -348,29 +354,34 @@ func (c *AixinwuOrderItemGetController) Post() {
 			response.Status = GenStatus(StatusCodeUndefinedError)
 			break
 		}
-		qs := o.QueryTable(&TypeAixinwuOrderItem{})
-		qs = qs.Filter("order_id", request.OrderID)
-		retval := make([]TypeAixinwuOrderItem, 0)
-		qs.All(&retval)
-		for index := range retval {
-			images := make([]TypeAixinwuProductImage, 0)
-			_, err = o.QueryTable("lcn_product_image").
-				Filter("product_id", retval[index].Product_id).
-				All(&images)
-			ErrReport(err)
-			if err != nil || len(images) == 0 {
-				continue
-			}
-			imageStr := ""
-			for _, imgs := range images {
-				imageStr += "img/" + imgs.File + ","
-			}
-			imageStr = imageStr[:len(imageStr)-1]
-			retval[index].Image = imageStr
-		}
-		response.Items = retval
+		response.Items = getItems(request.OrderID)
 		break
 	}
 	c.Data["json"] = response
 	c.ServeJSON()
+}
+
+func getItems(orderid int) []TypeAixinwuOrderItem {
+	o := orm.NewOrm()
+	qs := o.QueryTable(&TypeAixinwuOrderItem{})
+	qs = qs.Filter("order_id", orderid)
+	retval := make([]TypeAixinwuOrderItem, 0)
+	qs.All(&retval)
+	for index := range retval {
+		images := make([]TypeAixinwuProductImage, 0)
+		_, err := o.QueryTable("lcn_product_image").
+			Filter("product_id", retval[index].Product_id).
+			All(&images)
+		ErrReport(err)
+		if err != nil || len(images) == 0 {
+			continue
+		}
+		imageStr := ""
+		for _, imgs := range images {
+			imageStr += "img/" + imgs.File + ","
+		}
+		imageStr = imageStr[:len(imageStr)-1]
+		retval[index].Image = imageStr
+	}
+	return retval
 }

@@ -27,7 +27,7 @@ func (c *AixinwuVolunteerActGetController) Post() {
 
 	for index, _ := range response {
 		if response[index].Poster != "" {
-			response[index].Image = "http://test.aixinwu.info/uploads/" +
+			response[index].Image = "http://aixinwu.sjtu.edu.cn/uploads/" +
 				response[index].Poster
 		}
 		volunteer := TypeAixinwuVolunteer{

@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/orm"
+	"github.com/garyburd/redigo/redis"
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
-	//"math/rand"
+	"math/rand"
 	"net/http"
+	"strconv"
 )
 
 type UserAddController struct {
@@ -30,13 +33,18 @@ func (c *UserAddController) Post() {
 		c.Abort("500")
 		return
 	}
-	retVal := TypeRegularResp{
-		MataData: GenMataData(),
-	}
+	retVal := struct {
+		TypeRegularResp
+		Jaccount string `json:"jaccount"`
+	}{}
+	retVal.MataData = GenMataData()
+	retVal.Status = GenStatus(StatusCodeOK)
+
 	// check username and psw
-	_, err = AddUser(info)
+	info, err = AddUser(info)
 	ErrReport(err)
 	retVal.Status = GenStatus(StatusCodeOK)
+	retVal.Jaccount = info.JAccount
 	c.Data["json"] = retVal
 	c.ServeJSON()
 
@@ -56,34 +64,101 @@ func (c *TextMessageVerificationController) Post() {
 	if err != nil {
 		c.Abort("400")
 	}
-	//num := fmt.Sprint(rand.Int() % 1000000)
-	num := "666666"
-	urlstr := fmt.Sprintf(`http://api.sms.cn/sms/?ac=send&uid=aixinwu&pwd=6118209e858c6a52f87c32d5c7295322&mobile=%s&content={"code":"%s"}&template=390283`,
-		info.Phone,
-		num,
-	)
-	resp, err := http.Get(urlstr)
-	ErrReport(err)
-	if resp != nil {
-		defer resp.Body.Close()
-	}
-	if err != nil {
-		c.Abort("400")
-	}
 	conn, err := redisPool.Dial()
 	ErrReport(err)
 	if err != nil {
 		c.Abort("500")
 	}
-	_, err = conn.Do("SETEX", fmt.Sprint("Phone_verification", info.Phone), 600, num)
+	checkstr, err := redis.String(conn.Do("GET", fmt.Sprint("Phone_verification", info.Phone)))
 	ErrReport(err)
-	content, err := ioutil.ReadAll(resp.Body)
-	ErrReport(err)
-	responseText := string(content)
-	beego.Trace(responseText)
+	num := fmt.Sprint(rand.Int() % 1000000)
+	if checkstr != "" {
+		num = checkstr
+	} else {
+		urlstr := fmt.Sprintf(`http://api.sms.cn/sms/?ac=send&uid=aixinwu&pwd=6118209e858c6a52f87c32d5c7295322&mobile=%s&content={"code":"%s"}&template=390283`,
+			info.Phone,
+			num,
+		)
+		resp, err := http.Get(urlstr)
+		ErrReport(err)
+		if resp != nil {
+			defer resp.Body.Close()
+		}
+		if err != nil {
+			c.Abort("400")
+		}
+		_, err = conn.Do("SETEX", fmt.Sprint("Phone_verification", info.Phone), 600, num)
+		ErrReport(err)
+		content, err := ioutil.ReadAll(resp.Body)
+		ErrReport(err)
+		responseText := string(content)
+		beego.Trace(responseText)
+	}
+	//num := "666666"
 	info.Status = GenStatus(StatusCodeOK)
 	info.Code = num
 	beego.Trace("The Code is ", num)
 	c.Data["json"] = info
+	c.ServeJSON()
+}
+
+type UserJaccountAssociate struct {
+	beego.Controller
+}
+
+func (c *UserJaccountAssociate) Post() {
+	beego.Debug("associate user")
+	info := TypeRegularReq{}
+	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
+	beego.Trace("Post Body is:", string(body))
+	err := json.Unmarshal(body, &info)
+	ErrReport(err)
+	tokeninfo := ParseToken(info.Token)
+	response := TypeRegularResp{
+		Status: GenStatus(StatusCodeOK),
+	}
+	for {
+		localuser, err := GetUserInfoByID(fmt.Sprint(tokeninfo.UserID))
+		if err != nil {
+			ErrReport(err)
+			response.Status = GenStatus(StatusCodeDatabaseErr)
+			break
+		}
+		o := orm.NewOrm()
+		address := TypeAixinwuAddress{
+			Is_default: 1,
+			Mobile:     localuser.Username,
+		}
+		err = o.Read(&address, "mobile", "is_default")
+		if err != nil {
+			ErrReport(err)
+			response.Status = GenStatus(StatusCodeDatabaseErr)
+			break
+		}
+		aixinwuID, err := strconv.ParseInt(address.Customer_id, 10, 64)
+		ErrReport(err)
+		if err != nil {
+			response.Status = GenStatus(StatusCodeDatabaseErr)
+			break
+		}
+		jac := TypeAixinwuJaccountInfo{
+			Customer_id: int(aixinwuID),
+		}
+		err = o.Read(&jac, "customer_id")
+		if err != nil {
+			ErrReport(err)
+			response.Status = GenStatus(StatusCodeDatabaseErr)
+			break
+		}
+		localuser.JAccount = jac.Jaccount_id
+		_, err = o.Update(&localuser)
+		if err != nil {
+			ErrReport(err)
+			response.Status = GenStatus(StatusCodeDatabaseErr)
+			break
+		}
+		break
+	}
+	c.Data["json"] = response
 	c.ServeJSON()
 }

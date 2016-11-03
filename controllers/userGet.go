@@ -27,6 +27,8 @@ func (c *UserGetController) Post() {
 		return
 	}
 	userInfo, err := GetUserInfo(tInfo.UserName)
+	userInfo.VerificationCode = ""
+	userInfo.Password = ""
 	ErrReport(err)
 	retVal := TypeUserReq{
 		MataData: GenMataData(),
@@ -35,6 +37,7 @@ func (c *UserGetController) Post() {
 	}
 	// check username and psw
 	retVal.Status = GenStatus(StatusCodeOK)
+	retVal.UserInfo.NickName = BaseDecode(retVal.UserInfo.NickName)
 	c.Data["json"] = retVal
 	c.ServeJSON()
 

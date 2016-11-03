@@ -44,6 +44,7 @@ type TypeUserReq struct {
 	UserInfo TypeUserInfo `json:"userinfo"`
 	Token    string       `json:"token"`
 	Status   TypeStatus   `json:"status"`
+	Image    string       `json:"image"`
 }
 
 // image related request parameters
@@ -55,15 +56,38 @@ type TypeImgResp struct {
 }
 
 type TypeUserInfo struct {
-	ID               int     `json:"ID"       orm:"pk;auto;column(Uid)"`
-	Username         string  `json:"username" orm:"type(text);unique;column(username)"`
-	Password         string  `json:"password" orm:"column(password)"`
-	VerificationCode string  `json:"verification_code"`
-	NickName         string  `json:"nickname" orm:"type(text);column(nickname)"`
-	Phone            string  `json:"phone"    orm:"column(phone)"`
-	Email            string  `json:"email"    orm:"column(email)"`
-	Coins            float64 `json:"coins"    orm:"column(coins)"`
-	JAccount         string  `json:"jaccount" orm:"column(jaccount)"`
+	ID               int    `json:"ID"       orm:"pk;auto;column(Uid)"`
+	Username         string `json:"username" orm:"type(text);column(username)"`
+	Image            string `json:"image"    orm:"type(text);unique;column(image)"`
+	Password         string `json:"password" orm:"column(password)"`
+	VerificationCode string `json:"verification_code"`
+	NickName         string `json:"nickname" orm:"type(text);column(nickname)"`
+	//Phone            string  `json:"phone"    orm:"column(phone)"`
+	Email    string  `json:"email"    orm:"column(email)"`
+	Coins    float64 `json:"coins"    orm:"column(coins)"`
+	JAccount string  `json:"jaccount" orm:"column(jaccount)"`
+}
+
+func (t *TypeUserInfo) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Username string  `json:"username" orm:"type(text);column(username)"`
+		Image    string  `json:"image"    orm:"type(text);unique;column(image)"`
+		NickName string  `json:"nickname" orm:"type(text);column(nickname)"`
+		Email    string  `json:"email"    orm:"column(email)"`
+		Coins    float64 `json:"coins"    orm:"column(coins)"`
+		JAccount string  `json:"jaccount" orm:"column(jaccount)"`
+	}{
+		Username: t.Username,
+		Image:    t.Image,
+		NickName: t.NickName,
+		Email:    t.Email,
+		Coins:    t.Coins,
+		JAccount: t.JAccount,
+	})
+}
+
+func (u *TypeUserInfo) TableName() string {
+	return "app_user_info"
 }
 
 /*
@@ -75,7 +99,7 @@ type TypeUserInfo struct {
 type TypeItemInfo struct {
 	ID                      int       `json:"ID"                       orm:"pk;auto;(id)"`
 	Caption                 string    `json:"caption"                  orm:"(caption);type(text);null"`
-	BoughtAt                time.Time `json:"boughtAt"                 orm:"(boughtAt);type(datetime)null"`
+	BoughtAt                time.Time `json:"boughtAt"                 orm:"(boughtAt);type(datetime);null"`
 	ItemCondition           int       `json:"itemCondition"            orm:"(itemCondition);null"`
 	EstimatedPriceByUser    int       `json:"estimatedPriceByUser"     orm:"(estimatedPriceByUser);null"`
 	EstimatedPriceByAiXinWu int       `json:"estimatedPriceByAiXinWu"  orm:"(estimatedPriceByAiXinWu);null"`
@@ -86,9 +110,13 @@ type TypeItemInfo struct {
 	Description             string    `json:"description"              orm:"(description);type(text);null"`
 	OwnerID                 int       `json:"ownerID"                  orm:"(ownerID);null"`
 	Price                   int       `json:"price"                    orm:"(price);null"`
-	UserSuggestedPrice      int       `json:"user_suggested_price"    orm:"(user_suggested_price);null"`
+	UserSuggestedPrice      int       `json:"user_suggested_price"     orm:"(user_suggested_price);null"`
 	Images                  string    `json:"images"                   orm:"(images);type(text);null"`
 	Status                  int       `json:"status"                   orm:"(status);null"`
+}
+
+func (u *TypeItemInfo) TableName() string {
+	return "app_item_info"
 }
 
 func (t *TypeItemInfo) MarshalJSON() ([]byte, error) {
@@ -136,6 +164,10 @@ type TypeItemComments struct {
 	Created     time.Time `json:"created"       orm:"auto_now_add;type(datetime)"`
 }
 
+func (u *TypeItemComments) TableName() string {
+	return "app_item_comments"
+}
+
 func (t *TypeItemComments) MarshalJSON() ([]byte, error) {
 	type Alias TypeItemComments
 	return json.Marshal(&struct {
@@ -171,6 +203,10 @@ type TypeChatInfo struct {
 	BuyerID     int       `json:"buyer_id"      orm:"(buyer_id)"`
 	PublisherID int       `json:"publisher_id"  orm:"(publisher_id)"`
 	Created     time.Time `json:"created"       orm:"auto_now_add;type(datetime)"`
+}
+
+func (u *TypeChatInfo) TableName() string {
+	return "app_chat_info"
 }
 
 func (t *TypeChatInfo) MarshalJSON() ([]byte, error) {
@@ -437,28 +473,29 @@ func (u *TypeAixinwuBook) GetWeight() int {
 }
 
 type TypeAixinwuOrder struct {
-	Id                  int       `json:"id"                    orm:"auto;pk;column(id)"`
-	Order_sn            string    `json:"order_sn"              orm:"column(order_sn)"`
-	Customer_id         int       `json:"customer_id"           orm:"column(customer_id)"`
-	Payment_id          int       `json:"payment_id"            orm:"column(payment_id)"`
-	Shipping_id         int       `json:"shipping_id"           orm:"column(shipping_id)"`
-	Total_product_price float64   `json:"total_product_price"   orm:"column(total_product_price)"`
-	Total_weight        int       `json:"total_weight"          orm:"column(total_weight)"`
-	Auto_freight_fee    float64   `json:"auto_freight_fee"      orm:"column(auto_freight_fee)"`
-	Actual_freight_fee  float64   `json:"actual_freight_fee"    orm:"column(actual_freight_fee)"`
-	Payment_fee         float64   `json:"payment_fee"           orm:"column(payment_fee)"`
-	Total_cost          float64   `json:"total_cost"            orm:"column(total_cost)"`
-	Total_price         float64   `json:"total_price"           orm:"column(total_price)"`
-	Need_pay            float64   `json:"need_pay"              orm:"column(need_pay)"`
-	Already_pay         float64   `json:"already_pay"           orm:"column(already_pay)"`
-	Is_need_invoice     int       `json:"is_need_invoice"       orm:"column(is_need_invoice)"`
-	Customer_remark     string    `json:"customer_remark"       orm:"column(customer_remark)"`
-	Status              int       `json:"status"                orm:"column(status)"`
-	Is_delete           int       `json:"is_delete"             orm:"column(is_delete)"`
-	Barcode             string    `json:"barcode"               orm:"column(barcode)"`
-	Consignee_id        int       `json:"consignee_id"          orm:"column(consignee_id)"`
-	Place_at            time.Time `json:"place_at"              orm:"column(place_at)"`
-	Update_at           time.Time `json:"update_at"             orm:"column(update_at)"`
+	Id                  int                    `json:"id"                    orm:"auto;pk;column(id)"`
+	Order_sn            string                 `json:"order_sn"              orm:"column(order_sn)"`
+	Customer_id         int                    `json:"customer_id"           orm:"column(customer_id)"`
+	Payment_id          int                    `json:"payment_id"            orm:"column(payment_id)"`
+	Shipping_id         int                    `json:"shipping_id"           orm:"column(shipping_id)"`
+	Total_product_price float64                `json:"total_product_price"   orm:"column(total_product_price)"`
+	Total_weight        int                    `json:"total_weight"          orm:"column(total_weight)"`
+	Auto_freight_fee    float64                `json:"auto_freight_fee"      orm:"column(auto_freight_fee)"`
+	Actual_freight_fee  float64                `json:"actual_freight_fee"    orm:"column(actual_freight_fee)"`
+	Payment_fee         float64                `json:"payment_fee"           orm:"column(payment_fee)"`
+	Total_cost          float64                `json:"total_cost"            orm:"column(total_cost)"`
+	Total_price         float64                `json:"total_price"           orm:"column(total_price)"`
+	Need_pay            float64                `json:"need_pay"              orm:"column(need_pay)"`
+	Already_pay         float64                `json:"already_pay"           orm:"column(already_pay)"`
+	Is_need_invoice     int                    `json:"is_need_invoice"       orm:"column(is_need_invoice)"`
+	Customer_remark     string                 `json:"customer_remark"       orm:"column(customer_remark)"`
+	Status              int                    `json:"status"                orm:"column(status)"`
+	Is_delete           int                    `json:"is_delete"             orm:"column(is_delete)"`
+	Barcode             string                 `json:"barcode"               orm:"column(barcode)"`
+	Consignee_id        int                    `json:"consignee_id"          orm:"column(consignee_id)"`
+	Place_at            time.Time              `json:"place_at"              orm:"column(place_at)"`
+	Update_at           time.Time              `json:"update_at"             orm:"column(update_at)"`
+	Items               []TypeAixinwuOrderItem `json:"items"                 orm:"-"`
 }
 
 func (t *TypeAixinwuOrder) MarshalJSON() ([]byte, error) {

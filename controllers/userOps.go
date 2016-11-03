@@ -11,6 +11,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/garyburd/redigo/redis"
+	"time"
 )
 
 /*
@@ -115,39 +116,44 @@ func UpdateUserInfo(usrinfo TypeUserInfo) error {
 		return err
 	}
 	beego.Trace("updating information for user id", s.ID)
-	s.NickName = usrinfo.NickName
-	s.Password = usrinfo.Password
-	s.Coins = usrinfo.Coins
-	num, err := o.Update(&s)
+	if usrinfo.NickName != "" {
+		s.NickName = BaseEncode(usrinfo.NickName)
+	}
+	//s.Password = usrinfo.Password
+	if usrinfo.Image != "" {
+		s.Image = usrinfo.Image
+	}
+	//s.Coins = usrinfo.Coins
+	num, err := o.Update(&s, "nickname", "image")
 	ErrReport(err)
 	beego.Info("affected rows when update:", num)
 	return err
 }
 
-func AddUser(usrInfo TypeUserInfo) (int, error) {
+func AddUser(usrInfo TypeUserInfo) (TypeUserInfo, error) {
 	o := orm.NewOrm()
+	s := usrInfo
+	s.Coins = -1
 	// check if user already exist
 	if succ, err := CheckUserNameExist(usrInfo.Username); succ {
 		beego.Error(err)
-		return -1, errors.New("User name already exists")
+		return s, errors.New("User name already exists")
 	}
-	s := usrInfo
-	s.Coins = -1
 	// check phone via text message
 	conn, err := redisPool.Dial()
 	if err != nil {
 		ErrReport(err)
-		return -1, err
+		return s, err
 	}
 	num, err := redis.String(conn.Do("GET", fmt.Sprint("Phone_verification", usrInfo.Username)))
 	ErrReport(err)
 	if err != nil {
 		beego.Trace("Key:", fmt.Sprint("Phone_verification", usrInfo.Username))
-		return -1, err
+		return s, err
 	}
 	if num != usrInfo.VerificationCode {
 		beego.Trace("code given by user:", usrInfo.VerificationCode, " actual code:", num)
-		return -1, errors.New("Error verifivation code")
+		return s, errors.New("Error verifivation code")
 	}
 	tmp, _ := json.Marshal(&usrInfo)
 	beego.Trace(string(tmp))
@@ -178,13 +184,15 @@ func AddUser(usrInfo TypeUserInfo) (int, error) {
 		}
 	}
 
+	s.NickName = BaseEncode(s.NickName)
 	id, err := o.Insert(&s)
+	s.ID = int(id)
 	if err != nil {
 		ErrReport(err)
-		return -1, err
+		return s, err
 	}
 	beego.Info("Adding user name")
-	return int(id), nil
+	return s, nil
 }
 
 func DelUser(name string) (bool, error) {
@@ -239,6 +247,9 @@ func AddItem(itemInfo TypeItemInfo) (int, error) {
 	//o.Using("default")
 	itemInfo.Caption = BaseEncode(itemInfo.Caption)
 	itemInfo.Description = BaseEncode(itemInfo.Description)
+	//if itemInfo.BoughtAt == nil{
+	itemInfo.BoughtAt = time.Now()
+	//}
 	id, err := o.Insert(&itemInfo)
 	ErrReport(err)
 	return int(id), err
@@ -277,7 +288,7 @@ func GetItemsByUserID(id int) []TypeItemInfo {
 	itemids := make([]TypeItemInfo, 0)
 	o := orm.NewOrm()
 	//o.Using("default")
-	_, err := o.Raw("select * from type_item_info where owner_i_d = ?", id).QueryRows(&itemids)
+	_, err := o.Raw("select * from app_item_info where owner_i_d = ?", id).QueryRows(&itemids)
 	ErrReport(err)
 	for i := 0; i < len(itemids); i++ {
 		itemids[i].Description = BaseDecode(itemids[i].Description)
@@ -291,7 +302,7 @@ func GetAllItem(startat int, length int) []TypeItemInfo {
 	itemids := make([]TypeItemInfo, 0)
 	o := orm.NewOrm()
 	//o.Using("default")
-	o.Raw("select max(i_d) from type_item_info").QueryRow(&maxvalStr)
+	o.Raw("select max(i_d) from app_item_info").QueryRow(&maxvalStr)
 	maxval, err := strconv.ParseInt(maxvalStr, 10, 64)
 	ErrReport(err)
 	beego.Trace("maxvalue ", maxval)
@@ -307,7 +318,7 @@ func GetAllItem(startat int, length int) []TypeItemInfo {
 		endIndex = int(maxval)
 	}
 	//_, err = o.Raw("select * from type_item_info where i_d > ? and i_d <= ? and status = 0  order  by  i_d desc", startindex, endIndex).QueryRows(&itemids)
-	_, err = o.Raw("select * from type_item_info where i_d > ? and i_d <= ?  order  by  i_d desc", startindex, endIndex).QueryRows(&itemids)
+	_, err = o.Raw("select * from app_item_info where i_d > ? and i_d <= ?  order  by  i_d desc", startindex, endIndex).QueryRows(&itemids)
 	ErrReport(err)
 	for i := 0; i < len(itemids); i++ {
 		itemids[i].Description = BaseDecode(itemids[i].Description)
@@ -335,7 +346,7 @@ func GetComments(itemid int) []TypeItemComments {
 	comments := make([]TypeItemComments, 0)
 	o := orm.NewOrm()
 	//o.Using("default")
-	_, err := o.Raw("select * from type_item_comments where item_id = ?", itemid).QueryRows(&comments)
+	_, err := o.Raw("select * from app_item_comments where item_id = ?", itemid).QueryRows(&comments)
 	ErrReport(err)
 	for i := 0; i < len(comments); i++ {
 		comments[i].Content = BaseDecode(comments[i].Content)
@@ -368,9 +379,9 @@ func GetChat(itemID, buyerID int) []TypeChatInfo {
 	chats := make([]TypeChatInfo, 0)
 	o := orm.NewOrm()
 	//o.Using("default")
-	//_, err := o.Raw("select * from aixinwu_test.type_chat_info where item_id = ? and buyer_id = ?", itemID, buyerID).QueryRows(&chats)
-	//_, err := o.Raw("select * from aixinwu_test.type_chat_info where buyer_i_d = ?", buyerID).QueryRows(&chats)
-	_, err := o.Raw("select * from aixinwu_test.type_chat_info where buyer_i_d = ? or publisher_i_d=?", buyerID, buyerID).QueryRows(&chats)
+	//_, err := o.Raw("select * from aixinwu_test.app_chat_info where item_id = ? and buyer_id = ?", itemID, buyerID).QueryRows(&chats)
+	//_, err := o.Raw("select * from aixinwu_test.app_chat_info where buyer_i_d = ?", buyerID).QueryRows(&chats)
+	_, err := o.Raw("select * from aixinwu_test.app_chat_info where buyer_i_d = ? or publisher_i_d=?", buyerID, buyerID).QueryRows(&chats)
 	ErrReport(err)
 	for i := 0; i < len(chats); i++ {
 		chats[i].Content = BaseDecode(chats[i].Content)
@@ -561,4 +572,16 @@ func TransferLocalIDtoAixinwuID(id int) int {
 	ErrReport(o.Read(&jainfo, "jaccount_id"))
 
 	return jainfo.Customer_id
+}
+
+func getAddress(userid int) TypeAixinwuAddress {
+	o := orm.NewOrm()
+	add := TypeAixinwuAddress{
+		Customer_id: fmt.Sprint(userid),
+		Is_default:  1,
+	}
+	err := o.Read(&add, "customer_id", "is_default")
+	ErrReport(err)
+	return add
+
 }

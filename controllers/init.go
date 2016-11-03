@@ -28,7 +28,8 @@ func SysInit() {
 		fmt.Println(err)
 		log.Fatal(err)
 	}
-	err = orm.RegisterDataBase("default", "mysql", "aixinwu_test:$AIXINWU_test@tcp(localhost:3306)/aixinwu_test?charset=utf8&loc=Asia%2FShanghai")
+	//err = orm.RegisterDataBase("default", "mysql", "aixinwu_test:$AIXINWU_test@tcp(localhost:3306)/aixinwu_test?charset=utf8&loc=Asia%2FShanghai")
+	err = orm.RegisterDataBase("default", "mysql", "sjtu:dywb!3396@tcp(localhost:3306)/sjtu_aixin?charset=utf8&loc=Asia%2FShanghai")
 	if err != nil {
 		fmt.Println(err)
 		log.Fatal(err)
@@ -80,7 +81,7 @@ func makeFakeUser() {
 		Username: "a@a.com",
 		Password: "1234",
 		NickName: "nick",
-		Phone:    "12345678",
+		//Phone:    "12345678",
 		Email:    "a@a.com",
 		JAccount: "liangyuding",
 	}
