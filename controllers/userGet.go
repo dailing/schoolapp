@@ -99,9 +99,11 @@ func (c *UserGetRestfulController) Get() {
 	c.Data["json"] = struct {
 		Username string `json:"username" orm:"type(text);unique;column(username)"`
 		NickName string `json:"nickname" orm:"type(text);column(nickname)"`
+		Image    string `json:"image"    orm:"type(text);unique;column(image)"`
 	}{
 		Username: userinfo.Username,
-		NickName: userinfo.NickName,
+		NickName: BaseDecode(userinfo.NickName),
+		Image:    userinfo.Image,
 	}
 	c.ServeJSON()
 }

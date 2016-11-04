@@ -53,6 +53,7 @@ func SysInit() {
 	orm.RegisterModel(new(TypeAixinwuVolunteerAct))
 	orm.RegisterModel(new(TypeServerParameters))
 	orm.RegisterModel(new(TypeAixinwuVolunteer))
+	orm.RegisterModel(new(TypeAixinwuCashLog))
 	createTable()
 	makeFakeUser()
 

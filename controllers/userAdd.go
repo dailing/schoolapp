@@ -43,7 +43,11 @@ func (c *UserAddController) Post() {
 	// check username and psw
 	info, err = AddUser(info)
 	ErrReport(err)
-	retVal.Status = GenStatus(StatusCodeOK)
+	if err != nil {
+		retVal.Status = GenStatus(StatusCodeUserAlresdyRegisted)
+	} else {
+		retVal.Status = GenStatus(StatusCodeOK)
+	}
 	retVal.Jaccount = info.JAccount
 	c.Data["json"] = retVal
 	c.ServeJSON()

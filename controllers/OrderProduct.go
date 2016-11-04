@@ -159,6 +159,17 @@ func (c *OrderProductController) Post() {
 			break
 		}
 
+		// make cash record
+		cashrecord := TypeAixinwuCashLog{
+			Datetime:    time.Now(),
+			Customer_id: order.Customer_id,
+			Admin_id:    0,
+			Change_num:  float64(-order.Total_price),
+			Reason:      "支付订单，订单号：" + order.Order_sn,
+		}
+		_, err = o.Insert(&cashrecord)
+		ErrReport(err)
+
 		// add order items to order
 		orderIDs := ""
 		for index, item := range request.OrderInfo {

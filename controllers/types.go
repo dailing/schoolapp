@@ -345,6 +345,7 @@ type TypeAixinwuProduct struct {
 	Image                  string    `json:"image"                   orm:"-"` // ignore this field in database
 	DespUrl                string    `json:"desp_url"                orm:"-"` // ignore field
 	OriginalPrice          float64   `json:"original_price"          orm:"-"`
+	AlreadyBuy             int       `json:"already_buy"             orm:"-"`
 }
 
 func (t *TypeAixinwuProduct) MarshalJSON() ([]byte, error) {
@@ -813,22 +814,37 @@ type TypeSetAddressReq struct {
 	Snum      string `json:"snum"           orm:"column(snum)"`
 }
 
+type TypeAixinwuCashLog struct {
+	Id          int       `json:"id"           orm:"column(id);pk;auto"`
+	Datetime    time.Time `json:"datetime"     orm:"column(datetime)"`
+	Customer_id int       `json:"customer_id"  orm:"column(customer_id)"`
+	Admin_id    int       `json:"admin_id"     orm:"column(admin_id)"`
+	Change_num  float64   `json:"change_num"   orm:"column(change_num)"`
+	Reason      string    `json:"reason"       orm:"column(reason)"`
+}
+
+func (u *TypeAixinwuCashLog) TableName() string {
+	return "lcn_cash_log"
+}
+
 const (
-	StatusCodeOK             = iota
-	StatusCodeErrorLoginInfo = iota
-	StatusCodeUndefinedError = iota
-	StatusCodeNotImplemented = iota
-	StatusCodeNotEnoughMoney = iota
-	StatusCodeDatabaseErr    = iota
-	StatusNoJaccountInfo     = iota
+	StatusCodeOK                  = iota
+	StatusCodeUserAlresdyRegisted = iota
+	StatusCodeErrorLoginInfo      = iota
+	StatusCodeUndefinedError      = iota
+	StatusCodeNotImplemented      = iota
+	StatusCodeNotEnoughMoney      = iota
+	StatusCodeDatabaseErr         = iota
+	StatusNoJaccountInfo          = iota
 )
 
 var ErrorDesp = map[int]string{
-	StatusCodeOK:             "OK",
-	StatusCodeErrorLoginInfo: "Wrong username or password",
-	StatusCodeUndefinedError: "Not specified",
-	StatusCodeNotImplemented: "Not implemented",
-	StatusCodeNotEnoughMoney: "Not enourgh money",
-	StatusCodeDatabaseErr:    "Database error",
-	StatusNoJaccountInfo:     "No jaccount information found",
+	StatusCodeOK:                  "OK",
+	StatusCodeUserAlresdyRegisted: "User already registed",
+	StatusCodeErrorLoginInfo:      "Wrong username or password",
+	StatusCodeUndefinedError:      "Not specified",
+	StatusCodeNotImplemented:      "Not implemented",
+	StatusCodeNotEnoughMoney:      "Not enourgh money",
+	StatusCodeDatabaseErr:         "Database error",
+	StatusNoJaccountInfo:          "No jaccount information found",
 }

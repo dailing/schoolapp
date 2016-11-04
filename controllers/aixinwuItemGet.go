@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/dailing/levlog"
@@ -80,6 +81,51 @@ func (c *AixintuItemGetRestfulRController) Get() {
 	itemID, err := strconv.ParseInt(c.Ctx.Input.Param(":productID"), 10, 64)
 	levlog.E(err)
 	items := GetAixintuItemsByID(int(itemID))
+	resp := TypeAixinwuItemReqResp{
+		AixinwuItems: items,
+		Status:       GenStatus(StatusCodeOK),
+	}
+	c.Data["json"] = resp
+	c.ServeJSON()
+}
+
+func (c *AixintuItemGetRestfulRController) Post() {
+	beego.Debug("get product")
+	request := TypeRegularReq{}
+	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
+	beego.Info("Post Body is:", string(body))
+	err := json.Unmarshal(body, &request)
+	beego.Trace("body is :", string(body))
+	ErrReport(err)
+	if err != nil {
+		c.Abort("400")
+		return
+	}
+	tokenInfo := ParseToken(request.Token)
+	if tokenInfo.UserID <= 0 {
+		c.Abort("400")
+	}
+
+	itemID, err := strconv.ParseInt(c.Ctx.Input.Param(":productID"), 10, 64)
+	aixinwuID := TransferLocalIDtoAixinwuID(tokenInfo.UserID)
+	levlog.E(err)
+	items := GetAixintuItemsByID(int(itemID))
+	o := orm.NewOrm()
+	qs := o.QueryTable(&TypeAixinwuOrder{})
+	orders := make([]TypeAixinwuOrder, 0)
+	qs.Filter("customer_id", fmt.Sprint(aixinwuID)).All(&orders)
+	count := 0
+	for _, order := range orders {
+		qs := o.QueryTable(&TypeAixinwuOrderItem{})
+		orderItems := make([]TypeAixinwuOrderItem, 0)
+		num, err := qs.Filter("Order_id", order.Id).Filter("Product_id", items[0].Id).All(&orderItems)
+		ErrReport(err)
+		for _, i := range orderItems {
+			count += i.Quantity
+		}
+		count += int(num)
+	}
+	items[0].AlreadyBuy = count
 	resp := TypeAixinwuItemReqResp{
 		AixinwuItems: items,
 		Status:       GenStatus(StatusCodeOK),
