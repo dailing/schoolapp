@@ -90,12 +90,21 @@ func (c *OrderProductController) Post() {
 				response.Status.Description = err.Error()
 				break
 			}
-			beego.Trace("Product:", product.GetName(), " id:", product.GetID(), " stock ", product.GetStock(), " querying:", item.Quantity)
+			beego.Trace("Product:", product.GetName(),
+				" id:", product.GetID(),
+				" stock ", product.GetStock(),
+				" querying:", item.Quantity)
 			if product.GetStock() < item.Quantity {
 				response.Status.Code = StatusCodeUndefinedError
 				response.Status.Description = fmt.Sprint("Product:",
 					product.GetName(), " id:", product.GetID(),
 					" short of stock ", product.GetStock())
+				break
+			}
+			if product.Limit > 0 &&
+				(item.Quantity >
+					product.Limit-GetItemAlreadyBuy(jaccountInfo.Customer_id, item.ProductID)) {
+				response.Status = GenStatus(StatusCodeItemLimitedToBuy)
 				break
 			}
 			// update stock

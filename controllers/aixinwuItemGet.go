@@ -3,13 +3,13 @@ package controllers
 import (
 	"encoding/json"
 
-	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/dailing/levlog"
 	"html/template"
 	"io/ioutil"
 	"strconv"
+	"time"
 )
 
 type AixintuItemGetController struct {
@@ -110,26 +110,35 @@ func (c *AixintuItemGetRestfulRController) Post() {
 	aixinwuID := TransferLocalIDtoAixinwuID(tokenInfo.UserID)
 	levlog.E(err)
 	items := GetAixintuItemsByID(int(itemID))
-	o := orm.NewOrm()
-	qs := o.QueryTable(&TypeAixinwuOrder{})
-	orders := make([]TypeAixinwuOrder, 0)
-	qs.Filter("customer_id", fmt.Sprint(aixinwuID)).All(&orders)
-	count := 0
-	for _, order := range orders {
-		qs := o.QueryTable(&TypeAixinwuOrderItem{})
-		orderItems := make([]TypeAixinwuOrderItem, 0)
-		num, err := qs.Filter("Order_id", order.Id).Filter("Product_id", items[0].Id).All(&orderItems)
-		ErrReport(err)
-		for _, i := range orderItems {
-			count += i.Quantity
-		}
-		count += int(num)
-	}
-	items[0].AlreadyBuy = count
+	items[0].AlreadyBuy = GetItemAlreadyBuy(aixinwuID, int(itemID))
 	resp := TypeAixinwuItemReqResp{
 		AixinwuItems: items,
 		Status:       GenStatus(StatusCodeOK),
 	}
 	c.Data["json"] = resp
 	c.ServeJSON()
+}
+
+func GetItemAlreadyBuy(aixinwuID int, ItemID int) int {
+	o := orm.NewOrm()
+	qs := o.QueryTable(&TypeAixinwuOrder{})
+	orders := make([]TypeAixinwuOrder, 0)
+	qs.Filter("customer_id", aixinwuID).
+		Filter("Is_delete", 0).
+		Filter("place_at__gt", time.Now().Add(-time.Hour*24*7)).
+		All(&orders)
+	count := 0
+	for _, order := range orders {
+		qs := o.QueryTable(&TypeAixinwuOrderItem{})
+		orderItems := make([]TypeAixinwuOrderItem, 0)
+		num, err := qs.Filter("Order_id", order.Id).
+			Filter("Product_id", ItemID).
+			All(&orderItems)
+		ErrReport(err)
+		for _, i := range orderItems {
+			count += i.Quantity
+		}
+		count += int(num)
+	}
+	return count
 }

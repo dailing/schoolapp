@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>serVersion</title>
+    <script src="/static/js/userOps.js"></script>
+    <script>
+        function adfasdfas() {
+            console.log("click");
+            var code = document.getElementById("version").value;
+            var desp = document.getElementById("desp").value;
+            console.log("Setting code to " + code);
+            var jsonObj = {
+                version_code: code,
+                desp: desp
+            };
+            var resp = doAjaxCall(jsonObj, "/api/version_code");
+            console.log()
+        }
+    </script>
+</head>
+<body>
+
+
+<labe> Version Code</labe>
+<input type="text" id="version">
+<br>
+<label>Desp</label>
+<input type="text" id="desp">
+<br>
+<input type="button" onclick="adfasdfas()" value="Set">
+
+
+</body>
+</html>

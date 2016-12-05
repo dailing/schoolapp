@@ -41,13 +41,8 @@ func (c *UserAddController) Post() {
 	retVal.Status = GenStatus(StatusCodeOK)
 
 	// check username and psw
-	info, err = AddUser(info)
-	ErrReport(err)
-	if err != nil {
-		retVal.Status = GenStatus(StatusCodeUserAlresdyRegisted)
-	} else {
-		retVal.Status = GenStatus(StatusCodeOK)
-	}
+	info, status := AddUser(info)
+	retVal.Status = GenStatus(status)
 	retVal.Jaccount = info.JAccount
 	c.Data["json"] = retVal
 	c.ServeJSON()
@@ -61,6 +56,7 @@ type TextMessageVerificationController struct {
 func (c *TextMessageVerificationController) Post() {
 	beego.Debug("add user")
 	info := TestMessageVerification{}
+	info.Status = GenStatus(StatusCodeOK)
 	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
 	beego.Trace("Post Body is:", string(body))
 	err := json.Unmarshal(body, &info)
@@ -78,6 +74,7 @@ func (c *TextMessageVerificationController) Post() {
 	num := fmt.Sprint(rand.Int() % 1000000)
 	if checkstr != "" {
 		num = checkstr
+		info.Status = GenStatus(StatusVerificationLater)
 	} else {
 		urlstr := fmt.Sprintf(`http://api.sms.cn/sms/?ac=send&uid=aixinwu&pwd=6118209e858c6a52f87c32d5c7295322&mobile=%s&content={"code":"%s"}&template=390283`,
 			info.Phone,
@@ -89,18 +86,23 @@ func (c *TextMessageVerificationController) Post() {
 			defer resp.Body.Close()
 		}
 		if err != nil {
-			c.Abort("400")
+			info.Status = GenStatus(StatusCodeUndefinedError)
 		}
 		_, err = conn.Do("SETEX", fmt.Sprint("Phone_verification", info.Phone), 600, num)
 		ErrReport(err)
+		if err != nil {
+			info.Status = GenStatus(StatusCodeDatabaseErr)
+		}
 		content, err := ioutil.ReadAll(resp.Body)
 		ErrReport(err)
+		if err != nil {
+			info.Status = GenStatus(StatusCodeDatabaseErr)
+		}
 		responseText := string(content)
 		beego.Trace(responseText)
 	}
 	//num := "666666"
-	info.Status = GenStatus(StatusCodeOK)
-	info.Code = num
+	//info.Code = num
 	beego.Trace("The Code is ", num)
 	c.Data["json"] = info
 	c.ServeJSON()
@@ -165,4 +167,24 @@ func (c *UserJaccountAssociate) Post() {
 	}
 	c.Data["json"] = response
 	c.ServeJSON()
+}
+
+func CheckVerificationCode(mobile string, code string) bool {
+	// check phone via text message
+	conn, err := redisPool.Dial()
+	if err != nil {
+		ErrReport(err)
+		return false
+	}
+	num, err := redis.String(conn.Do("GET", fmt.Sprint("Phone_verification", mobile)))
+	ErrReport(err)
+	if err != nil {
+		beego.Trace("Key:", fmt.Sprint("Phone_verification", mobile))
+		return false
+	}
+	if num != code {
+		beego.Trace("code given by user:", mobile, " actual code:", num)
+		return false
+	}
+	return true
 }

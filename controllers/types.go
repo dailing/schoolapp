@@ -827,6 +827,13 @@ func (u *TypeAixinwuCashLog) TableName() string {
 	return "lcn_cash_log"
 }
 
+type TypeAixinwuDonateRecordGetReq TypeAixinwuOrderGetReq
+
+type TypeAixinwuDonateRecordGetResp struct {
+	Status  TypeStatus           `json:"status"`
+	Records []TypeLcnDonateBatch `json:"records"`
+}
+
 const (
 	StatusCodeOK                  = iota
 	StatusCodeUserAlresdyRegisted = iota
@@ -836,6 +843,9 @@ const (
 	StatusCodeNotEnoughMoney      = iota
 	StatusCodeDatabaseErr         = iota
 	StatusNoJaccountInfo          = iota
+	StatusVerificationLater       = iota
+	StatusVerificationFailed      = iota
+	StatusCodeItemLimitedToBuy    = iota
 )
 
 var ErrorDesp = map[int]string{
@@ -847,4 +857,7 @@ var ErrorDesp = map[int]string{
 	StatusCodeNotEnoughMoney:      "Not enourgh money",
 	StatusCodeDatabaseErr:         "Database error",
 	StatusNoJaccountInfo:          "No jaccount information found",
+	StatusVerificationLater:       "Sent verification too frequently",
+	StatusVerificationFailed:      "Verification code error",
+	StatusCodeItemLimitedToBuy:    "User has already reached the purchase limit",
 }

@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"github.com/garyburd/redigo/redis"
 	"time"
 )
 
@@ -130,30 +129,23 @@ func UpdateUserInfo(usrinfo TypeUserInfo) error {
 	return err
 }
 
-func AddUser(usrInfo TypeUserInfo) (TypeUserInfo, error) {
+func AddUser(usrInfo TypeUserInfo) (s TypeUserInfo, status int) {
 	o := orm.NewOrm()
-	s := usrInfo
+	s = usrInfo
 	s.Coins = -1
 	// check if user already exist
-	if succ, err := CheckUserNameExist(usrInfo.Username); succ {
-		beego.Error(err)
-		return s, errors.New("User name already exists")
-	}
-	// check phone via text message
-	conn, err := redisPool.Dial()
-	if err != nil {
+	if succ, err := CheckUserNameExist(usrInfo.Username); succ || err != nil {
 		ErrReport(err)
-		return s, err
+		if err != nil {
+			status = StatusCodeDatabaseErr
+		} else {
+			status = StatusCodeUserAlresdyRegisted
+		}
+		return
 	}
-	num, err := redis.String(conn.Do("GET", fmt.Sprint("Phone_verification", usrInfo.Username)))
-	ErrReport(err)
-	if err != nil {
-		beego.Trace("Key:", fmt.Sprint("Phone_verification", usrInfo.Username))
-		return s, err
-	}
-	if num != usrInfo.VerificationCode {
-		beego.Trace("code given by user:", usrInfo.VerificationCode, " actual code:", num)
-		return s, errors.New("Error verifivation code")
+	if !CheckVerificationCode(usrInfo.Username, usrInfo.VerificationCode) {
+		status = StatusVerificationFailed
+		return
 	}
 	tmp, _ := json.Marshal(&usrInfo)
 	beego.Trace(string(tmp))
@@ -164,7 +156,7 @@ func AddUser(usrInfo TypeUserInfo) (TypeUserInfo, error) {
 	}
 	tmp, _ = json.Marshal(&address)
 	beego.Trace(string(tmp))
-	err = o.Read(&address, "mobile", "is_default")
+	err := o.Read(&address, "mobile", "is_default")
 	tmp, _ = json.Marshal(&address)
 	beego.Trace(string(tmp))
 	ErrReport(err)
@@ -189,10 +181,12 @@ func AddUser(usrInfo TypeUserInfo) (TypeUserInfo, error) {
 	s.ID = int(id)
 	if err != nil {
 		ErrReport(err)
-		return s, err
+		status = StatusCodeDatabaseErr
+		return
 	}
 	beego.Info("Adding user name")
-	return s, nil
+	status = StatusCodeOK
+	return
 }
 
 func DelUser(name string) (bool, error) {
@@ -227,7 +221,11 @@ func CheckUserNameExist(name string) (bool, error) {
 	_, err := GetUserInfo(name)
 	beego.Trace(err)
 	if err != nil {
-		return false, err
+		if err == orm.ErrNoRows {
+			return false, nil
+		} else {
+			return false, err
+		}
 	}
 	return true, nil
 }
@@ -523,7 +521,7 @@ func ServerParameterGet(key string) string {
 	}
 	err := o.Read(&param, "key")
 	ErrReport(err)
-	return param.Value
+	return BaseDecode(param.Value)
 }
 
 func ServerParameterHas(key string) bool {
@@ -551,7 +549,7 @@ func ServerParameterSet(key string, value string) error {
 	if err != nil && err != orm.ErrNoRows {
 		return err
 	}
-	param.Value = value
+	param.Value = BaseEncode(value)
 	if err == orm.ErrNoRows {
 		_, err = o.Insert(&param)
 		ErrReport(err)

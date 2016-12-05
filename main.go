@@ -33,11 +33,23 @@ type TypeItemInfo struct {
 }
 
 func main() {
-
 	orm.DebugLog = orm.NewLog(os.Stdout)
 	beego.SetLogger("file", `{"filename":"test.log"}`)
 	beego.Info("This is an info log")
 	controllers.SysInit()
+
+	//fmt.Println(time.Now().Add(-time.Hour * 24 * 7))
+	//fmt.Println(time.Now())
+	//o := orm.NewOrm()
+	//order := make([]controllers.TypeAixinwuOrder,0)
+	//num,err := o.QueryTable(&controllers.TypeAixinwuOrder{}).
+	//	Filter("place_at__gt",time.Now().Add(-time.Hour * 24 * 7)).All(&order)
+	//beego.Trace(num, err)
+	//for _,item := range order{
+	//	beego.Trace(item.Id, item.Customer_id, item.Place_at)
+	//}
+	//return
+
 	// start gnatsd
 	if _, err := os.Stat("gnatsd"); os.IsNotExist(err) {
 		beego.Warning("No gnatsd found")

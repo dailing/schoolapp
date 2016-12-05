@@ -35,7 +35,7 @@ func genBarcode() string {
 	for {
 		code = rand.Int() % modVal
 		//code += 1
-		info.Barcode = fmt.Sprintf("34%07d", code)
+		info.Barcode = fmt.Sprintf("54%07d", code)
 		err := o.Read(&info, "barcode")
 		beego.Debug("trying bar code ", info.Barcode)
 		ErrReport(err)
@@ -60,52 +60,111 @@ func (c *ItemAddAixinwuController) Post() {
 		c.Abort("500")
 		return
 	}
-	response := TypeRegularResp{
-		MataData: GenMataData(),
-	}
+	response := TypeRegularResp{}
 	// check token
 	tInfo := ParseToken(request.Token)
 	if tInfo.UserID <= 0 {
 		c.Abort("400")
 		return
 	}
-	// get jacount info
-	o := orm.NewOrm()
-	jinfo := TypeAixinwuJaccountInfo{
-		Jaccount_id: request.Item.JAcountID,
-	}
-	err = o.Read(&jinfo, "jaccount_id")
-	ErrReport(err)
+	var itemInfo TypeAixinwuItem
+	for {
+		// get jacount info
+		o := orm.NewOrm()
+		jinfo := TypeAixinwuJaccountInfo{
+			Jaccount_id: request.Item.JAcountID,
+		}
+		err = o.Read(&jinfo, "jaccount_id")
+		ErrReport(err)
+		if err != nil {
+			break
+		}
 
-	// set parameters
-	succ := utf8.Valid([]byte(request.Item.Desc))
-	beego.Info(succ)
-	//request.Item.Desc = baseEncode(request.Item)
-	dinfo := TypeLcnDonateBatch{
-		Donation_sn: getDonationSN(),
-		Barcode:     genBarcode(),
-		User_id:     jinfo.Customer_id,
-		Snum:        jinfo.Snum,
-		Desc:        request.Item.Desc,
-		Status:      1,
+		// set parameters
+		succ := utf8.Valid([]byte(request.Item.Desc))
+		beego.Info(succ)
+		//request.Item.Desc = baseEncode(request.Item)
+		dinfo := TypeLcnDonateBatch{
+			Donation_sn: getDonationSN(),
+			Barcode:     genBarcode(),
+			User_id:     jinfo.Customer_id,
+			Snum:        jinfo.Snum,
+			Desc:        request.Item.Desc,
+			Status:      1,
+		}
+		donationID, err := o.Insert(&dinfo)
+		ErrReport(err)
+		if err != nil {
+			break
+		}
+		itemInfo = TypeAixinwuItem{
+			Barcode:     dinfo.Barcode,
+			Status:      1,
+			Donation_id: int(donationID),
+			Valuation:   request.Item.Valuation,
+			//Valuation:   123,
+			Name:        request.Item.Desc,
+			Description: request.Item.Desc,
+			Is_delete:   0,
+			Quantity:    1,
+			Validity:    time.Now(),
+		}
+		_, err = o.Insert(&itemInfo)
+		ErrReport(err)
+		if err != nil {
+			break
+		}
+		break
 	}
-	donationID, err := o.Insert(&dinfo)
-	ErrReport(err)
-	itemInfo := TypeAixinwuItem{
-		Barcode:     dinfo.Barcode,
-		Status:      1,
-		Donation_id: int(donationID),
-		Valuation:   request.Item.Valuation,
-		//Valuation:   123,
-		Name:        request.Item.Desc,
-		Description: request.Item.Desc,
-		Is_delete:   0,
-		Quantity:    1,
-		Validity:    time.Now(),
-	}
-	_, err = o.Insert(&itemInfo)
-	ErrReport(err)
 	response.Status = GenStatus(StatusCodeOK)
+	if err != nil {
+		response.Status = GenStatus(StatusCodeDatabaseErr)
+	}
+	c.Data["json"] = struct {
+		Status   TypeStatus      `json:"status"`
+		ItemInfo TypeAixinwuItem `json:"item_info"`
+	}{
+		Status:   response.Status,
+		ItemInfo: itemInfo,
+	}
+	c.ServeJSON()
+}
+
+type DonateRecordGetController struct {
+	beego.Controller
+}
+
+func (c *DonateRecordGetController) Post() {
+	beego.Debug("Aixinwu item")
+	request := TypeAixinwuDonateRecordGetReq{}
+	body := c.Ctx.Input.CopyBody(beego.AppConfig.DefaultInt64("bodybuffer", 1024*1024))
+	beego.Info("Post Body is:", string(body))
+	err := json.Unmarshal(body, &request)
+	ErrReport(err)
+	if err != nil {
+		c.Abort("400")
+	}
+	tokenInfo := ParseToken(request.Token)
+	if tokenInfo.UserID <= 0 {
+		c.Abort("400")
+	}
+	aixinwuID := TransferLocalIDtoAixinwuID(tokenInfo.UserID)
+	o := orm.NewOrm()
+	records := make([]TypeLcnDonateBatch, 0)
+	qs := o.QueryTable(&TypeLcnDonateBatch{})
+	_, err = qs.Filter("user_id", aixinwuID).
+		Offset(request.Offset).
+		Limit(request.Length).
+		All(&records)
+	ErrReport(err)
+	response := TypeAixinwuDonateRecordGetResp{
+		Records: records,
+	}
+	if err == nil {
+		response.Status = GenStatus(StatusCodeOK)
+	} else {
+		response.Status = GenStatus(StatusCodeDatabaseErr)
+	}
 	c.Data["json"] = response
 	c.ServeJSON()
 }

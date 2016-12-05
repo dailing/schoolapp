@@ -10,7 +10,7 @@ import (
 func init() {
 	beego.SetStaticPath("/ckfinder", "/home/sjtu/Sites/aixinwu.sjtu.edu.cn/ckfinder")
 	beego.SetStaticPath("/originalSite", "/home/sjtu/Sites/aixinwu.sjtu.edu.cn/")
-	//beego.Router("/", &controllers.MainController{})
+	beego.Router("/", &controllers.MainController{})
 	beego.Router("/api/login", &controllers.LoginController{})
 	beego.Router("/api/usr_add", &controllers.UserAddController{})
 	beego.Router("/api/phone_verification", &controllers.TextMessageVerificationController{})
@@ -19,6 +19,7 @@ func init() {
 	beego.Router("/api/usr_set_address", &controllers.AinxinwuAddressSetController{})
 	beego.Router("/api/usr_get_by_id/:uid", &controllers.UserGetRestfulController{})
 	beego.Router("/api/usr_update", &controllers.UserUpdateController{})
+	beego.Router("/api/usr_change_psw", &controllers.UserChangePswController{})
 
 	beego.Router("/api/img_upload", &controllers.ImgUploadController{})
 	beego.Router("/api/img_get", &controllers.ImgGetController{})
@@ -57,8 +58,9 @@ func init() {
 	beego.Router("/api/aixinwu_volunteer_act_get", &controllers.AixinwuVolunteerActGetController{})
 	beego.Router("/api/aixinwu_volunteer_act_Join", &controllers.AixinwuVolunteerActJoinController{})
 	beego.Router("/api/aixinwu_associate_jaccount", &controllers.UserJaccountAssociate{})
+	beego.Router("/api/donate_get", &controllers.DonateRecordGetController{})
 
-	//beego.Router("/api/jaccountAssociate",)
+	beego.Router("/api/version_code", &controllers.VersionCodeController{})
 
 	beego.ErrorHandler("404", serve404)
 }
